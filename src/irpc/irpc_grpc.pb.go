@@ -95,5 +95,5 @@ var _IrpcGreeter_serviceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "rpc/irpc/irpc.proto",
+	Metadata: "irpc.proto",
 }

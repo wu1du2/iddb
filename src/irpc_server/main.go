@@ -25,7 +25,7 @@ import (
 	"net"
 
 	"google.golang.org/grpc"
-	pb "rpc/irpc"
+	pb "irpc"
 )
 
 const (

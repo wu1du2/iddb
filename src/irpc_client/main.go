@@ -26,12 +26,12 @@ import (
 	"time"
 
 	"google.golang.org/grpc"
-	pb "rpc/irpc"
+	pb "irpc"
 )
 
 const (
-	address     = "10.48.66.127:50053"
-	// address     = "localhost:50053"
+	// address     = "10.48.66.127:50053"
+	address     = "localhost:50053"
 	defaultName = "wky"
 )
 
