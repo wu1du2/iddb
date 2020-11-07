@@ -1,59 +1,20 @@
-/*
- *
- * Copyright 2015 gRPC authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
-
-// Package main implements a client for Greeter service.
 package main
 
 import (
-	"context"
+	"fmt"
 	"log"
-	"os"
-	"time"
 
-	"google.golang.org/grpc"
-	pb "irpc"
-)
-
-const (
-	// address     = "10.48.66.127:50053"
-	address     = "localhost:50053"
-	defaultName = "wky"
+	"github.com/xwb1989/sqlparser"
 )
 
 func main() {
-	// Set up a connection to the server.
-	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	// sql := "select Customer.name ,Orders.quantity,Book.title from Customer,Orders,Book where Customer.id=Orders.customer_id and Book.id=Orders.book_id  and Customer.rank=1 and Book.copies>5000"
+	sql := "SELECT * FROM Customer"
+	query, err := sqlparser.Parse(sql)
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		println("ERROR!")
+		log.Fatal(err)
 	}
-	defer conn.Close()
-	c := pb.NewIrpcGreeterClient(conn)
+	fmt.Printf("%+#v", query)
 
-	// Contact the server and print out its response.
-	name := defaultName
-	if len(os.Args) > 1 {
-		name = os.Args[1]
-	}
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-	r, err := c.IrpcGreet(ctx, &pb.IrpcRequest{Name: name})
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
-	}
-	log.Printf("Greeting: %s", r.GetMessage())
 }
