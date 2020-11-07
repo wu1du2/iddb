@@ -6,7 +6,7 @@ The purpose of this project is to implement a simple Relational Distributed Data
 iddb is implemented by Golang. This project follows Golang standard of coding.
 1. The project iddb is packed up as an isolated directory. iddb consists 3 part, bin, pkg, and src. All codes, including grpc dependency and our packages, are placed in src.
 2. All modules of iddb are assembled as Golang Packages. We can use module by using "import PKG_NAME"
-3. Make sure the go environment variable “GOPATH” is [iddb]. Using "go env" to check out.
+3. Make sure the go environment variable “GOPATH” is [xxx/iddb]. Using "go env" to check out.
 
 ## Environment
 Hardware:  
