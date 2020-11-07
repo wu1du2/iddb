@@ -1,5 +1,11 @@
 # iddb
 **2020 RUC ddb course project**
+**Authors: Kunyao Wu, Hongyao Zhao, Zhiyu Shui and Dalin Wang**
+**Assignment**
+**Kunyao Wu: rpc**
+**Hongyao Zhao: mysql install, query processing**
+**Zhiyu Shui: etcd install, data allocation**
+**Dalin Wang: SQL parser**
 ## Overview
 The purpose of this project is to implement a simple Relational Distributed Database(RDDB), iddb. iddb supports handling some simple SQL queries, making query optimization and executing SQL sequences in different sites.
 
