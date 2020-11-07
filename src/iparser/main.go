@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"sqlparser"
+	"github.com/xwb1989/sqlparser"
 )
 
 func main() {
