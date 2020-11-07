@@ -18,7 +18,7 @@ etcd version:
 network:  
 
 ## Modules 
-Next, we will introduce the design of iddb. iddb consists of 4 modules, iparser(analyzing input SQL sentence), irpc (data transmission and networking), iquerymanager(query optimization), imeta(synchronizing metadata) and iexecuter(execute SQL in local mysql)
+Next, we will introduce the design of iddb. iddb consists of 5 main modules, iparser(analyzing input SQL sentence), irpc (data transmission and networking), iquerymanager(query optimization), imeta(synchronizing metadata) and iexecuter(execute SQL in local mysql)
 
 ### iparser
 123123213
