@@ -41,7 +41,7 @@ Next, we will introduce the design of iddb. iddb consists of 5 main modules, ipa
 21332132
 
 ## installation & configuration
-note that all operations need to finish in all 3 computers in cluster.
+note that all operations need to complete in all 3 computers in cluster.
 1. install golang newest version (up to 2020/11/7)
 
 2. set go environment variables for all 3 computers
