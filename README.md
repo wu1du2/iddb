@@ -1,7 +1,7 @@
 # iddb
 **2020 RUC ddb course project**  
-**Authors: Kunyao Wu, Hongyao Zhao, Zhiyu Shui and Dalin Wang**  
-**Assignment**  
+***Authors:*** Kunyao Wu, Hongyao Zhao, Zhiyu Shui and Dalin Wang**  
+***Assignment:***  
 **Kunyao Wu: rpc**  
 **Hongyao Zhao: mysql install, query processing**  
 **Zhiyu Shui: etcd install, data allocation**  
