@@ -1,12 +1,11 @@
 syntax = "proto3";
 
-option go_package = "irpcstream";
+option go_package = "irpcstream/irpc2";
 
-package irpcstream;
+package irpc2;
 
-// Interface exported by the server.
 service IrpcStream {
-  rpc GetTable(SQLREQ) returns (stream Tuple) {}
+  rpc EX(SQLREQ) returns (stream Tuple) {}
 }
 
 message SQLREQ {

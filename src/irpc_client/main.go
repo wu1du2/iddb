@@ -25,8 +25,9 @@ import (
 	"os"
 	"time"
 
-	"google.golang.org/grpc"
 	pb "irpc"
+
+	"google.golang.org/grpc"
 )
 
 const (
@@ -43,7 +44,8 @@ func main() {
 	}
 	defer conn.Close()
 	c := pb.NewIrpcGreeterClient(conn)
-
+	log.Printf("Waiting 10s.............")
+	time.Sleep(time.Duration(10) * time.Second)
 	// Contact the server and print out its response.
 	name := defaultName
 	if len(os.Args) > 1 {
