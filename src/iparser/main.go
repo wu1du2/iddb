@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/pingcap/parser"
 	"github.com/pingcap/parser/ast"
 	_ "github.com/pingcap/parser/test_driver"
-	plannerCore "github.com/pingcap/tidb/planner/core"
 )
 
 func parse(sql string) (*ast.StmtNode, error) {
