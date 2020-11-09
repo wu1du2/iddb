@@ -57,3 +57,7 @@ note that all operations need to complete in all 3 computers in cluster.
 
 5. install iddb
 
+
+## working log
+2020.11.9 discuss the design of iddb
+
