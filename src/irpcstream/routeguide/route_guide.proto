@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+option go_package = "irpcstream";
+
+package irpcstream;
+
+// Interface exported by the server.
+service IrpcStream {
+  rpc GetTable(SQLREQ) returns (stream Tuple) {}
+}
+
+message SQLREQ {
+  string sqlsentence = 1;
+}
+
+message Publisher{
+  int64 id = 1;
+  string name = 2;
+  string nation = 3;
+}
+
+message Book{
+  int64 id = 1;
+  string title = 2;
+  string authors = 3;
+  int64 publisher_id = 4;
+  int64 copies = 5;
+}
+
+message Customer{
+  int64 id = 1;
+  string name = 2;
+  int64 rank = 3;
+}
+
+message Orders{
+  int64 customer_id = 1;
+  int64 book_id = 2;
+  int64 quantity = 3;
+}
+
+message Tuple {
+  Publisher publisher = 1;
+  Book book = 2;
+  Customer customer = 3;
+  Orders orders = 4;
+}
