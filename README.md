@@ -14,12 +14,13 @@ iddb is implemented by Golang. This project follows Golang standard of coding.
 3. Make sure the go environment variable “GOPATH” is [xxx/iddb]. Using "go env" to check out.
 
 ## Environment
-1. Hardware: 
+1. Hardware:  
 cpu: 8  Intel Core Processor (Skylake)  
 memory:  15885 MB  
 disk: 500 GB  
 
-2. OS:CentOS Linux release 7.4.1708 (Core)  
+2. OS:  
+CentOS Linux release 7.4.1708 (Core)  
 (kernel version:3.10.0-693.5.2.el7.x86_64)  
 
 3. golang version:  
@@ -32,9 +33,13 @@ mysql-5.7.32
 etcd-v3.3.25  
 
 6. network:  
-10.77.70.161 
-10.77.70.162
-10.77.70.171 
+cluster:  
+node1: 10.77.70.161  
+node2: 10.77.70.162  
+node3: 10.77.70.171  
+  
+protocol buffer: libprotoc 3.13.0  
+grpc: 1.34.0-dev  
 
 ## Design 
 Next, we will introduce the design of iddb. iddb consists of 5 main modules, iparser(parsing input SQL statements), irpc (data transmission and networking), iquerymanager(query analyzation and optimization), imeta(synchronizing metadata) and iexecuter(executing SQL in local mysql databases)
