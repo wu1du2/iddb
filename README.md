@@ -52,10 +52,11 @@ note that all operations need to complete in all 3 computers in cluster.
 sudo yum install git
 sudo yum install wget
 2. install golang newest version (up to 2020/11/7)
-```wget https://studygolang.com/dl/golang/go1.15.4.linux-amd64.tar.gz  
+```
+wget https://studygolang.com/dl/golang/go1.15.4.linux-amd64.tar.gz  
 tar zxf go1.15.4.linux-amd64.tar.gz  
-sudo mv go /usr/local/  ```
-
+sudo mv go /usr/local/  
+```
 export GOROOT=/usr/local/go
 
 export GOBIN=$GOROOT/bin
