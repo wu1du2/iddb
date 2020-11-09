@@ -47,15 +47,27 @@ Next, we will introduce the design of iddb. iddb consists of 5 main modules, ipa
 
 ## installation & configuration
 note that all operations need to complete in all 3 computers in cluster.
-1. install golang newest version (up to 2020/11/7)
 
-2. set go environment variables for all 3 computers
+1. install tools and dependency
+sudo yum install git
+sudo yum install wget
+2. install golang newest version (up to 2020/11/7)
+‘wget https://studygolang.com/dl/golang/go1.15.4.linux-amd64.tar.gz  
+tar zxf go1.15.4.linux-amd64.tar.gz  
+sudo mv go /usr/local/  ‘
 
-3. install mysql5.7
+export GOROOT=/usr/local/go
 
-4. install etcd
+export GOBIN=$GOROOT/bin
 
-5. install iddb
+export PATH=$PATH:$GOBIN
+3. set go environment variables for all 3 computers
+
+4. install mysql5.7
+
+5. install etcd
+
+6. install iddb
 
 
 ## working log
