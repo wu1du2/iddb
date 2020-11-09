@@ -31,8 +31,8 @@ import (
 )
 
 const (
-	// address     = "10.48.66.127:50053"
-	address     = "localhost:50053"
+	address = "10.77.70.161:50053"
+	// address     = "localhost:50053"
 	defaultName = "wky"
 )
 
