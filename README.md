@@ -6,7 +6,7 @@
 **Zhiyu Shui: etcd installation, data allocation**  
 **Dalin Wang: SQL parser**  
 ## Overview  
-The purpose of this project is to implement a simple Relational Distributed Database(RDDB), iddb. iddb supports handling some simple SQL queries, making query optimization and executing SQL sequences in different sites.
+The purpose of this project is to implement a simple Relational Distributed Database(RDDB), iddb. iddb supports handling some simple SQL queries, making query optimization and executing SQL statements in different sites.
 
 iddb is implemented by Golang. This project follows Golang standard of coding.
 1. The project iddb is packed up as an isolated directory. iddb consists 3 part, bin, pkg, and src. All codes, including grpc dependency and our packages, are placed in src.
