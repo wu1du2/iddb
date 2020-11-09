@@ -2,19 +2,29 @@ package main
 
 import (
 	"fmt"
-	"log"
-
-	"github.com/marianogappa/sqlparser"
+	"github.com/pingcap/parser"
+	"github.com/pingcap/parser/ast"
+	_ "github.com/pingcap/parser/test_driver"
+	plannerCore "github.com/pingcap/tidb/planner/core"
 )
 
-func main() {
-	sql := "select Customer.name ,Orders.quantity,Book.title from Customer,Orders,Book where Customer.id=Orders.customer_id and Book.id=Orders.book_id  and Customer.rank=1 and Book.copies>5000"
-	// sql := "SELECT * FROM Customer"
-	query, err := sqlparser.Parse(sql)
-	if err != nil {
-		println("ERROR!")
-		log.Fatal(err)
-	}
-	fmt.Printf("%+#v", query)
+func parse(sql string) (*ast.StmtNode, error) {
+	p := parser.New()
 
+	stmtNodes, _, err := p.Parse(sql, "", "")
+	if err != nil {
+		return nil, err
+	}
+
+	return &stmtNodes[0], nil
+}
+
+func main() {
+	astNode, err := parse("SELECT a, b FROM t")
+	if err != nil {
+		fmt.Printf("parse error: %v\n", err.Error())
+		return
+	}
+	fmt.Printf("%v\n", *astNode)
+	// plannerCore.buildSelect(nil,astNode)
 }
