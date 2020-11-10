@@ -100,7 +100,31 @@ the procedure of installing mysql5.7
 
 5. install etcd
 ```
-the procedure of installing etcd
+configuration
+./etcd --name etcd01 --initial-advertise-peer-urls http://10.77.70.161:2380 \
+--listen-peer-urls http://10.77.70.161:2380 \
+--listen-client-urls http://10.77.70.161:2379,http://127.0.0.1:2379 \
+--advertise-client-urls http://10.77.70.161:2379 \
+--initial-cluster-token etcd-cluster-1 \
+--initial-cluster etcd01=http://10.77.70.161:2380,etcd02=http://10.77.70.162:2380,etcd03=http://10.77.70.171:2380 \
+--initial-cluster-state new
+
+./etcd --name etcd02 --initial-advertise-peer-urls http://10.77.70.162:2380 \
+--listen-peer-urls http://10.77.70.162:2380 \
+--listen-client-urls http://10.77.70.162:2379,http://127.0.0.1:2379 \
+--advertise-client-urls http://10.77.70.162:2379 \
+--initial-cluster-token etcd-cluster-1 \
+--initial-cluster etcd01=http://10.77.70.161:2380,etcd02=http://10.77.70.162:2380,etcd03=http://10.77.70.171:2380 \
+--initial-cluster-state new
+
+
+./etcd --name etcd03 --initial-advertise-peer-urls http://10.77.70.171:2380 \
+--listen-peer-urls http://10.77.70.171:2380 \
+--listen-client-urls http://10.77.70.171:2379,http://127.0.0.1:2379 \
+--advertise-client-urls http://10.77.70.171:2379 \
+--initial-cluster-token etcd-cluster-1 \
+--initial-cluster etcd01=http://10.77.70.161:2380,etcd02=http://10.77.70.162:2380,etcd03=http://10.77.70.171:2380 \
+--initial-cluster-state new
 ```
 
 6. install iddb
