@@ -30,8 +30,8 @@ import (
 )
 
 const (
-	// address = "10.77.70.161:50053"
-	address = "localhost:50053"
+	address = "10.77.70.161:50053"
+	// address = "localhost:50053"
 	//defaultName = "wky"
 )
 
@@ -47,17 +47,8 @@ func main() {
 	}
 	defer conn.Close()
 	c := pb.NewPushTableClient(conn)
-	//log.Printf("Waiting 10s.............")
-	//time.Sleep(time.Duration(10) * time.Second)
-	// Contact the server and print out its response.
-	// name := defaultName
-	// name = name
-	// if len(os.Args) > 1 {
-	// 	name = os.Args[1]
-	// }
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	log.Printf("111111")
 	var temtableinfo pb.TableInfo = pb.TableInfo{TableName: "testrpc3",
 		TotalRow: 10,
 		TotalCol: 10}
@@ -88,7 +79,7 @@ func main() {
 
 	r, err := c.PushTable(ctx, &inputTable)
 	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+		log.Fatalf("could not call: %v", err)
 	}
-	log.Printf("Greeting: %d", r.IsSuc)
+	println("result is ", r.IsSuc)
 }
