@@ -1,10 +1,10 @@
 # iddb
 **2020 RUC ddb course project**   
 ***Assignment:***  
-**Kunyao Wu: rpc**  
+**Kunyao Wu: irpc**  
 **Hongyao Zhao: mysql installation, query optimization**  
-**Zhiyu Shui: etcd installation**  
-**Dalin Wang: SQL parser, query analyzation**  
+**Zhiyu Shui: imeta,etcd installation**  
+**Dalin Wang: iparser, iqueryanalyzer**  
 ## Overview  
 The purpose of this project is to implement a simple Relational Distributed Database(RDDB), iddb. iddb supports handling some simple SQL queries, making query optimization and executing SQL statements in different sites.
 
@@ -42,10 +42,10 @@ protocol buffer: libprotoc 3.13.0
 grpc: 1.34.0-dev  
 
 ## Design 
-Next, we will introduce the design of iddb. iddb consists of 5 main modules, iparser(parsing input SQL statements), irpc (data transmission and networking), iquerymanager(query analyzation and optimization), imeta(synchronizing metadata) and iexecuter(executing SQL in local mysql databases)
+Next, we will introduce the design of iddb. iddb consists of 6 main modules, iparser(parsing input SQL statements), irpc (data transmission and remote executor call), iqueryanalyzer(query analyzation) and iqueryoptimizer(optimization), imeta(synchronizing metadata by etcd) and iexecuter(executing SQL in local mysql databases)
 
 ### overview  
-123  
+  
 
 
 
