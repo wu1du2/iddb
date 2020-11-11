@@ -45,8 +45,8 @@ grpc: 1.34.0-dev
 Next, we will introduce the design of iddb. iddb consists of 6 main modules, iparser(parsing input SQL statements), irpc (data transmission and remote executor call), iqueryanalyzer(query analyzation) and iqueryoptimizer(optimization), imeta(synchronizing metadata by etcd) and iexecuter(executing SQL in local mysql databases)
 
 ### overview  
-  
 
+![iddbarchitecture](https://github.com/wu1du2/iddb/blob/master/img/architecture.jpeg)
 
 
 ### iparser
