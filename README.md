@@ -46,7 +46,7 @@ Next, we will introduce the design of iddb. iddb consists of 6 main modules, ipa
 
 ### overview  
 
-![iddbarchitecture](https://github.com/wu1du2/iddb/blob/master/img/architecture.jpeg)
+![iddbarchitecture](https://github.com/wu1du2/iddb/raw/master/img/architecture.jpeg)
 
 
 ### iparser
