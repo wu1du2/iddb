@@ -53,11 +53,11 @@ Next, we will introduce the design of iddb. iddb consists of 6 main modules, ipa
 123123213
 21332132
 
-### irpc
+### iqueryanalyzer
 123123213
 21332132
 
-### iquerymanager
+### iqueryoptimizer
 123123213
 21332132
 
@@ -66,6 +66,10 @@ Next, we will introduce the design of iddb. iddb consists of 6 main modules, ipa
 21332132
 
 ### iexecuter
+123123213
+21332132
+
+### irpc
 123123213
 21332132
 
