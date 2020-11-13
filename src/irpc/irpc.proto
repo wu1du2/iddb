@@ -17,11 +17,11 @@ service PushTable {
 }
 
 service ExecuterCaller{
-  rpc ExecuterCall(IrpcNull) returns (IrpcStatus) {}
+  rpc ExecuterCall(IrpcCallReq) returns (IrpcStatus) {}
 }
 
-message IrpcNull {
-
+message IrpcCallReq {
+  int64 Txnid = 1;
 }
 
 message IrpcStatus {

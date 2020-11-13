@@ -100,7 +100,7 @@ var _PushTable_serviceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ExecuterCallerClient interface {
-	ExecuterCall(ctx context.Context, in *IrpcNull, opts ...grpc.CallOption) (*IrpcStatus, error)
+	ExecuterCall(ctx context.Context, in *IrpcCallReq, opts ...grpc.CallOption) (*IrpcStatus, error)
 }
 
 type executerCallerClient struct {
@@ -111,7 +111,7 @@ func NewExecuterCallerClient(cc grpc.ClientConnInterface) ExecuterCallerClient {
 	return &executerCallerClient{cc}
 }
 
-func (c *executerCallerClient) ExecuterCall(ctx context.Context, in *IrpcNull, opts ...grpc.CallOption) (*IrpcStatus, error) {
+func (c *executerCallerClient) ExecuterCall(ctx context.Context, in *IrpcCallReq, opts ...grpc.CallOption) (*IrpcStatus, error) {
 	out := new(IrpcStatus)
 	err := c.cc.Invoke(ctx, "/irpc.ExecuterCaller/ExecuterCall", in, out, opts...)
 	if err != nil {
@@ -124,7 +124,7 @@ func (c *executerCallerClient) ExecuterCall(ctx context.Context, in *IrpcNull, o
 // All implementations must embed UnimplementedExecuterCallerServer
 // for forward compatibility
 type ExecuterCallerServer interface {
-	ExecuterCall(context.Context, *IrpcNull) (*IrpcStatus, error)
+	ExecuterCall(context.Context, *IrpcCallReq) (*IrpcStatus, error)
 	mustEmbedUnimplementedExecuterCallerServer()
 }
 
@@ -132,7 +132,7 @@ type ExecuterCallerServer interface {
 type UnimplementedExecuterCallerServer struct {
 }
 
-func (UnimplementedExecuterCallerServer) ExecuterCall(context.Context, *IrpcNull) (*IrpcStatus, error) {
+func (UnimplementedExecuterCallerServer) ExecuterCall(context.Context, *IrpcCallReq) (*IrpcStatus, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExecuterCall not implemented")
 }
 func (UnimplementedExecuterCallerServer) mustEmbedUnimplementedExecuterCallerServer() {}
@@ -149,7 +149,7 @@ func RegisterExecuterCallerServer(s *grpc.Server, srv ExecuterCallerServer) {
 }
 
 func _ExecuterCaller_ExecuterCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IrpcNull)
+	in := new(IrpcCallReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -161,7 +161,7 @@ func _ExecuterCaller_ExecuterCall_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: "/irpc.ExecuterCaller/ExecuterCall",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ExecuterCallerServer).ExecuterCall(ctx, req.(*IrpcNull))
+		return srv.(ExecuterCallerServer).ExecuterCall(ctx, req.(*IrpcCallReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }

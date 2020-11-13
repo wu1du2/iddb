@@ -23,8 +23,8 @@ const (
 )
 
 // ExecuterCall implementation, defined in irpc.pb.go
-func (s *cserver) ExecuterCall(ctx context.Context, in *IrpcNull) (*IrpcStatus, error) {
-	iexecuter.RunExecuter()
+func (s *cserver) ExecuterCall(ctx context.Context, in *IrpcCallReq) (*IrpcStatus, error) {
+	iexecuter.RunExecuter(in.Txnid)
 	return &IrpcStatus{IsSuc: 1}, nil
 }
 
