@@ -14,7 +14,8 @@ type Table struct {
 func main() {
 	address := "localhost:50053"
 	var table irpc.Table
-	table.Operation = "INSERT INTO PUBLISHER (ID, NATION)"
+	table.Createstmt = "Create Table PUBLISHER (ID int, NATION varchar(255) )"
+	table.Insertstmt = "INSERT INTO PUBLISHER (ID, NATION)"
 	table.Rowlength = 10
 	table.Record = make([]string, 10)
 	table.Record[0] = "(0,'USA')"

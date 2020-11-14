@@ -28,19 +28,22 @@ receive a table from remote client, make it a INSERT statement
 and execute
 */
 func (s *tserver) PushTable(ctx context.Context, in *Table) (*IrpcStatus, error) {
-	stmt := ""
+	insertstmt := ""
+	createstmt := ""
+	createstmt = in.Createstmt
 	rowlength := in.Rowlength
 	var i int64
-	op := in.Operation
-	stmt += op + " VALUES "
+	insertop := in.Insertstmt
+	insertstmt += insertop + " VALUES "
 	for i = 0; i < rowlength; i++ {
-		stmt += in.Record[i]
+		insertstmt += in.Record[i]
 		if i != rowlength-1 {
-			stmt += ","
+			insertstmt += ","
 		}
 	}
-	stmt += ";"
-	iexecuter.ExecuteInsertStmt(stmt)
+	insertstmt += ";"
+	iexecuter.ExecuteInsertStmt(createstmt)
+	iexecuter.ExecuteInsertStmt(insertstmt)
 	return &IrpcStatus{IsSuc: 1}, nil
 }
 
