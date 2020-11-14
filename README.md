@@ -70,8 +70,17 @@ Next, we will introduce the design of iddb. iddb consists of 6 main modules, ipa
 21332132
 
 ### irpc
-123123213
-21332132
+interface:
+1. irpc/call_client: RunCallClient(caddress string, txnid int64) int64  
+
+2. irpc/call_server: RunCallServer()  
+
+3. irpc/tran_client: RunTranClient(taddress string, table Table) int64  
+
+4. irpc/tran_server: RunTranServer()  
+
+USAGE: read src/examples/irpc
+
 
 ## installation & configuration
 note that all operations need to complete in all 3 computers in cluster.
