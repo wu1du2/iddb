@@ -25,6 +25,6 @@ func main() {
 		fmt.Printf("parse error: %v\n", err.Error())
 		return
 	}
-	fmt.Printf("%v\n", *astNode)
+	fmt.Printf("%+v\n", *astNode)
 	// plannerCore.buildSelect(nil,astNode)
 }
