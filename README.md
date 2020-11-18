@@ -1,9 +1,9 @@
 # iddb
 **2020 RUC ddb course project**   
 ***Assignment:***  
-**Kunyao Wu: irpc**  
-**Hongyao Zhao: mysql installation, query optimization**  
-**Zhiyu Shui: imeta,etcd installation**  
+**Kunyao Wu: irpc,iqueryoptimizer**  
+**Hongyao Zhao: mysql installation, iqueryoptimizer**  
+**Zhiyu Shui: imeta,etcd installation,iqueryoptimizer**  
 **Dalin Wang: iparser, iqueryanalyzer**  
 ## Overview  
 The purpose of this project is to implement a simple Relational Distributed Database(RDDB), iddb. iddb supports handling some simple SQL queries, making query optimization and executing SQL statements in different sites.
@@ -147,6 +147,6 @@ git clone https://github.com/wu1du2/iddb.git
 
 
 ## working log
-2020.11.9 discuss the design of iddb
+2020.11.9 discussed the design of iddb
+2020.11.11 mid-term report
 
-## 设计文档
