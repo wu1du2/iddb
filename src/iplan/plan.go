@@ -1,4 +1,4 @@
-package iparser
+package iplan
 
 type PlanTreeNode struct {
 	Left         int
