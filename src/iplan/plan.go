@@ -17,7 +17,6 @@ type PlanTreeNode struct {
 	//cols_type string
 	Joint_cols string
 	//union string
-
 }
 type PlanTree struct {
 	NodeNum int
