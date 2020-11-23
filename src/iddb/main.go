@@ -14,6 +14,10 @@ import (
 	// "net"
 )
 
+func readconf() {
+
+}
+
 func main() {
 	fmt.Println("Hello world!")
 }
