@@ -1,6 +1,7 @@
 package iplan
 
 type PlanTreeNode struct {
+	Nodeid		 int
 	Left         int
 	Right        int
 	Parent       int
@@ -14,7 +15,7 @@ type PlanTreeNode struct {
 	Where string
 	Cols  string
 	//cols_type string
-	//joint_tables string
+	Joint_cols string
 	//union string
 
 }
