@@ -2,7 +2,7 @@ package main
 
 import (
     "fmt"
-    "github.com/etcd/client/v3"
+    "github.com/coreos/etcd/clientv3"
     "time"
 )
 
