@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	// "iparser"
 	// "iqueryanalyzer"
 	// "iqueryoptimizer"
@@ -12,6 +11,7 @@ import (
 	// "iexecuter"
 	// "log"
 	// "net"
+	"iutilities"
 )
 
 func readconf() {
@@ -19,5 +19,7 @@ func readconf() {
 }
 
 func main() {
-	fmt.Println("Hello world!")
+	var nodes iutilities.Nodes
+	nodes = iutilities.GetMe()
+	nodes.Print()
 }
