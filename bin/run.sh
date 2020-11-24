@@ -1,1 +1,1 @@
-go run 
+go run /Users/wukunyao/Documents/GitHub/iddb/src/examples/iconfig/getconf.go
