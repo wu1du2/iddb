@@ -1,11 +1,11 @@
 package main
 
 import (
-	"iparser"
+	"iplan"
 )
 
 func main() {
-	var pln iparser.PlanTreeNode
+	var pln iplan.PlanTreeNode
 	pln.Left = 1
 	pln.Right = 2
 	println(pln.Left, pln.Right)
