@@ -11,42 +11,61 @@ import (
 	// "iexecuter"
 	// "log"
 	// "net"
-	"fmt"
 	"iutilities"
+
+	"fmt"
+	"os"
 	"strings"
 )
 
-func readconf() {
-
-}
+var (
+	me    iutilities.Nodes
+	peers []iutilities.Nodes
+)
 
 /*
 iddb main设计思路
 1.CLIENT, 默认SERVER已经启动
 2.循环接收用户输入，提供类似mysql的界面
 3.初始化，知道自己和peers的信息
-
+4.生成生成txnid(全局唯一，严格递增)
 */
 
 func main() {
 	//INIT
-	var nodes iutilities.Nodes
-	nodes = iutilities.GetMe()
-	nodes.Print()
-	//
-	quit := false
+	println(len(os.Args))
+	for i, v := range os.Args {
+		println(i, v)
+	}
+
+	me = getMe()
+	me.Print()
+
+	peers= getPeers()
+	peers.Print()
+
+	//GET INPUT SQL STATEMENT
 	var sqlstmt string
-	for quit != true {
+	for {
 		println("please enter SQL statement end with ; (q to quit)")
 		sqlstmt = ScanLine()
 		println(sqlstmt)
 		if strings.EqualFold(sqlstmt, "q") {
-			quit = true
+			break
 		}
+
 	}
 	return
-
 }
+
+func getMe() iutilities.Nodes {
+	return iutilities.GetMe()
+}
+
+func getPeers() []iutilities.Nodes{
+	return iutilities.GetPeers()
+}
+
 
 func ScanLine() string {
 	var c byte
