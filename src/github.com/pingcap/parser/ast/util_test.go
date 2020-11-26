@@ -81,33 +81,33 @@ func (s *testCacheableSuite) TestCacheable(c *C) {
 func (s *testCacheableSuite) TestUnionReadOnly(c *C) {
 	selectReadOnly := &SelectStmt{}
 	selectForUpdate := &SelectStmt{
-		LockInfo: &SelectLockInfo{LockType: SelectLockForUpdate},
+		LockTp: SelectLockForUpdate,
 	}
 	selectForUpdateNoWait := &SelectStmt{
-		LockInfo: &SelectLockInfo{LockType: SelectLockForUpdateNoWait},
+		LockTp: SelectLockForUpdateNoWait,
 	}
 
-	setOprStmt := &SetOprStmt{
-		SelectList: &SetOprSelectList{
-			Selects: []Node{selectReadOnly, selectReadOnly},
+	unionStmt := &UnionStmt{
+		SelectList: &UnionSelectList{
+			Selects: []*SelectStmt{selectReadOnly, selectReadOnly},
 		},
 	}
-	c.Assert(IsReadOnly(setOprStmt), IsTrue)
+	c.Assert(IsReadOnly(unionStmt), IsTrue)
 
-	setOprStmt.SelectList.Selects = []Node{selectReadOnly, selectReadOnly, selectReadOnly}
-	c.Assert(IsReadOnly(setOprStmt), IsTrue)
+	unionStmt.SelectList.Selects = []*SelectStmt{selectReadOnly, selectReadOnly, selectReadOnly}
+	c.Assert(IsReadOnly(unionStmt), IsTrue)
 
-	setOprStmt.SelectList.Selects = []Node{selectReadOnly, selectForUpdate}
-	c.Assert(IsReadOnly(setOprStmt), IsFalse)
+	unionStmt.SelectList.Selects = []*SelectStmt{selectReadOnly, selectForUpdate}
+	c.Assert(IsReadOnly(unionStmt), IsFalse)
 
-	setOprStmt.SelectList.Selects = []Node{selectReadOnly, selectForUpdateNoWait}
-	c.Assert(IsReadOnly(setOprStmt), IsFalse)
+	unionStmt.SelectList.Selects = []*SelectStmt{selectReadOnly, selectForUpdateNoWait}
+	c.Assert(IsReadOnly(unionStmt), IsFalse)
 
-	setOprStmt.SelectList.Selects = []Node{selectForUpdate, selectForUpdateNoWait}
-	c.Assert(IsReadOnly(setOprStmt), IsFalse)
+	unionStmt.SelectList.Selects = []*SelectStmt{selectForUpdate, selectForUpdateNoWait}
+	c.Assert(IsReadOnly(unionStmt), IsFalse)
 
-	setOprStmt.SelectList.Selects = []Node{selectReadOnly, selectForUpdate, selectForUpdateNoWait}
-	c.Assert(IsReadOnly(setOprStmt), IsFalse)
+	unionStmt.SelectList.Selects = []*SelectStmt{selectReadOnly, selectForUpdate, selectForUpdateNoWait}
+	c.Assert(IsReadOnly(unionStmt), IsFalse)
 }
 
 // CleanNodeText set the text of node and all child node empty.
@@ -125,7 +125,6 @@ type nodeTextCleaner struct {
 // Enter implements Visitor interface.
 func (checker *nodeTextCleaner) Enter(in Node) (out Node, skipChildren bool) {
 	in.SetText("")
-	in.SetOriginTextPosition(0)
 	switch node := in.(type) {
 	case *Constraint:
 		if node.Option != nil {

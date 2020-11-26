@@ -109,9 +109,8 @@ func (tc *testExpressionsSuite) TestUnaryOperationExprRestore(c *C) {
 		{"--1", "--1"},
 		{"-+1", "-+1"},
 		{"-1", "-1"},
-		{"not true", "NOT TRUE"},
+		{"not true", "!TRUE"},
 		{"~3", "~3"},
-		{"!true", "!TRUE"},
 	}
 	extractNodeFunc := func(node Node) Node {
 		return node.(*SelectStmt).Fields.Fields[0].Expr

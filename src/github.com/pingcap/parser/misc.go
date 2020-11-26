@@ -133,12 +133,6 @@ func init() {
 	initTokenFunc("'\"", startString)
 }
 
-// isInTokenMap indicates whether the target string is contained in tokenMap.
-func isInTokenMap(target string) bool {
-	_, ok := tokenMap[target]
-	return ok
-}
-
 // tokenMap is a map of known identifiers to the parser token ID.
 // Please try to keep the map in alphabetical order.
 var tokenMap = map[string]int{
@@ -158,8 +152,6 @@ var tokenMap = map[string]int{
 	"ANALYZE":                  analyze,
 	"AND":                      and,
 	"ANY":                      any,
-	"APPROX_COUNT_DISTINCT":    approxCountDistinct,
-	"APPROX_PERCENTILE":        approxPercentile,
 	"AS":                       as,
 	"ASC":                      asc,
 	"ASCII":                    ascii,
@@ -197,7 +189,6 @@ var tokenMap = map[string]int{
 	"CACHE":                    cache,
 	"CANCEL":                   cancel,
 	"CAPTURE":                  capture,
-	"CARDINALITY":              cardinality,
 	"CASCADE":                  cascade,
 	"CASCADED":                 cascaded,
 	"CASE":                     caseKwd,
@@ -231,11 +222,11 @@ var tokenMap = map[string]int{
 	"CONNECTION":               connection,
 	"CONSISTENT":               consistent,
 	"CONSTRAINT":               constraint,
-	"CONSTRAINTS":              constraints,
 	"CONTEXT":                  context,
 	"CONVERT":                  convert,
 	"COPY":                     copyKwd,
-	"CORRELATION":              correlation,
+	"COUNT":                    count,
+	"APPROX_COUNT_DISTINCT":    approxCountDistinct,
 	"CPU":                      cpu,
 	"CREATE":                   create,
 	"CROSS":                    cross,
@@ -275,7 +266,6 @@ var tokenMap = map[string]int{
 	"DELAY_KEY_WRITE":          delayKeyWrite,
 	"DELAYED":                  delayed,
 	"DELETE":                   deleteKwd,
-	"DEPENDENCY":               dependency,
 	"DEPTH":                    depth,
 	"DESC":                     desc,
 	"DESCRIBE":                 describe,
@@ -323,7 +313,6 @@ var tokenMap = map[string]int{
 	"EXTRACT":                  extract,
 	"FALSE":                    falseKwd,
 	"FAULTS":                   faultsSym,
-	"FETCH":                    fetch,
 	"FIELDS":                   fields,
 	"FILE":                     file,
 	"FIRST":                    first,
@@ -331,7 +320,6 @@ var tokenMap = map[string]int{
 	"FLASHBACK":                flashback,
 	"FLOAT":                    floatType,
 	"FLUSH":                    flush,
-	"FOLLOWER":                 follower,
 	"FOLLOWING":                following,
 	"FOR":                      forKwd,
 	"FORCE":                    force,
@@ -353,7 +341,6 @@ var tokenMap = map[string]int{
 	"HAVING":                   having,
 	"HIGH_PRIORITY":            highPriority,
 	"HISTORY":                  history,
-	"HISTOGRAM":                histogram,
 	"HOSTS":                    hosts,
 	"HOUR_MICROSECOND":         hourMicrosecond,
 	"HOUR_MINUTE":              hourMinute,
@@ -384,7 +371,6 @@ var tokenMap = map[string]int{
 	"INT8":                     int8Type,
 	"INTEGER":                  integerType,
 	"INTERNAL":                 internal,
-	"INTERSECT":                intersect,
 	"INTERVAL":                 interval,
 	"INTO":                     into,
 	"INVISIBLE":                invisible,
@@ -397,7 +383,6 @@ var tokenMap = map[string]int{
 	"JOB":                      job,
 	"JOBS":                     jobs,
 	"JOIN":                     join,
-	"JSON_ARRAYAGG":            jsonArrayagg,
 	"JSON_OBJECTAGG":           jsonObjectAgg,
 	"JSON":                     jsonType,
 	"KEY_BLOCK_SIZE":           keyBlockSize,
@@ -409,9 +394,7 @@ var tokenMap = map[string]int{
 	"LAST_BACKUP":              lastBackup,
 	"LAST":                     last,
 	"LASTVAL":                  lastval,
-	"LEADER":                   leader,
 	"LEADING":                  leading,
-	"LEARNER":                  learner,
 	"LEFT":                     left,
 	"LESS":                     less,
 	"LEVEL":                    level,
@@ -510,9 +493,7 @@ var tokenMap = map[string]int{
 	"PER_DB":                   per_db,
 	"PER_TABLE":                per_table,
 	"PESSIMISTIC":              pessimistic,
-	"PLACEMENT":                placement,
 	"PLUGINS":                  plugins,
-	"POLICY":                   policy,
 	"POSITION":                 position,
 	"PRE_SPLIT_REGIONS":        preSplitRegions,
 	"PRECEDING":                preceding,
@@ -552,12 +533,10 @@ var tokenMap = map[string]int{
 	"REPEATABLE":               repeatable,
 	"REPLACE":                  replace,
 	"REPLICA":                  replica,
-	"REPLICAS":                 replicas,
 	"REPLICATION":              replication,
 	"REQUIRE":                  require,
 	"RESET":                    reset,
 	"RESPECT":                  respect,
-	"RESTART":                  restart,
 	"RESTORE":                  restore,
 	"RESTORES":                 restores,
 	"RESTRICT":                 restrict,
@@ -571,7 +550,6 @@ var tokenMap = map[string]int{
 	"ROW_COUNT":                rowCount,
 	"ROW_FORMAT":               rowFormat,
 	"ROW":                      row,
-	"ROWS":                     rows,
 	"RTREE":                    rtree,
 	"SAMPLES":                  samples,
 	"SAN":                      san,
@@ -627,7 +605,6 @@ var tokenMap = map[string]int{
 	"STALENESS":                staleness,
 	"START":                    start,
 	"STARTING":                 starting,
-	"STATISTICS":               statistics,
 	"STATS_AUTO_RECALC":        statsAutoRecalc,
 	"STATS_BUCKETS":            statsBuckets,
 	"STATS_HEALTHY":            statsHealthy,
@@ -729,7 +706,6 @@ var tokenMap = map[string]int{
 	"VARIABLES":                variables,
 	"VARIANCE":                 varPop,
 	"VARYING":                  varying,
-	"VOTER":                    voter,
 	"VIEW":                     view,
 	"VIRTUAL":                  virtual,
 	"VISIBLE":                  visible,
@@ -747,7 +723,6 @@ var tokenMap = map[string]int{
 	"YEAR_MONTH":               yearMonth,
 	"YEAR":                     yearType,
 	"ZEROFILL":                 zerofill,
-	"WAIT":                     wait,
 }
 
 // See https://dev.mysql.com/doc/refman/5.7/en/function-resolution.html for details
@@ -759,7 +734,6 @@ var btFuncTokenMap = map[string]int{
 	"CAST":                  builtinCast,
 	"COUNT":                 builtinCount,
 	"APPROX_COUNT_DISTINCT": builtinApproxCountDistinct,
-	"APPROX_PERCENTILE":     builtinApproxPercentile,
 	"CURDATE":               builtinCurDate,
 	"CURTIME":               builtinCurTime,
 	"DATE_ADD":              builtinDateAdd,
@@ -801,6 +775,7 @@ var windowFuncTokenMap = map[string]int{
 	"OVER":         over,
 	"PERCENT_RANK": percentRank,
 	"RANK":         rank,
+	"ROWS":         rows,
 	"ROW_NUMBER":   rowNumber,
 	"WINDOW":       window,
 }
@@ -858,7 +833,6 @@ var hintTokenMap = map[string]int{
 
 	// TiDB hint names
 	"AGG_TO_COP":              hintAggToCop,
-	"LIMIT_TO_COP":            hintLimitToCop,
 	"IGNORE_PLAN_CACHE":       hintIgnorePlanCache,
 	"HASH_AGG":                hintHashAgg,
 	"IGNORE_INDEX":            hintIgnoreIndex,
@@ -870,8 +844,6 @@ var hintTokenMap = map[string]int{
 	"QUERY_TYPE":              hintQueryType,
 	"READ_CONSISTENT_REPLICA": hintReadConsistentReplica,
 	"READ_FROM_STORAGE":       hintReadFromStorage,
-	"BROADCAST_JOIN":          hintBCJoin,
-	"BROADCAST_JOIN_LOCAL":    hintBCJoinPreferLocal,
 	"MERGE_JOIN":              hintSMJoin,
 	"STREAM_AGG":              hintStreamAgg,
 	"SWAP_JOIN_INPUTS":        hintSwapJoinInputs,
@@ -881,7 +853,6 @@ var hintTokenMap = map[string]int{
 	"USE_TOJA":                hintUseToja,
 	"TIME_RANGE":              hintTimeRange,
 	"USE_CASCADES":            hintUseCascades,
-	"NTH_PLAN":                hintNthPlan,
 
 	// TiDB hint aliases
 	"TIDB_HJ":   hintHashJoin,
@@ -893,7 +864,6 @@ var hintTokenMap = map[string]int{
 	"OLTP":            hintOLTP,
 	"TIKV":            hintTiKV,
 	"TIFLASH":         hintTiFlash,
-	"PARTITION":       hintPartition,
 	"FALSE":           hintFalse,
 	"TRUE":            hintTrue,
 	"MB":              hintMB,

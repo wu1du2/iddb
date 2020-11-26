@@ -53,11 +53,11 @@ func (ts *testDMLSuite) TestDMLVisitorCover(c *C) {
 
 		// TODO: cover childrens
 		{&InsertStmt{Table: tableRefsClause}, 1, 1},
-		{&SetOprStmt{}, 0, 0},
+		{&UnionStmt{}, 0, 0},
 		{&UpdateStmt{TableRefs: tableRefsClause}, 1, 1},
 		{&SelectStmt{}, 0, 0},
 		{&FieldList{}, 0, 0},
-		{&SetOprSelectList{}, 0, 0},
+		{&UnionSelectList{}, 0, 0},
 		{&WindowSpec{}, 0, 0},
 		{&PartitionByClause{}, 0, 0},
 		{&FrameClause{}, 0, 0},
@@ -299,10 +299,10 @@ func (tc *testDMLSuite) TestOrderByClauseRestore(c *C) {
 	}
 	RunNodeRestoreTest(c, testCases, "SELECT 1 FROM t1 %s", extractNodeFunc)
 
-	extractNodeFromSetOprStmtFunc := func(node Node) Node {
-		return node.(*SetOprStmt).OrderBy
+	extractNodeFromUnionStmtFunc := func(node Node) Node {
+		return node.(*UnionStmt).OrderBy
 	}
-	RunNodeRestoreTest(c, testCases, "SELECT 1 FROM t1 UNION SELECT 2 FROM t2 %s", extractNodeFromSetOprStmtFunc)
+	RunNodeRestoreTest(c, testCases, "SELECT 1 FROM t1 UNION SELECT 2 FROM t2 %s", extractNodeFromUnionStmtFunc)
 }
 
 func (tc *testDMLSuite) TestAssignmentRestore(c *C) {

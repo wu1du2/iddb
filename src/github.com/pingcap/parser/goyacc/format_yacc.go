@@ -40,10 +40,7 @@ func Format(inputFilename string, goldenFilename string) (err error) {
 		return err
 	}
 	defer func() {
-		teardownErr := yFmt.Teardown()
-		if err == nil {
-			err = teardownErr
-		}
+		err = yFmt.Teardown()
 	}()
 
 	if err = printDefinitions(yFmt, spec.Defs); err != nil {

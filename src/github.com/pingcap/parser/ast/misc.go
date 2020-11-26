@@ -16,7 +16,6 @@ package ast
 import (
 	"bytes"
 	"fmt"
-	"net/url"
 	"strconv"
 	"strings"
 
@@ -64,13 +63,11 @@ const (
 	RepeatableRead  = "REPEATABLE-READ"
 
 	// Valid formats for explain statement.
-	ExplainFormatROW     = "row"
-	ExplainFormatDOT     = "dot"
-	ExplainFormatJSON    = "json"
-	ExplainFormatHint    = "hint"
-	ExplainFormatVerbose = "verbose"
-	PumpType             = "PUMP"
-	DrainerType          = "DRAINER"
+	ExplainFormatROW  = "row"
+	ExplainFormatDOT  = "dot"
+	ExplainFormatHint = "hint"
+	PumpType          = "PUMP"
+	DrainerType       = "DRAINER"
 )
 
 // Transaction mode constants.
@@ -84,9 +81,7 @@ var (
 	ExplainFormats = []string{
 		ExplainFormatROW,
 		ExplainFormatDOT,
-		ExplainFormatJSON,
 		ExplainFormatHint,
-		ExplainFormatVerbose,
 	}
 )
 
@@ -566,11 +561,9 @@ func (n *UseStmt) Accept(v Visitor) (Node, bool) {
 }
 
 const (
-	// SetNames is the const for set names stmt.
-	// If VariableAssignment.Name == Names, it should be set names stmt.
+	// SetNames is the const for set names/charset stmt.
+	// If VariableAssignment.Name == Names, it should be set names/charset stmt.
 	SetNames = "SetNAMES"
-	// SetCharset is the const for set charset stmt.
-	SetCharset = "SetCharset"
 )
 
 // VariableAssignment is a variable assignment struct.
@@ -598,13 +591,11 @@ func (n *VariableAssignment) Restore(ctx *format.RestoreCtx) error {
 			ctx.WriteKeyWord("SESSION")
 		}
 		ctx.WritePlain(".")
-	} else if n.Name != SetNames && n.Name != SetCharset {
+	} else if n.Name != SetNames {
 		ctx.WriteKeyWord("@")
 	}
 	if n.Name == SetNames {
 		ctx.WriteKeyWord("NAMES ")
-	} else if n.Name == SetCharset {
-		ctx.WriteKeyWord("CHARSET ")
 	} else {
 		ctx.WriteName(n.Name)
 		ctx.WritePlain("=")
@@ -1474,8 +1465,8 @@ type CreateBindingStmt struct {
 	stmtNode
 
 	GlobalScope bool
-	OriginNode  StmtNode
-	HintedNode  StmtNode
+	OriginSel   StmtNode
+	HintedSel   StmtNode
 }
 
 func (n *CreateBindingStmt) Restore(ctx *format.RestoreCtx) error {
@@ -1486,11 +1477,11 @@ func (n *CreateBindingStmt) Restore(ctx *format.RestoreCtx) error {
 		ctx.WriteKeyWord("SESSION ")
 	}
 	ctx.WriteKeyWord("BINDING FOR ")
-	if err := n.OriginNode.Restore(ctx); err != nil {
+	if err := n.OriginSel.Restore(ctx); err != nil {
 		return errors.Trace(err)
 	}
 	ctx.WriteKeyWord(" USING ")
-	if err := n.HintedNode.Restore(ctx); err != nil {
+	if err := n.HintedSel.Restore(ctx); err != nil {
 		return errors.Trace(err)
 	}
 	return nil
@@ -1502,30 +1493,17 @@ func (n *CreateBindingStmt) Accept(v Visitor) (Node, bool) {
 		return v.Leave(newNode)
 	}
 	n = newNode.(*CreateBindingStmt)
-	selnode, ok := n.OriginNode.Accept(v)
+	selnode, ok := n.OriginSel.Accept(v)
 	if !ok {
 		return n, false
 	}
-	switch node := selnode.(type) {
-	case *SelectStmt:
-		n.OriginNode = node
-		hintedSelnode, ok := n.HintedNode.Accept(v)
-		if !ok {
-			return n, false
-		}
-		n.HintedNode = hintedSelnode.(*SelectStmt)
-		return v.Leave(n)
-	case *SetOprStmt:
-		n.OriginNode = node
-		hintedSetOprNode, ok := n.HintedNode.Accept(v)
-		if !ok {
-			return n, false
-		}
-		n.HintedNode = hintedSetOprNode.(*SetOprStmt)
-		return v.Leave(n)
-	default:
+	n.OriginSel = selnode.(*SelectStmt)
+	hintedSelnode, ok := n.HintedSel.Accept(v)
+	if !ok {
 		return n, false
 	}
+	n.HintedSel = hintedSelnode.(*SelectStmt)
+	return v.Leave(n)
 }
 
 // DropBindingStmt deletes sql binding hint.
@@ -1533,8 +1511,8 @@ type DropBindingStmt struct {
 	stmtNode
 
 	GlobalScope bool
-	OriginNode  StmtNode
-	HintedNode  StmtNode
+	OriginSel   StmtNode
+	HintedSel   StmtNode
 }
 
 func (n *DropBindingStmt) Restore(ctx *format.RestoreCtx) error {
@@ -1545,12 +1523,12 @@ func (n *DropBindingStmt) Restore(ctx *format.RestoreCtx) error {
 		ctx.WriteKeyWord("SESSION ")
 	}
 	ctx.WriteKeyWord("BINDING FOR ")
-	if err := n.OriginNode.Restore(ctx); err != nil {
+	if err := n.OriginSel.Restore(ctx); err != nil {
 		return errors.Trace(err)
 	}
-	if n.HintedNode != nil {
+	if n.HintedSel != nil {
 		ctx.WriteKeyWord(" USING ")
-		if err := n.HintedNode.Restore(ctx); err != nil {
+		if err := n.HintedSel.Restore(ctx); err != nil {
 			return errors.Trace(err)
 		}
 	}
@@ -1563,136 +1541,18 @@ func (n *DropBindingStmt) Accept(v Visitor) (Node, bool) {
 		return v.Leave(newNode)
 	}
 	n = newNode.(*DropBindingStmt)
-	selnode, ok := n.OriginNode.Accept(v)
+	selnode, ok := n.OriginSel.Accept(v)
 	if !ok {
 		return n, false
 	}
-	switch node := selnode.(type) {
-	case *SelectStmt:
-		n.OriginNode = node
-		if n.HintedNode != nil {
-			selnode, ok = n.HintedNode.Accept(v)
-			if !ok {
-				return n, false
-			}
-			n.HintedNode = selnode.(*SelectStmt)
-		}
-		return v.Leave(n)
-	case *SetOprStmt:
-		n.OriginNode = node
-		if n.HintedNode != nil {
-			selnode, ok = n.HintedNode.Accept(v)
-			if !ok {
-				return n, false
-			}
-			n.HintedNode = selnode.(*SetOprStmt)
-		}
-		return v.Leave(n)
-	default:
-		return n, false
-	}
-}
-
-// Extended statistics types.
-const (
-	StatsTypeCardinality uint8 = iota
-	StatsTypeDependency
-	StatsTypeCorrelation
-)
-
-// CreateStatisticsStmt is a statement to create extended statistics.
-// Examples:
-//   CREATE STATISTICS stats1 (cardinality) ON t(a, b, c);
-//   CREATE STATISTICS stats2 (dependency) ON t(a, b);
-//   CREATE STATISTICS stats3 (correlation) ON t(a, b);
-type CreateStatisticsStmt struct {
-	stmtNode
-
-	IfNotExists bool
-	StatsName   string
-	StatsType   uint8
-	Table       *TableName
-	Columns     []*ColumnName
-}
-
-// Restore implements Node interface.
-func (n *CreateStatisticsStmt) Restore(ctx *format.RestoreCtx) error {
-	ctx.WriteKeyWord("CREATE STATISTICS ")
-	if n.IfNotExists {
-		ctx.WriteKeyWord("IF NOT EXISTS ")
-	}
-	ctx.WriteName(n.StatsName)
-	switch n.StatsType {
-	case StatsTypeCardinality:
-		ctx.WriteKeyWord(" (cardinality) ")
-	case StatsTypeDependency:
-		ctx.WriteKeyWord(" (dependency) ")
-	case StatsTypeCorrelation:
-		ctx.WriteKeyWord(" (correlation) ")
-	}
-	ctx.WriteKeyWord("ON ")
-	if err := n.Table.Restore(ctx); err != nil {
-		return errors.Annotate(err, "An error occurred while restore CreateStatisticsStmt.Table")
-	}
-
-	ctx.WritePlain("(")
-	for i, col := range n.Columns {
-		if i != 0 {
-			ctx.WritePlain(", ")
-		}
-		if err := col.Restore(ctx); err != nil {
-			return errors.Annotatef(err, "An error occurred while restore CreateStatisticsStmt.Columns: [%v]", i)
-		}
-	}
-	ctx.WritePlain(")")
-	return nil
-}
-
-// Accept implements Node Accept interface.
-func (n *CreateStatisticsStmt) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*CreateStatisticsStmt)
-	node, ok := n.Table.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.Table = node.(*TableName)
-	for i, col := range n.Columns {
-		node, ok = col.Accept(v)
+	n.OriginSel = selnode.(*SelectStmt)
+	if n.HintedSel != nil {
+		selnode, ok = n.HintedSel.Accept(v)
 		if !ok {
 			return n, false
 		}
-		n.Columns[i] = node.(*ColumnName)
+		n.HintedSel = selnode.(*SelectStmt)
 	}
-	return v.Leave(n)
-}
-
-// DropStatisticsStmt is a statement to drop extended statistics.
-// Examples:
-//   DROP STATISTICS stats1;
-type DropStatisticsStmt struct {
-	stmtNode
-
-	StatsName string
-}
-
-// Restore implements Node interface.
-func (n *DropStatisticsStmt) Restore(ctx *format.RestoreCtx) error {
-	ctx.WriteKeyWord("DROP STATISTICS ")
-	ctx.WriteName(n.StatsName)
-	return nil
-}
-
-// Accept implements Node Accept interface.
-func (n *DropStatisticsStmt) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*DropStatisticsStmt)
 	return v.Leave(n)
 }
 
@@ -1761,7 +1621,6 @@ const (
 	AdminReloadBindings
 	AdminShowTelemetry
 	AdminResetTelemetryID
-	AdminReloadStatistics
 )
 
 // HandleRange represents a range where handle value >= Begin and < End.
@@ -1974,8 +1833,6 @@ func (n *AdminStmt) Restore(ctx *format.RestoreCtx) error {
 		ctx.WriteKeyWord("SHOW TELEMETRY")
 	case AdminResetTelemetryID:
 		ctx.WriteKeyWord("RESET TELEMETRY_ID")
-	case AdminReloadStatistics:
-		ctx.WriteKeyWord("RELOAD STATISTICS")
 	default:
 		return errors.New("Unsupported AdminStmt type")
 	}
@@ -1996,14 +1853,6 @@ func (n *AdminStmt) Accept(v Visitor) (Node, bool) {
 			return n, false
 		}
 		n.Tables[i] = node.(*TableName)
-	}
-
-	if n.Where != nil {
-		node, ok := n.Where.Accept(v)
-		if !ok {
-			return n, false
-		}
-		n.Where = node.(ExprNode)
 	}
 
 	return v.Leave(n)
@@ -2597,38 +2446,6 @@ func (n *BRIEStmt) Restore(ctx *format.RestoreCtx) error {
 	return nil
 }
 
-// SecureText implements SensitiveStmtNode
-func (n *BRIEStmt) SecureText() string {
-	// FIXME: this solution is not scalable, and duplicates some logic from BR.
-	redactedStorage := n.Storage
-	u, err := url.Parse(n.Storage)
-	if err == nil {
-		if u.Scheme == "s3" {
-			query := u.Query()
-			for key := range query {
-				switch strings.ToLower(strings.ReplaceAll(key, "_", "-")) {
-				case "access-key", "secret-access-key":
-					query[key] = []string{"xxxxxx"}
-				}
-			}
-			u.RawQuery = query.Encode()
-			redactedStorage = u.String()
-		}
-	}
-
-	redactedStmt := &BRIEStmt{
-		Kind:    n.Kind,
-		Schemas: n.Schemas,
-		Tables:  n.Tables,
-		Storage: redactedStorage,
-		Options: n.Options,
-	}
-
-	var sb strings.Builder
-	_ = redactedStmt.Restore(format.NewRestoreCtx(format.DefaultRestoreFlags, &sb))
-	return sb.String()
-}
-
 // Ident is the table identifier composed of schema name and table name.
 type Ident struct {
 	Schema model.CIStr
@@ -2677,7 +2494,6 @@ type TableOptimizerHint struct {
 	// - TIME_RANGE          => ast.HintTimeRange
 	// - READ_FROM_STORAGE   => model.CIStr
 	// - USE_TOJA            => bool
-	// - NTH_PLAN            => int64
 	HintData interface{}
 	// QBName is the default effective query block of this hint.
 	QBName  model.CIStr
@@ -2691,18 +2507,11 @@ type HintTimeRange struct {
 	To   string
 }
 
-// HintSetVar is the payload of `SET_VAR` hint
-type HintSetVar struct {
-	VarName string
-	Value   string
-}
-
 // HintTable is table in the hint. It may have query block info.
 type HintTable struct {
-	DBName        model.CIStr
-	TableName     model.CIStr
-	QBName        model.CIStr
-	PartitionList []model.CIStr
+	DBName    model.CIStr
+	TableName model.CIStr
+	QBName    model.CIStr
 }
 
 func (ht *HintTable) Restore(ctx *format.RestoreCtx) {
@@ -2714,17 +2523,6 @@ func (ht *HintTable) Restore(ctx *format.RestoreCtx) {
 	if ht.QBName.L != "" {
 		ctx.WriteKeyWord("@")
 		ctx.WriteName(ht.QBName.String())
-	}
-	if len(ht.PartitionList) > 0 {
-		ctx.WriteKeyWord(" PARTITION")
-		ctx.WritePlain("(")
-		for i, p := range ht.PartitionList {
-			if i > 0 {
-				ctx.WritePlain(", ")
-			}
-			ctx.WriteName(p.String())
-		}
-		ctx.WritePlain(")")
 	}
 }
 
@@ -2740,7 +2538,7 @@ func (n *TableOptimizerHint) Restore(ctx *format.RestoreCtx) error {
 	}
 	// Hints without args except query block.
 	switch n.HintName.L {
-	case "hash_agg", "stream_agg", "agg_to_cop", "read_consistent_replica", "no_index_merge", "qb_name", "ignore_plan_cache", "limit_to_cop":
+	case "hash_agg", "stream_agg", "agg_to_cop", "read_consistent_replica", "no_index_merge", "qb_name", "ignore_plan_cache":
 		ctx.WritePlain(")")
 		return nil
 	}
@@ -2751,9 +2549,7 @@ func (n *TableOptimizerHint) Restore(ctx *format.RestoreCtx) error {
 	switch n.HintName.L {
 	case "max_execution_time":
 		ctx.WritePlainf("%d", n.HintData.(uint64))
-	case "nth_plan":
-		ctx.WritePlainf("%d", n.HintData.(int64))
-	case "tidb_hj", "tidb_smj", "tidb_inlj", "hash_join", "merge_join", "inl_join", "broadcast_join", "broadcast_join_local":
+	case "tidb_hj", "tidb_smj", "tidb_inlj", "hash_join", "merge_join", "inl_join":
 		for i, table := range n.Tables {
 			if i != 0 {
 				ctx.WritePlain(", ")
@@ -2797,11 +2593,6 @@ func (n *TableOptimizerHint) Restore(ctx *format.RestoreCtx) error {
 		ctx.WriteString(hintData.From)
 		ctx.WritePlain(", ")
 		ctx.WriteString(hintData.To)
-	case "set_var":
-		hintData := n.HintData.(HintSetVar)
-		ctx.WriteString(hintData.VarName)
-		ctx.WritePlain(", ")
-		ctx.WriteString(hintData.Value)
 	}
 	ctx.WritePlain(")")
 	return nil

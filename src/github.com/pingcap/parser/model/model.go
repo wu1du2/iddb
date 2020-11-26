@@ -42,11 +42,6 @@ const (
 	StateDeleteReorganization
 	// StatePublic means this schema element is ok for all write and read operations.
 	StatePublic
-	// StateReplica means we're waiting tiflash replica to be finished.
-	StateReplicaOnly
-	/*
-	 *  Please add the new state at the end to keep the values consistent across versions.
-	 */
 )
 
 // String implements fmt.Stringer interface.
@@ -62,8 +57,6 @@ func (s SchemaState) String() string {
 		return "delete reorganization"
 	case StatePublic:
 		return "public"
-	case StateReplicaOnly:
-		return "replica only"
 	default:
 		return "none"
 	}
@@ -85,21 +78,14 @@ const (
 	CurrLatestColumnInfoVersion = ColumnInfoVersion2
 )
 
-// ChangeStateInfo is used for recording the information of schema changing.
-type ChangeStateInfo struct {
-	// DependencyColumnOffset is the changing column offset that the current column depends on when executing modify/change column.
-	DependencyColumnOffset int `json:"relative_col_offset"`
-}
-
 // ColumnInfo provides meta data describing of a table column.
 type ColumnInfo struct {
-	ID                    int64       `json:"id"`
-	Name                  CIStr       `json:"name"`
-	Offset                int         `json:"offset"`
-	OriginDefaultValue    interface{} `json:"origin_default"`
-	OriginDefaultValueBit []byte      `json:"origin_default_bit"`
-	DefaultValue          interface{} `json:"default"`
-	DefaultValueBit       []byte      `json:"default_bit"`
+	ID                 int64       `json:"id"`
+	Name               CIStr       `json:"name"`
+	Offset             int         `json:"offset"`
+	OriginDefaultValue interface{} `json:"origin_default"`
+	DefaultValue       interface{} `json:"default"`
+	DefaultValueBit    []byte      `json:"default_bit"`
 	// DefaultIsExpr is indicates the default value string is expr.
 	DefaultIsExpr       bool                `json:"default_is_expr"`
 	GeneratedExprString string              `json:"generated_expr_string"`
@@ -109,8 +95,7 @@ type ColumnInfo struct {
 	State               SchemaState `json:"state"`
 	Comment             string      `json:"comment"`
 	// A hidden column is used internally(expression index) and are not accessible by users.
-	Hidden           bool `json:"hidden"`
-	*ChangeStateInfo `json:"change_state_info"`
+	Hidden bool `json:"hidden"`
 	// Version means the version of the column info.
 	// Version = 0: For OriginDefaultValue and DefaultValue of timestamp column will stores the default time in system time zone.
 	//              That is a bug if multiple TiDB servers in different system time zone.
@@ -128,35 +113,6 @@ func (c *ColumnInfo) Clone() *ColumnInfo {
 // IsGenerated returns true if the column is generated column.
 func (c *ColumnInfo) IsGenerated() bool {
 	return len(c.GeneratedExprString) != 0
-}
-
-// SetOriginalDefaultValue sets the origin default value.
-// For mysql.TypeBit type, the default value storage format must be a string.
-// Other value such as int must convert to string format first.
-// The mysql.TypeBit type supports the null default value.
-func (c *ColumnInfo) SetOriginDefaultValue(value interface{}) error {
-	c.OriginDefaultValue = value
-	if c.Tp == mysql.TypeBit {
-		if value == nil {
-			return nil
-		}
-		if v, ok := value.(string); ok {
-			c.OriginDefaultValueBit = []byte(v)
-			return nil
-		}
-		return types.ErrInvalidDefault.GenWithStackByArgs(c.Name)
-	}
-	return nil
-}
-
-// GetOriginalDefaultValue gets the origin default value.
-func (c *ColumnInfo) GetOriginDefaultValue() interface{} {
-	if c.Tp == mysql.TypeBit && c.OriginDefaultValueBit != nil {
-		// If the column type is BIT, both `OriginDefaultValue` and `DefaultValue` of ColumnInfo are corrupted,
-		// because the content before json.Marshal is INCONSISTENT with the content after json.Unmarshal.
-		return string(c.OriginDefaultValueBit)
-	}
-	return c.OriginDefaultValue
 }
 
 // SetDefaultValue sets the default value.
@@ -216,9 +172,6 @@ func FindColumnInfo(cols []*ColumnInfo, name string) *ColumnInfo {
 // for use of execution phase.
 const ExtraHandleID = -1
 
-// ExtraPartitionID is the column ID of column which store the partitionID decoded in global index values.
-const ExtraPidColID = -2
-
 const (
 	// TableInfoVersion0 means the table info version is 0.
 	// Upgrade from v2.1.1 or v2.1.2 to v2.1.3 and later, and then execute a "change/modify column" statement
@@ -252,9 +205,6 @@ const (
 // ExtraHandleName is the name of ExtraHandle Column.
 var ExtraHandleName = NewCIStr("_tidb_rowid")
 
-// ExtraPartitionIdName is the name of ExtraPartitionId Column.
-var ExtraPartitionIdName = NewCIStr("_tidb_pid")
-
 // TableInfo provides meta data describing a DB table.
 type TableInfo struct {
 	ID      int64  `json:"id"`
@@ -262,24 +212,17 @@ type TableInfo struct {
 	Charset string `json:"charset"`
 	Collate string `json:"collate"`
 	// Columns are listed in the order in which they appear in the schema.
-	Columns     []*ColumnInfo     `json:"cols"`
-	Indices     []*IndexInfo      `json:"index_info"`
-	Constraints []*ConstraintInfo `json:"constraint_info"`
-	ForeignKeys []*FKInfo         `json:"fk_info"`
-	State       SchemaState       `json:"state"`
-	// PKIsHandle is true when primary key is a single integer column.
-	PKIsHandle bool `json:"pk_is_handle"`
-	// IsCommonHandle is true when clustered index feature is
-	// enabled and the primary key is not a single integer column.
-	IsCommonHandle bool `json:"is_common_handle"`
-
-	Comment         string `json:"comment"`
-	AutoIncID       int64  `json:"auto_inc_id"`
-	AutoIdCache     int64  `json:"auto_id_cache"`
-	AutoRandID      int64  `json:"auto_rand_id"`
-	MaxColumnID     int64  `json:"max_col_id"`
-	MaxIndexID      int64  `json:"max_idx_id"`
-	MaxConstraintID int64  `json:"max_cst_id"`
+	Columns     []*ColumnInfo `json:"cols"`
+	Indices     []*IndexInfo  `json:"index_info"`
+	ForeignKeys []*FKInfo     `json:"fk_info"`
+	State       SchemaState   `json:"state"`
+	PKIsHandle  bool          `json:"pk_is_handle"`
+	Comment     string        `json:"comment"`
+	AutoIncID   int64         `json:"auto_inc_id"`
+	AutoIdCache int64         `json:"auto_id_cache"`
+	AutoRandID  int64         `json:"auto_rand_id"`
+	MaxColumnID int64         `json:"max_col_id"`
+	MaxIndexID  int64         `json:"max_idx_id"`
 	// UpdateTS is used to record the timestamp of updating the table's schema information.
 	// These changing schema operations don't include 'truncate table' and 'rename table'.
 	UpdateTS uint64 `json:"update_timestamp"`
@@ -318,10 +261,6 @@ type TableInfo struct {
 
 	// TiFlashReplica means the TiFlash replica info.
 	TiFlashReplica *TiFlashReplicaInfo `json:"tiflash_replica"`
-
-	// IsColumnar means the table is column-oriented.
-	// It's true when the engine of the table is TiFlash only.
-	IsColumnar bool `json:"is_columnar"`
 }
 
 // TableLockInfo provides meta data describing a table lock.
@@ -565,17 +504,6 @@ func NewExtraHandleColInfo() *ColumnInfo {
 	return colInfo
 }
 
-// NewExtraPartitionIDColInfo mocks a column info for extra partition id column.
-func NewExtraPartitionIDColInfo() *ColumnInfo {
-	colInfo := &ColumnInfo{
-		ID:   ExtraPidColID,
-		Name: ExtraPartitionIdName,
-	}
-	colInfo.Tp = mysql.TypeLonglong
-	colInfo.Flen, colInfo.Decimal = mysql.GetDefaultFieldLengthAndDecimal(mysql.TypeLonglong)
-	return colInfo
-}
-
 // ColumnIsInIndex checks whether c is included in any indices of t.
 func (t *TableInfo) ColumnIsInIndex(c *ColumnInfo) bool {
 	for _, index := range t.Indices {
@@ -739,21 +667,14 @@ type PartitionInfo struct {
 	Enable bool `json:"enable"`
 
 	Definitions []PartitionDefinition `json:"definitions"`
-	// AddingDefinitions is filled when adding a partition that is in the mid state.
-	AddingDefinitions []PartitionDefinition `json:"adding_definitions"`
-	// DroppingDefinitions is filled when dropping a partition that is in the mid state.
-	DroppingDefinitions []PartitionDefinition `json:"dropping_definitions"`
-	Num                 uint64                `json:"num"`
+	Num         uint64                `json:"num"`
 }
 
 // GetNameByID gets the partition name by ID.
 func (pi *PartitionInfo) GetNameByID(id int64) string {
-	definitions := pi.Definitions
-	// do not convert this loop to `for _, def := range definitions`.
-	// see https://github.com/pingcap/parser/pull/1072 for the benchmark.
-	for i := range definitions {
-		if id == definitions[i].ID {
-			return definitions[i].Name.L
+	for _, def := range pi.Definitions {
+		if id == def.ID {
+			return def.Name.L
 		}
 	}
 	return ""
@@ -761,31 +682,10 @@ func (pi *PartitionInfo) GetNameByID(id int64) string {
 
 // PartitionDefinition defines a single partition.
 type PartitionDefinition struct {
-	ID       int64      `json:"id"`
-	Name     CIStr      `json:"name"`
-	LessThan []string   `json:"less_than"`
-	InValues [][]string `json:"in_values"`
-	Comment  string     `json:"comment,omitempty"`
-}
-
-// Clone clones ConstraintInfo.
-func (ci *PartitionDefinition) Clone() PartitionDefinition {
-	nci := *ci
-	nci.LessThan = make([]string, len(ci.LessThan))
-	copy(nci.LessThan, ci.LessThan)
-	return nci
-}
-
-// FindPartitionDefinitionByName finds PartitionDefinition by name.
-func (t *TableInfo) FindPartitionDefinitionByName(partitionDefinitionName string) *PartitionDefinition {
-	lowConstrName := strings.ToLower(partitionDefinitionName)
-	definitions := t.Partition.Definitions
-	for i := range definitions {
-		if definitions[i].Name.L == lowConstrName {
-			return &t.Partition.Definitions[i]
-		}
-	}
-	return nil
+	ID       int64    `json:"id"`
+	Name     CIStr    `json:"name"`
+	LessThan []string `json:"less_than"`
+	Comment  string   `json:"comment,omitempty"`
 }
 
 // IndexColumn provides index column info.
@@ -843,7 +743,6 @@ type IndexInfo struct {
 	Unique    bool           `json:"is_unique"`    // Whether the index is unique.
 	Primary   bool           `json:"is_primary"`   // Whether the index is primary key.
 	Invisible bool           `json:"is_invisible"` // Whether the index is invisible.
-	Global    bool           `json:"is_global"`    // Whether the index is global.
 }
 
 // Clone clones IndexInfo.
@@ -864,38 +763,6 @@ func (index *IndexInfo) HasPrefixIndex() bool {
 		}
 	}
 	return false
-}
-
-// ConstraintInfo provides meta data describing check-expression constraint.
-type ConstraintInfo struct {
-	ID             int64       `json:"id"`
-	Name           CIStr       `json:"constraint_name"`
-	Table          CIStr       `json:"tbl_name"`        // Table name.
-	ConstraintCols []CIStr     `json:"constraint_cols"` // Depended column names.
-	Enforced       bool        `json:"enforced"`
-	InColumn       bool        `json:"in_column"` // Indicate whether the constraint is column type check.
-	ExprString     string      `json:"expr_string"`
-	State          SchemaState `json:"state"`
-}
-
-// Clone clones ConstraintInfo.
-func (ci *ConstraintInfo) Clone() *ConstraintInfo {
-	nci := *ci
-
-	nci.ConstraintCols = make([]CIStr, len(ci.ConstraintCols))
-	copy(nci.ConstraintCols, ci.ConstraintCols)
-	return &nci
-}
-
-// FindConstraintInfoByName finds constraintInfo by name.
-func (t *TableInfo) FindConstraintInfoByName(constrName string) *ConstraintInfo {
-	lowConstrName := strings.ToLower(constrName)
-	for _, chk := range t.Constraints {
-		if chk.Name.L == lowConstrName {
-			return chk
-		}
-	}
-	return nil
 }
 
 // FKInfo provides meta data describing a foreign key constraint.
