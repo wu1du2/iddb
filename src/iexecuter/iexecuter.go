@@ -3,7 +3,7 @@ package iexecuter
 import (
 	"fmt"
 	"iplan"
-	// "database/sql"
+	"database/sql"
 	"strconv"
 	"strings"
     _ "github.com/go-sql-driver/mysql"
@@ -14,6 +14,7 @@ var mysql_user string
 var mysql_passwd string
 var mysql_db string
 var mysql_ip_port string
+
 func RunExecuter(txn_id int64) int64 {
 	// get the plan through txn_id
 	//
@@ -22,7 +23,15 @@ func RunExecuter(txn_id int64) int64 {
 }
 
 func ExecuteInsertStmt(stmt string) int64 {
+	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
+	db, err := sql.Open("mysql", mysql)
+	// TODO: assert(plan_node.Right = -1)
 	println(stmt)
+	println(err)
+	stmts, err := db.Prepare(stmt)
+	res, err := stmts.Exec()
+	println(res)
+	println(err)
 	return 0
 }
 
@@ -121,78 +130,104 @@ func FindOneNode(plan_tree iplan.PlanTree, node_id int) int {
 func ExecuteOneNode(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree) {
 	switch {
 	case plan_node.NodeType == 1 /*Table*/:
-		return
+		break
 	case plan_node.NodeType == 2 /*Select or Filter*/:
 		ExecuteFilter(plan_node, plan_tree)
-		return
+		break
 	case plan_node.NodeType == 3 /*projuection*/:
 		ExecuteProjection(plan_node, plan_tree)
-		return
+		break
 	case plan_node.NodeType == 4 /*join*/:
 		ExecuteJoin(plan_node, plan_tree)
-		return
+		break
 	case plan_node.NodeType == 5 /*union*/:
 		ExecuteUnion(plan_node, plan_tree)
-		return
+		break
+	}
+}
+
+func CleanTmpTable(plan_node_id int, plan_tree iplan.PlanTree) {
+	nodeType := plan_tree.Nodes[plan_node_id].NodeType
+	if (nodeType != 1) {
+		tablename := plan_tree.Nodes[plan_node_id].TmpTable
+		mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
+		db, err := sql.Open("mysql", mysql)
+		// TODO: assert(plan_node.Right = -1)
+		query := "drop table if exists " + tablename
+		println(query)
+		stmt, err := db.Prepare(query)
+		res, err := stmt.Exec()
+		checkErr(err)
+		println(res)
 	}
 }
 
 func ExecuteFilter(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree) {
-	// mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
-	// db, err := sql.Open("mysql", mysql)
+	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
+	db, err := sql.Open("mysql", mysql)
 	// TODO: assert(plan_node.Right = -1)
 
 	tablename := plan_tree.Nodes[plan_node.Left].TmpTable
 	query := "create table tmp_table_" + strconv.Itoa(plan_node.Nodeid) + " select * from " + tablename + " where " + plan_node.Where
 
 	println(query)
-	// stmt, err := db.Prepare(query)
-	// res, err := stmt.Exec()
-    // checkErr(err)
-	// println(res)
+	stmt, err := db.Prepare(query)
+	res, err := stmt.Exec()
+    checkErr(err)
+	println(res)
 	plan_node.TmpTable = "tmp_table_" + strconv.Itoa(plan_node.Nodeid)
-	plan_node.Status = 1
+	CleanTmpTable(plan_node.Left, plan_tree)
+	if (!plan_node.TransferFlag) {
+		plan_node.Status = 1
+	}
 }
 
 func ExecuteProjection(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree) {
-	// mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
-	// db, err := sql.Open("mysql", mysql)
+	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
+	db, err := sql.Open("mysql", mysql)
 	// TODO: assert(plan_node.Right = -1)
 
 	tablename := plan_tree.Nodes[plan_node.Left].TmpTable
 	query := "create table tmp_table_" + strconv.Itoa(plan_node.Nodeid) + " select " + plan_node.Cols + " from " + tablename
 	println(query)
 
-	// stmt, err := db.Prepare(query)
-	// res, err := stmt.Exec()
-    // checkErr(err)
-	// println(res)
+	stmt, err := db.Prepare(query)
+	res, err := stmt.Exec()
+    checkErr(err)
+	println(res)
 	plan_node.TmpTable = "tmp_table_" + strconv.Itoa(plan_node.Nodeid)
-	plan_node.Status = 1
+	CleanTmpTable(plan_node.Left, plan_tree)
+	if (!plan_node.TransferFlag) {
+		plan_node.Status = 1
+	}
 }
 
 func ExecuteJoin(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree) {
-	// mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
-	// db, err := sql.Open("mysql", mysql)
+	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
+	db, err := sql.Open("mysql", mysql)
 	// TODO: assert(plan_node.Right != -1)
 
 	tablename1 := plan_tree.Nodes[plan_node.Left].TmpTable
 	tablename2 := plan_tree.Nodes[plan_node.Right].TmpTable
 	cols := strings.Split(plan_node.Joint_cols, ",")
-	query := "create table tmp_table_" + strconv.Itoa(plan_node.Nodeid) + " select * from " + tablename1 + "," + tablename2 + " where " + tablename1 + "." + cols[0] + "==" + tablename2 + "." + cols[1]
+	query := "create table tmp_table_" + strconv.Itoa(plan_node.Nodeid) + " select * from " + tablename1 + "," + tablename2 + " where " + tablename1 + "." + cols[0] + "=" + tablename2 + "." + cols[1]
 	println(query)
 
-	// stmt, err := db.Prepare(query)
-	// res, err := stmt.Exec()
-    // checkErr(err)
-	// println(res)
+	stmt, err := db.Prepare(query)
+	res, err := stmt.Exec()
+    checkErr(err)
+	println(res)
 	plan_node.TmpTable = "tmp_table_" + strconv.Itoa(plan_node.Nodeid)
-	plan_node.Status = 1
+	CleanTmpTable(plan_node.Left, plan_tree)
+	CleanTmpTable(plan_node.Right, plan_tree)
+	if (!plan_node.TransferFlag) {
+		plan_node.Status = 1
+	}
 }
 
 func ExecuteUnion(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree) {
-	// mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
-	// db, err := sql.Open("mysql", mysql)
+	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
+	db, err := sql.Open("mysql", mysql)
 	// TODO: assert(plan_node.Right != -1)
 
 	tablename1 := plan_tree.Nodes[plan_node.Left].TmpTable
@@ -200,21 +235,30 @@ func ExecuteUnion(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree) {
 	query := "create table tmp_table_" + strconv.Itoa(plan_node.Nodeid) + " select * from " + tablename1 + "union" + "select * from " + tablename2
 	println(query)
 
-	// stmt, err := db.Prepare(query)
-	// res, err := stmt.Exec()
-    // checkErr(err)
-	// println(res)
+	stmt, err := db.Prepare(query)
+	res, err := stmt.Exec()
+    checkErr(err)
+	println(res)
 	plan_node.TmpTable = "tmp_table_" + strconv.Itoa(plan_node.Nodeid)
-	plan_node.Status = 1
+	CleanTmpTable(plan_node.Left, plan_tree)
+	CleanTmpTable(plan_node.Right, plan_tree)
+	if (!plan_node.TransferFlag) {
+		plan_node.Status = 1
+	}
 }
 
 // func ExecuteInsert(plan_node *iplan.PlanTreeNode) {
 
 // }
 
-// func ExecuteTransmission(plan_node *iplan.PlanTreeNode) {
+func ExecuteTransmission(plan_node *iplan.PlanTreeNode) {
+	if (plan_node.TransferFlag) {
 
-// }
+
+
+		plan_node.Status = 1
+	}
+}
 
 func checkErr(err error) {
     if err != nil {

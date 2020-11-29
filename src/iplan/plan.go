@@ -15,7 +15,7 @@ type PlanTreeNode struct {
 	Where string
 	Cols  string
 	//cols_type string
-	Joint_cols string
+	Joint_cols string //"customer_id,id"
 	//union string
 }
 type PlanTree struct {
