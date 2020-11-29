@@ -39,16 +39,13 @@ func getMe(config tomlConfig) Nodes {
 	return node
 }
 
-func getPeers(config tomlConfig) Nodes {
+func getPeers(config tomlConfig) []Nodes {
 	peers := make([]Nodes, 4)
-	println(len(peers))
 	for _, node := range config.Cluster {
-		if node.NodeId != config.NodeId {
-			return node
-		}
+		i := node.NodeId
+		peers[i-1] = node
 	}
-	var node Nodes
-	return node
+	return peers
 }
 
 func printMe(config tomlConfig) {
@@ -80,5 +77,5 @@ func GetPeers() []Nodes {
 	if _, err := toml.DecodeFile(configfile, &config); err != nil {
 		fmt.Println(err)
 	}
-	return getMe(config)
+	return getPeers(config)
 }

@@ -30,7 +30,4 @@ message IrpcStatus {
 
 message Table {
   string createstmt = 1; //create TableName (Col1 varchar(255), Col2 int, Col3 varchar255)
-  string insertstmt = 2; //insert into TableName (Col1, Col2, Col3)
-  int64 rowlength = 3; //
-  repeated string record = 4;  //(Val1, Val2, Val3)
 }

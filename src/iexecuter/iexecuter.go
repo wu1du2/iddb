@@ -21,7 +21,7 @@ func RunExecuter(txn_id int64) int64 {
 	return 0
 }
 
-func ExecuteInsertStmt(stmt string) int64 {
+func ExecuteCreateStmt(stmt string) int64 {
 	println(stmt)
 	return 0
 }

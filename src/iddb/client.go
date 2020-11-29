@@ -12,6 +12,7 @@ import (
 	// "log"
 	// "net"
 	"iutilities"
+	// "iparser"
 
 	"fmt"
 	"os"
@@ -24,8 +25,8 @@ var (
 )
 
 /*
-iddb main设计思路
-1.CLIENT, 默认SERVER已经启动
+iddb client设计思路
+1.默认SERVER已经启动
 2.循环接收用户输入，提供类似mysql的界面
 3.初始化，知道自己和peers的信息
 4.生成生成txnid(全局唯一，严格递增)
@@ -33,7 +34,6 @@ iddb main设计思路
 
 func main() {
 	//INIT
-	println(len(os.Args))
 	for i, v := range os.Args {
 		println(i, v)
 	}
@@ -41,8 +41,11 @@ func main() {
 	me = getMe()
 	me.Print()
 
-	peers= getPeers()
-	peers.Print()
+	peers = getPeers()
+	peers[0].Print()
+	peers[1].Print()
+	peers[2].Print()
+	peers[3].Print()
 
 	//GET INPUT SQL STATEMENT
 	var sqlstmt string
@@ -62,10 +65,13 @@ func getMe() iutilities.Nodes {
 	return iutilities.GetMe()
 }
 
-func getPeers() []iutilities.Nodes{
+func getPeers() []iutilities.Nodes {
 	return iutilities.GetPeers()
 }
 
+// func parse(sql string)(){
+
+// }
 
 func ScanLine() string {
 	var c byte
