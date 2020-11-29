@@ -1,4 +1,4 @@
-package iexecuter
+package iexec
 
 import (
 	"database/sql"

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"irpc"
+	"irpctran"
 )
 
 /*
@@ -13,7 +13,7 @@ type Table struct {
 */
 func main() {
 	address := "localhost:50053"
-	var table irpc.Table
+	var table irpctran.Table
 	table.Createstmt = "Create Table PUBLISHER (ID int, NATION varchar(255) );"
-	irpc.RunTranClient(address, table)
+	irpctran.RunTranClient(address, table)
 }

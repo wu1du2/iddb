@@ -1,9 +1,9 @@
 package main
 
 import (
-	"irpc"
+	"irpctran"
 )
 
 func main() {
-	irpc.RunTranServer()
+	irpctran.RunTranServer()
 }
