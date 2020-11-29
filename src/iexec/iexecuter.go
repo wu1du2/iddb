@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"iplan"
+	"irpctran"
 	"strconv"
 	"strings"
 
@@ -23,9 +24,16 @@ func RunExecuter(txn_id int64) int64 {
 	return 0
 }
 
-func ExecuteCreateStmt(stmt string) int64 {
-	println(stmt)
-	return 0
+// func ExecuteCreateStmt(stmt string) int64 {
+// 	println(stmt)
+// 	return 0
+// }
+
+func ExecuteRemoteCreateStmt() {
+	address := "localhost:50053"
+	var table irpctran.Table
+	table.Createstmt = "Create Table PUBLISHER (ID int, NATION varchar(255) );"
+	irpctran.RunTranClient(address, table)
 }
 
 func ExecuteInsertStmt(stmt string) int64 {
