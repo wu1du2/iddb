@@ -7,7 +7,7 @@ package irpctran
 
 import (
 	"context"
-	"iexecuter"
+	"itrans"
 	"log"
 	"net"
 
@@ -29,7 +29,7 @@ and execute
 */
 func (s *tserver) PushTable(ctx context.Context, in *Table) (*IrpcStatus, error) {
 	createstmt := in.Createstmt
-	iexecuter.ExecuteCreateStmt(createstmt)
+	itrans.ExecuteCreateStmt(createstmt)
 	return &IrpcStatus{IsSuc: 1}, nil
 }
 

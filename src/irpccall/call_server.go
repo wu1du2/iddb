@@ -29,6 +29,7 @@ func (s *cserver) ExecuterCall(ctx context.Context, in *IrpcCallReq) (*IrpcStatu
 }
 
 func RunCallServer() {
+	println("rpccall")
 	lis, err := net.Listen("tcp", cport)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)

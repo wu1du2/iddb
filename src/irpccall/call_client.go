@@ -22,6 +22,7 @@ output:
 	1 for succeed, 0 for failed
 */
 func RunCallClient(caddress string, txnid int64) int64 {
+	println("rpccall")
 	// Set up a connection to the server.
 	conn, err := grpc.Dial(caddress, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
