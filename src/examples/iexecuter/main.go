@@ -104,7 +104,7 @@ func test_tree() {
     pn0.Status = 0
     pn0.Locate = 1
     pn0.NodeType = 4
-    pn0.Joint_cols = "id, customer_id"
+    pn0.Joint_cols = "id,customer_id"
     // 结点1
     pn1 := &plan_tree.Nodes[1]
     pn1.Nodeid = 1
@@ -124,7 +124,7 @@ func test_tree() {
     pn2.Status = 0
     pn2.Locate = 1
     pn2.NodeType = 3
-    pn2.Cols = "customer_id"
+    pn2.Cols = "customer_id,quantity"
     // 结点3 data节点
     pn3 := &plan_tree.Nodes[3]
     pn3.Nodeid = 3
