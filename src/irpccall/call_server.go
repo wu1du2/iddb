@@ -3,11 +3,11 @@ call_server
 Author: Kunyao Wu
 the implementation of irpc executer caller server
 */
-package irpc
+package irpccall
 
 import (
 	"context"
-	"iexecuter"
+	"iexec"
 	"log"
 	"net"
 
@@ -24,11 +24,12 @@ const (
 
 // ExecuterCall implementation, defined in irpc.pb.go
 func (s *cserver) ExecuterCall(ctx context.Context, in *IrpcCallReq) (*IrpcStatus, error) {
-	iexecuter.RunExecuter(in.Txnid)
+	iexec.RunExecuter(in.Txnid)
 	return &IrpcStatus{IsSuc: 1}, nil
 }
 
 func RunCallServer() {
+	println("rpccall")
 	lis, err := net.Listen("tcp", cport)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)

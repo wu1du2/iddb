@@ -3,7 +3,7 @@ tran_client
 Author: Kunyao Wu
 the implementation of irpc transmission client
 */
-package irpc
+package irpctran
 
 import (
 	"context"
@@ -23,6 +23,7 @@ output:
 	1 for succeed, 0 for failed
 */
 func RunTranClient(taddress string, table Table) int64 {
+	println("irpctran")
 	// Set up a connection to the server.
 	conn, err := grpc.Dial(taddress, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {

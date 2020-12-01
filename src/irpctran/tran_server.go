@@ -3,11 +3,11 @@ tran_server
 Author: Kunyao Wu
 the implementation of irpc transmission server
 */
-package irpc
+package irpctran
 
 import (
 	"context"
-	"iexecuter"
+	"itrans"
 	"log"
 	"net"
 
@@ -28,22 +28,8 @@ receive a table from remote client, make it a INSERT statement
 and execute
 */
 func (s *tserver) PushTable(ctx context.Context, in *Table) (*IrpcStatus, error) {
-	insertstmt := ""
-	createstmt := ""
-	createstmt = in.Createstmt
-	rowlength := in.Rowlength
-	var i int64
-	insertop := in.Insertstmt
-	insertstmt += insertop + " VALUES "
-	for i = 0; i < rowlength; i++ {
-		insertstmt += in.Record[i]
-		if i != rowlength-1 {
-			insertstmt += ","
-		}
-	}
-	insertstmt += ";"
-	iexecuter.ExecuteInsertStmt(createstmt)
-	iexecuter.ExecuteInsertStmt(insertstmt)
+	createstmt := in.Createstmt
+	itrans.ExecuteCreateStmt(createstmt)
 	return &IrpcStatus{IsSuc: 1}, nil
 }
 
@@ -51,6 +37,7 @@ func (s *tserver) PushTable(ctx context.Context, in *Table) (*IrpcStatus, error)
 Regitering transmission server
 */
 func RunTranServer() {
+	println("irpctran")
 	lis, err := net.Listen("tcp", tport)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
