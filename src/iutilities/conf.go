@@ -10,6 +10,11 @@ const (
 	configfile = "/Users/wukunyao/Documents/GitHub/iddb/cnf/iddb.conf"
 )
 
+var (
+	Me    Nodes
+	Peers []Nodes
+)
+
 type tomlConfig struct {
 	NodeId  int64
 	Cluster map[string]Nodes
