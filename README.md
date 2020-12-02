@@ -113,31 +113,50 @@ the procedure of installing mysql5.7
 
 5. install etcd
 ```
-configuration
-./etcd --name etcd01 --initial-advertise-peer-urls http://10.77.70.161:2380 \
---listen-peer-urls http://10.77.70.161:2380 \
---listen-client-urls http://10.77.70.161:2379,http://127.0.0.1:2379 \
---advertise-client-urls http://10.77.70.161:2379 \
---initial-cluster-token etcd-cluster-1 \
---initial-cluster etcd01=http://10.77.70.161:2380,etcd02=http://10.77.70.162:2380,etcd03=http://10.77.70.171:2380 \
---initial-cluster-state new
+environment
 
-./etcd --name etcd02 --initial-advertise-peer-urls http://10.77.70.162:2380 \
---listen-peer-urls http://10.77.70.162:2380 \
---listen-client-urls http://10.77.70.162:2379,http://127.0.0.1:2379 \
---advertise-client-urls http://10.77.70.162:2379 \
---initial-cluster-token etcd-cluster-1 \
---initial-cluster etcd01=http://10.77.70.161:2380,etcd02=http://10.77.70.162:2380,etcd03=http://10.77.70.171:2380 \
---initial-cluster-state new
+(1)packages:
+$git clone https://github.com.cnpmjs.org/coreos/go-semver.git
+$git clone https://github.com.cnpmjs.org/coreos/go-systemd.git
+$git clone https://github.com.cnpmjs.org/gogo/protobuf.git
+$git clone https://github.com.cnpmjs.org/uber-go/zap.git
+$git clone https://github.com.cnpmjs.org/uber-go/multierr.git
+$git clone https://github.com.cnpmjs.org/uber-go/atomic.git
 
+(2)etcd:
+$git clone https://github.com.cnpmjs.org/etcd-io/etcd.git
 
-./etcd --name etcd03 --initial-advertise-peer-urls http://10.77.70.171:2380 \
---listen-peer-urls http://10.77.70.171:2380 \
---listen-client-urls http://10.77.70.171:2379,http://127.0.0.1:2379 \
---advertise-client-urls http://10.77.70.171:2379 \
---initial-cluster-token etcd-cluster-1 \
---initial-cluster etcd01=http://10.77.70.161:2380,etcd02=http://10.77.70.162:2380,etcd03=http://10.77.70.171:2380 \
---initial-cluster-state new
+for version 3.3.25
+$git checkout 7d12776
+$./build
+
+(3)goreman (for cluster)
+$git clone https://github.com.cnpmjs.org/mattn/goreman.git
+$make
+
+if fialed =>
+$go env -w GOPROXY=https://goproxy.cn,direct
+$go env -w GOPRIVATE=.gitlab.com,.gite.com
+$go env -w GOSUMDB="sum.goolang.google.cn"
+
+(4)configfile: etcd/Procfile_C
+# Procfile_C
+
+#161
+etcd1: bin/etcd --name etcd161 --listen-client-urls http://10.77.70.161:2379,http://127.0.0.1:2379 --advertise-client-urls http://10.77.70.161:2379 --listen-peer-urls http://10.77.70.161:2380 --initial-advertise-peer-urls http://10.77.70.161:2380 --initial-cluster-token etcd-cluster-1 --initial-cluster 'etcd161=http://10.77.70.161:2380,etcd162=http://10.77.70.162:2380,etcd171=http://10.77.70.171:2380' --initial-cluster-state new --enable-pprof
+
+#162
+etcd2: bin/etcd --name etcd162 --listen-client-urls http://10.77.70.162:2379,http://127.0.0.1:2379 --advertise-client-urls http://10.77.70.162:2379 --listen-peer-urls http://10.77.70.162:2380 --initial-advertise-peer-urls http://10.77.70.162:2380 --initial-cluster-token etcd-cluster-1 --initial-cluster 'etcd161=http://10.77.70.161:2380,etcd162=http://10.77.70.162:2380,etcd171=http://10.77.70.171:2380' --initial-cluster-state new --enable-pprof
+
+#171
+etcd: bin/etcd --name etcd171 --listen-client-urls http://10.77.70.171:2379,http://127.0.0.1:2379 --advertise-client-urls http://127.0.0.1:2379 --listen-peer-urls http://10.77.70.171:2380 --initial-advertise-peer-urls http://10.77.70.171:2380 --initial-cluster-token etcd-cluster-1 --initial-cluster 'etcd161=http://10.77.70.161:2380,etcd162=http://10.77.70.162:2380,etcd171=http://10.77.70.171:2380' --initial-cluster-state new --enable-pprof
+
+(5)run etcd cluster 
+$cd /home/centos/iddb/src/github.com/coreos/etcd
+/home/centos/iddb/src/github.com/mattn/goreman/goreman -f Procfile_C start
+
+$nohup /home/centos/iddb/src/github.com/mattn/goreman/goreman -f Procfile_C start &
+
 ```
 
 6. install iddb
