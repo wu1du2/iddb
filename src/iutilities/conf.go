@@ -50,6 +50,7 @@ func getPeers(config tomlConfig) []Nodes {
 		i := node.NodeId
 		peers[i-1] = node
 	}
+	
 	return peers
 }
 
