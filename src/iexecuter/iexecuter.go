@@ -3,6 +3,7 @@ package iexecuter
 import (
 	"fmt"
 	"iplan"
+	"itransmission"
 	"database/sql"
 	"strconv"
 	"strings"
@@ -144,6 +145,7 @@ func ExecuteOneNode(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree) {
 		ExecuteUnion(plan_node, plan_tree)
 		break
 	}
+	ExecuteTransmission(plan_node)
 }
 
 func CleanTmpTable(plan_node_id int, plan_tree iplan.PlanTree) {
@@ -251,14 +253,30 @@ func ExecuteUnion(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree) {
 
 // }
 
-func ExecuteTransmission(plan_node *iplan.PlanTreeNode) {
-	if (plan_node.TransferFlag) {
+// func ExecuteTransmission(plan_node *iplan.PlanTreeNode) {
+// 	println("TransferFlag")
+// 	if (plan_node.TransferFlag) {
+// 		mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
+// 		db, err := sql.Open("mysql", mysql)
+// 		println(err)
+// 		// create remote table
+// 		query := "show create table " + plan_node.TmpTable
+// 		println(query)
+// 		rows, err := db.Query(query)
+// 		rows.Next()
+// 		var table_name sql.NullString
+// 		var create_sql sql.NullString
+// 		err = rows.Scan(&table_name, &create_sql)
+// 		checkErr(err)
+// 		fmt.Println(table_name)
+// 		fmt.Println(create_sql)
+// 		// get table desc
 
-
-
-		plan_node.Status = 1
-	}
-}
+// 		// insert table
+// 		irpc.RunTranClient(address,create_sql)
+// 		plan_node.Status = 1
+// 	}
+// }
 
 func checkErr(err error) {
     if err != nil {
