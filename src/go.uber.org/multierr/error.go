@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Uber Technologies, Inc.
+// Copyright (c) 2020 Uber Technologies, Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -54,7 +54,7 @@
 //
 // 	errors := multierr.Errors(err)
 // 	if len(errors) > 0 {
-// 		fmt.Println("The following errors occurred:")
+// 		fmt.Println("The following errors occurred:", errors)
 // 	}
 //
 // Advanced Usage
@@ -87,6 +87,7 @@ package multierr // import "go.uber.org/multierr"
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -184,6 +185,33 @@ func (merr *multiError) Errors() []error {
 		return nil
 	}
 	return merr.errors
+}
+
+// As attempts to find the first error in the error list that matches the type
+// of the value that target points to.
+//
+// This function allows errors.As to traverse the values stored on the
+// multierr error.
+func (merr *multiError) As(target interface{}) bool {
+	for _, err := range merr.Errors() {
+		if errors.As(err, target) {
+			return true
+		}
+	}
+	return false
+}
+
+// Is attempts to match the provided error against errors in the error list.
+//
+// This function allows errors.Is to traverse the values stored on the
+// multierr error.
+func (merr *multiError) Is(target error) bool {
+	for _, err := range merr.Errors() {
+		if errors.Is(err, target) {
+			return true
+		}
+	}
+	return false
 }
 
 func (merr *multiError) Error() string {
@@ -421,7 +449,7 @@ func Append(left error, right error) error {
 // 		items = append(items, item)
 // 	}
 //
-// Compare this with a verison that relies solely on Append:
+// Compare this with a version that relies solely on Append:
 //
 // 	var err error
 // 	for line := range lines {
