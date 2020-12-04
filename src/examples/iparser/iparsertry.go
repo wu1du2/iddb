@@ -8,7 +8,10 @@ import (
 	_ "github.com/pingcap/parser/test_driver"
 )
 
-func parse(sql string) (*ast.StmtNode, error) {
+
+
+
+func Parse(sql string) (*ast.StmtNode, error) {
 	p := parser.New()
 
 	stmtNodes, _, err := p.Parse(sql, "", "")
@@ -20,7 +23,7 @@ func parse(sql string) (*ast.StmtNode, error) {
 }
 
 func main() {
-	astNode, err := parse("SELECT a, b FROM t")
+	astNode, err := Parse("SELECT a, b FROM t1;")
 	if err != nil {
 		fmt.Printf("parse error: %v\n", err.Error())
 		return

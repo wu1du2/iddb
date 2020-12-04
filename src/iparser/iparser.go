@@ -8,6 +8,12 @@ import (
 	_ "github.com/pingcap/parser/test_driver"
 )
 
+type Mystmtnode struct{
+	ast.
+}
+
+
+
 func parse(sql string) (*ast.StmtNode, error) {
 	p := parser.New()
 

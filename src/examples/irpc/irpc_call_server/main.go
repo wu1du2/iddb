@@ -1,9 +1,7 @@
 package main
 
-import (
-	"irpc"
-)
+import "irpccall"
 
 func main() {
-	irpc.RunCallServer()
+	irpccall.RunCallServer()
 }
