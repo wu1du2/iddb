@@ -7,7 +7,8 @@ import (
 	"irpctran"
 	"strconv"
 	"strings"
-
+	"iutilities"
+	"reflect"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -16,7 +17,8 @@ var mysql_user string
 var mysql_passwd string
 var mysql_db string
 var mysql_ip_port string
-
+var db *sql.DB
+var err error
 func RunExecuter(txn_id int64) int64 {
 	// get the plan through txn_id
 	//
@@ -29,33 +31,25 @@ func RunExecuter(txn_id int64) int64 {
 // 	return 0
 // }
 
-func ExecuteRemoteCreateStmt() {
-	address := "localhost:50053"
+func ExecuteRemoteCreateStmt(address string, create_sql string) {
+	// address := "localhost:50053"
 	var table irpctran.Table
-	table.Createstmt = "Create Table PUBLISHER (ID int, NATION varchar(255) );"
+	// table.Createstmt = "Create Table PUBLISHER (ID int, NATION varchar(255) );"
+	table.Createstmt = create_sql
 	irpctran.RunTranClient(address, table)
-}
-
-func ExecuteInsertStmt(stmt string) int64 {
-	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
-	db, err := sql.Open("mysql", mysql)
-	// TODO: assert(plan_node.Right = -1)
-	println(stmt)
-	println(err)
-	stmts, err := db.Prepare(stmt)
-	res, err := stmts.Exec()
-	println(res)
-	println(err)
-	return 0
 }
 
 func Init() {
 	// TODO:set site id
+	// site = iutilities.Me.NodeId
 	site = 1
-	mysql_user = "root"
-	mysql_passwd = "123456"
-	mysql_db = "test"
-	mysql_ip_port = "127.0.0.1:3306"
+	mysql_user = iutilities.Mysql.Mysql_user
+	mysql_passwd = iutilities.Mysql.Mysql_passwd
+	mysql_db = iutilities.Mysql.Mysql_db
+	mysql_ip_port = iutilities.Mysql.Mysql_ip_port
+	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
+	db, err = sql.Open("mysql", mysql)
+	checkErr(err)
 }
 
 func RunTree(plan_tree iplan.PlanTree) int64 {
@@ -166,14 +160,13 @@ func ExecuteOneNode(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree) {
 		ExecuteUnion(plan_node, plan_tree)
 		break
 	}
+	ExecuteTransmission(plan_node)
 }
 
 func CleanTmpTable(plan_node_id int, plan_tree iplan.PlanTree) {
 	nodeType := plan_tree.Nodes[plan_node_id].NodeType
 	if nodeType != 1 {
 		tablename := plan_tree.Nodes[plan_node_id].TmpTable
-		mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
-		db, err := sql.Open("mysql", mysql)
 		// TODO: assert(plan_node.Right = -1)
 		query := "drop table if exists " + tablename
 		println(query)
@@ -269,13 +262,183 @@ func ExecuteUnion(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree) {
 	}
 }
 
-// func ExecuteInsert(plan_node *iplan.PlanTreeNode) {
+func Strval(value interface{}) string {
+	var key string
+	if value == nil {
+		return key
+	}
 
-// }
+	switch value.(type) {
+	case float64:
+		ft := value.(float64)
+		key = strconv.FormatFloat(ft, 'f', -1, 64)
+	case float32:
+		ft := value.(float32)
+		key = strconv.FormatFloat(float64(ft), 'f', -1, 64)
+	case int:
+		it := value.(int)
+		key = strconv.Itoa(it)
+	case uint:
+		it := value.(uint)
+		key = strconv.Itoa(int(it))
+	case int8:
+		it := value.(int8)
+		key = strconv.Itoa(int(it))
+	case uint8:
+		it := value.(uint8)
+		key = strconv.Itoa(int(it))
+	case int16:
+		it := value.(int16)
+		key = strconv.Itoa(int(it))
+	case uint16:
+		it := value.(uint16)
+		key = strconv.Itoa(int(it))
+	case int32:
+		it := value.(int32)
+		key = strconv.Itoa(int(it))
+	case uint32:
+		it := value.(uint32)
+		key = strconv.Itoa(int(it))
+	case int64:
+		it := value.(int64)
+		key = strconv.FormatInt(it, 10)
+	case uint64:
+		it := value.(uint64)
+		key = strconv.FormatUint(it, 10)
+	case string:
+		key = value.(string)
+	case []byte:
+		key = string(value.([]byte))
+	case sql.RawBytes:
+		key = string(value.(sql.RawBytes))
+	case sql.NullBool:
+		boolnull := value.(sql.NullBool)
+		if boolnull.Valid { 
+			key = strconv.FormatBool(boolnull.Bool)
+		} else {
+			key = "NULL"
+		}
+	case sql.NullString:
+		stringnull := value.(sql.NullString)
+		if stringnull.Valid { 
+			key = stringnull.String
+		} else {
+			key = "NULL"
+		}
+	case sql.NullFloat64:
+		float64null := value.(sql.NullFloat64)
+		if float64null.Valid { 
+			key = strconv.FormatFloat(float64null.Float64, 'f', -1, 64)
+		} else {
+			key = "NULL"
+		}
+	case sql.NullInt32:
+		int32null := value.(sql.NullInt32)
+		if int32null.Valid { 
+			key = strconv.Itoa(int(int32null.Int32))
+		} else {
+			key = "NULL"
+		}
+	case sql.NullInt64:
+		int64null := value.(sql.NullInt64)
+		if int64null.Valid { 
+			key = strconv.FormatInt(int64null.Int64, 10)
+		} else {
+			key = "NULL"
+		}
+
+	default:
+		// newValue, _ := json.Marshal(value)
+		// key = string(newValue)
+	}
+
+	return key
+}
+
+func generateCreateQuery(plan_node *iplan.PlanTreeNode) string {
+	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
+	db, err := sql.Open("mysql", mysql)
+	checkErr(err)
+	// create table
+	query := "show create table " + plan_node.TmpTable
+	// println(query)
+	rows, err := db.Query(query)
+	rows.Next()
+	var table_name sql.NullString
+	var create_sql sql.NullString
+	err = rows.Scan(&table_name, &create_sql)
+	checkErr(err)
+	fmt.Println(table_name.String)
+	// fmt.Println(create_sql.String + ";")
+	return create_sql.String + ";"
+}
+
+func generateInsertQuery(plan_node *iplan.PlanTreeNode) string {
+	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
+	db, err := sql.Open("mysql", mysql)
+
+	insert_query := "insert into " + plan_node.TmpTable + " values "
+	query := "select * from " + plan_node.TmpTable
+	// println(query)
+	rows, err := db.Query(query)
+	
+	tt, err := rows.ColumnTypes()
+	checkErr(err)
+
+	types := make([]reflect.Type, len(tt))
+	for i, tp := range tt {
+		// ScanType
+		scanType := tp.ScanType()
+		types[i] = scanType
+		// fmt.Print(scanType)
+		// fmt.Print(" ")
+	}
+	// fmt.Println(" ")
+	values := make([]interface{}, len(tt))
+	for i := range values {
+		values[i] = reflect.New(types[i]).Interface()
+	}
+	i := 0
+	for rows.Next() {
+		if i != 0 {
+			insert_query = insert_query + ", "
+		}
+		err = rows.Scan(values...)
+		checkErr(err)
+		insert_query = insert_query + "("
+		for j := range values {
+			if j != 0 {
+				insert_query = insert_query + ", "
+			}
+			value := reflect.ValueOf(values[j]).Elem().Interface()
+			insert_query = insert_query + Strval(value)
+			// fmt.Print(Strval(value))
+			// fmt.Print(" ")
+		}
+		insert_query = insert_query + ")"
+		// fmt.Println(" ")
+		i++
+	}
+	insert_query = insert_query + ";"
+	return insert_query
+}
+
+func getAddress(plan_node *iplan.PlanTreeNode) string {
+	dest := iutilities.Peers[plan_node.Dest]
+	address := dest.IP + ":" + dest.Tran
+	return address
+}
 
 func ExecuteTransmission(plan_node *iplan.PlanTreeNode) {
-	if plan_node.TransferFlag {
-
+	if (plan_node.TransferFlag) {
+		address := getAddress(plan_node)
+		fmt.Println(address)
+		create_sql := generateCreateQuery(plan_node)
+		fmt.Println(create_sql)
+		// ExecuteRemoteCreateStmt(address,insert_query)
+		insert_query := generateInsertQuery(plan_node)
+		fmt.Println(insert_query)
+		// ExecuteRemoteCreateStmt(address,insert_query)
 		plan_node.Status = 1
 	}
 }

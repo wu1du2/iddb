@@ -19,11 +19,6 @@ import (
 	"strings"
 )
 
-var (
-	me    iutilities.Nodes
-	peers []iutilities.Nodes
-)
-
 /*
 iddb client设计思路
 1.默认SERVER已经启动
@@ -38,26 +33,32 @@ func main() {
 		println(i, v)
 	}
 
-	me = getMe()
-	me.Print()
+	iutilities.Me = getMe()
+	iutilities.Me.Print()
 
-	peers = getPeers()
-	peers[0].Print()
-	peers[1].Print()
-	peers[2].Print()
-	peers[3].Print()
+	iutilities.Peers = getPeers()
+	iutilities.Peers[0].Print()
+	iutilities.Peers[1].Print()
+	iutilities.Peers[2].Print()
+	iutilities.Peers[3].Print()
 
+	iutilities.Mysql = getMysqlConfig()
+	println("mysql_user= ", iutilities.Mysql.Mysql_user)
+	println("mysql_passwd= ", iutilities.Mysql.Mysql_passwd)
+	println("mysql_db= ", iutilities.Mysql.Mysql_db)
+	println("mysql_ip_port= ", iutilities.Mysql.Mysql_ip_port)
 	//GET INPUT SQL STATEMENT
 	var sqlstmt string
 	for {
 		println("please enter SQL statement end with ; (q to quit)")
-		sqlstmt = ScanLine()
+		sqlstmt = scanLine()
 		println(sqlstmt)
 		if strings.EqualFold(sqlstmt, "q") {
 			break
 		}
 
 	}
+
 	return
 }
 
@@ -69,11 +70,15 @@ func getPeers() []iutilities.Nodes {
 	return iutilities.GetPeers()
 }
 
+func getMysqlConfig() iutilities.MysqlConfig {
+	return iutilities.GetMysqlConfig()
+}
+
 // func parse(sql string)(){
 
 // }
 
-func ScanLine() string {
+func scanLine() string {
 	var c byte
 	var err error
 	var b []byte

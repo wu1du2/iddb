@@ -1,88 +1,88 @@
 package main
 
 import (
-    "fmt"
-    "database/sql"
-    "iexecuter"
-    "iplan"
+	"database/sql"
+	"fmt"
+	"iexec"
+	"iplan"
 
-    _ "github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
-    // test_mysql()
-    test_tree()
+	// test_mysql()
+	test_tree()
 }
 
 func test_mysql() {
-    fmt.Println("try to connect mysql")
-    db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/test?charset=utf8")
-    checkErr(err)
+	fmt.Println("try to connect mysql")
+	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/test?charset=utf8")
+	checkErr(err)
 
-    // insert
-    fmt.Println("try to insert")
-    stmt, err := db.Prepare("INSERT customer SET id=?,name=?")
-    checkErr(err)
+	// insert
+	fmt.Println("try to insert")
+	stmt, err := db.Prepare("INSERT customer SET id=?,name=?")
+	checkErr(err)
 
-    res, err := stmt.Exec(1, "zhhy")
-    checkErr(err)
+	res, err := stmt.Exec(1, "zhhy")
+	checkErr(err)
 
-    // update
-    fmt.Println("try to update")
-    stmt, err = db.Prepare("update customer set name=? where id=?")
-    checkErr(err)
+	// update
+	fmt.Println("try to update")
+	stmt, err = db.Prepare("update customer set name=? where id=?")
+	checkErr(err)
 
-    res, err = stmt.Exec("zhhy2", 1)
-    checkErr(err)
+	res, err = stmt.Exec("zhhy2", 1)
+	checkErr(err)
 
-    affect, err := res.RowsAffected()
-    checkErr(err)
+	affect, err := res.RowsAffected()
+	checkErr(err)
 
-    fmt.Println(affect)
+	fmt.Println(affect)
 
-    // query
-    fmt.Println("try to select first")
-    rows, err := db.Query("SELECT * FROM customer")
-    checkErr(err)
+	// query
+	fmt.Println("try to select first")
+	rows, err := db.Query("SELECT * FROM customer")
+	checkErr(err)
 
-    for rows.Next() {
-        var uid sql.NullInt32
-        var username sql.NullString
-        var rank sql.NullInt32
+	for rows.Next() {
+		var uid sql.NullInt32
+		var username sql.NullString
+		var rank sql.NullInt32
 
-        err = rows.Scan(&uid, &username, &rank)
-        checkErr(err)
-        fmt.Println(uid)
-        fmt.Println(username)
-        fmt.Println(rank)
-    }
+		err = rows.Scan(&uid, &username, &rank)
+		checkErr(err)
+		fmt.Println(uid)
+		fmt.Println(username)
+		fmt.Println(rank)
+	}
 
-    // delete
-    fmt.Println("try to delete")
-    stmt, err = db.Prepare("delete from customer where id=?")
-    checkErr(err)
+	// delete
+	fmt.Println("try to delete")
+	stmt, err = db.Prepare("delete from customer where id=?")
+	checkErr(err)
 
-    res, err = stmt.Exec(1)
-    checkErr(err)
+	res, err = stmt.Exec(1)
+	checkErr(err)
 
-    // query
-    fmt.Println("try to select two")
-    rows, err = db.Query("SELECT * FROM customer")
-    checkErr(err)
+	// query
+	fmt.Println("try to select two")
+	rows, err = db.Query("SELECT * FROM customer")
+	checkErr(err)
 
-    for rows.Next() {
-        var uid int
-        var username string
-        var rank int
+	for rows.Next() {
+		var uid int
+		var username string
+		var rank int
 
-        err = rows.Scan(&uid, &username, &rank)
-        checkErr(err)
-        fmt.Println(uid)
-        fmt.Println(username)
-        fmt.Println(rank)
-    }
+		err = rows.Scan(&uid, &username, &rank)
+		checkErr(err)
+		fmt.Println(uid)
+		fmt.Println(username)
+		fmt.Println(rank)
+	}
 
-    db.Close()
+	db.Close()
 
 }
 
@@ -104,6 +104,8 @@ func test_tree() {
     pn0.Status = 0
     pn0.Locate = 1
     pn0.NodeType = 4
+    pn0.TransferFlag = true
+    pn0.Dest = 2
     pn0.Joint_cols = "id,customer_id"
     // 结点1
     pn1 := &plan_tree.Nodes[1]
@@ -145,11 +147,11 @@ func test_tree() {
     pn4.Locate = 1
     pn4.NodeType = 1
     pn4.TmpTable = "orders"
-    iexecuter.RunTree(plan_tree)
+    iexec.RunTree(plan_tree)
 }
 
 func checkErr(err error) {
-    if err != nil {
-        panic(err)
-    }
+	if err != nil {
+		panic(err)
+	}
 }
