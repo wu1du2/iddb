@@ -2,6 +2,7 @@ package main
 
 import (
 	"irpctran"
+	"iutilities"
 )
 
 /*
@@ -12,8 +13,11 @@ type Table struct {
 }
 */
 func main() {
+	testnodeid := 1
+	ip := iutilities.Peers[testnodeid].IP
+	port := iutilities.Peers[testnodeid].Tran
+	address := ip + ":" + port
 	// address := "localhost:50053"
-	address := "10.77.70.161:50053"
 	var table irpctran.Table
 	table.Createstmt = "Create Table PUBLISHER (ID int, NATION varchar(255) );"
 	irpctran.RunTranClient(address, table)
