@@ -32,7 +32,7 @@ func ExecuteCreateStmt(stmt string) int64 {
 	}
 
 	println(stmt)
-	println(err)
+	// println(err)
 	stmts, err := db.Prepare(stmt)
 	if err != nil {
 		println("could not prepare: %v", err)
