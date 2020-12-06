@@ -30,7 +30,7 @@ func ExecuteCreateStmt(stmt string) int64 {
 	if err != nil {
 		println("could not open: %v", err)
 	}
-
+	db = db
 	println(stmt)
 	// println(err)
 	// stmts, err := db.Prepare(stmt)
