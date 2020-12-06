@@ -437,10 +437,10 @@ func ExecuteTransmission(plan_node *iplan.PlanTreeNode) {
 		fmt.Println(address)
 		create_sql := generateCreateQuery(plan_node)
 		fmt.Println(create_sql)
-		// ExecuteRemoteCreateStmt(address,insert_query)
+		ExecuteRemoteCreateStmt(address, create_sql)
 		insert_query := generateInsertQuery(plan_node)
 		fmt.Println(insert_query)
-		ExecuteRemoteCreateStmt(address, create_sql+insert_query)
+		ExecuteRemoteCreateStmt(address, insert_query)
 		plan_node.Status = 1
 	}
 }
