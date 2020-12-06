@@ -11,7 +11,9 @@ import (
 	// "iexecuter"
 	// "log"
 	// "net"
+	"irpctran"
 	"iutilities"
+
 	// "iparser"
 
 	"fmt"
@@ -49,6 +51,7 @@ func main() {
 	println("mysql_ip_port= ", iutilities.Mysql.Mysql_ip_port)
 	//GET INPUT SQL STATEMENT
 	var sqlstmt string
+	testtrans()
 	for {
 		println("please enter SQL statement end with ; (q to quit)")
 		sqlstmt = scanLine()
@@ -93,4 +96,17 @@ func scanLine() string {
 	}
 
 	return string(b)
+}
+
+func testtrans() {
+	iutilities.Peers = iutilities.GetPeers()
+	testnodeid := 0
+	ip := iutilities.Peers[testnodeid].IP
+	port := iutilities.Peers[testnodeid].Tran
+	address := ip + ":" + port
+	println(address)
+	// address := "localhost:50053"
+	var table irpctran.Table
+	table.Createstmt = "Create Table PUBLISHER1 (ID int, NATION varchar(255) );"
+	irpctran.RunTranClient(address, table)
 }
