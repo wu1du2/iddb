@@ -1,7 +1,9 @@
 package itrans
+
 import (
 	"database/sql"
 	"iutilities"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -13,7 +15,7 @@ var mysql_ip_port string
 
 func Init() {
 	// TODO:set site id
-	site = iutilities.Me.NodeId
+	site = iutilities.GetMe().NodeId
 	// site = 1
 	mysql_user = "root"
 	mysql_passwd = "123456"
