@@ -14,7 +14,7 @@ type Table struct {
 */
 func main() {
 	iutilities.Peers = iutilities.GetPeers()
-	testnodeid := 1
+	testnodeid := 0
 	ip := iutilities.Peers[testnodeid].IP
 	port := iutilities.Peers[testnodeid].Tran
 	address := ip + ":" + port
