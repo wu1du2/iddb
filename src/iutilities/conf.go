@@ -59,7 +59,7 @@ func getPeers(config tomlConfig) []Nodes {
 	peers := make([]Nodes, 4)
 	for _, node := range config.Cluster {
 		i := node.NodeId
-		peers[i-1] = node
+		peers[i] = node
 	}
 
 	return peers
