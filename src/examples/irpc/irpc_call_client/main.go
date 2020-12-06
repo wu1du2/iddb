@@ -6,11 +6,13 @@ import (
 )
 
 func main() {
+	iutilities.Peers = iutilities.GetPeers()
 	testnodeid := 1
 	ip := iutilities.Peers[testnodeid].IP
 	port := iutilities.Peers[testnodeid].Call
 	// address := "10.77.70.161:50054"
 	address := ip + ":" + port
+	println(address)
 	var txnid int64
 	txnid = 1
 	is_Suc := irpccall.RunCallClient(address, txnid)

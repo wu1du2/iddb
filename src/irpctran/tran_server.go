@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	tport = ":" + iutilities.Me.Tran
+	tport = ":" + iutilities.GetMe().Tran
 )
 
 type tserver struct {

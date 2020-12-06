@@ -20,7 +20,7 @@ type cserver struct {
 }
 
 var (
-	cport = ":" + iutilities.Me.Call
+	cport = ":" + iutilities.GetMe().Call
 )
 
 // ExecuterCall implementation, defined in irpc.pb.go

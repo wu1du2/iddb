@@ -13,10 +13,12 @@ type Table struct {
 }
 */
 func main() {
+	iutilities.Peers = iutilities.GetPeers()
 	testnodeid := 1
 	ip := iutilities.Peers[testnodeid].IP
 	port := iutilities.Peers[testnodeid].Tran
 	address := ip + ":" + port
+	println(address)
 	// address := "localhost:50053"
 	var table irpctran.Table
 	table.Createstmt = "Create Table PUBLISHER (ID int, NATION varchar(255) );"
