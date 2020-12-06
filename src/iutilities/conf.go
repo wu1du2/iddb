@@ -38,6 +38,16 @@ type Nodes struct {
 	Call   string
 }
 
+func LoadAllConfig() {
+	GetMe()
+	PrintMe()
+	GetPeers()
+	PrintPeers()
+	GetMysqlConfig()
+	PrintMysqlConfig()
+	return
+}
+
 func (n *Nodes) Print() {
 	println("NodeId= ", n.NodeId)
 	println("IP= ", n.IP)
@@ -63,6 +73,13 @@ func getPeers(config tomlConfig) []Nodes {
 	}
 
 	return peers
+}
+
+func PrintPeers() {
+	for _, node := range Peers {
+		node.Print()
+	}
+	return
 }
 
 func getMysqlConfig(config tomlConfig) MysqlConfig {
