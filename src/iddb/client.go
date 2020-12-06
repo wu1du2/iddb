@@ -11,6 +11,7 @@ import (
 	// "iexecuter"
 	// "log"
 	// "net"
+	"irpccall"
 	"irpctran"
 	"iutilities"
 
@@ -109,4 +110,17 @@ func testtrans() {
 	var table irpctran.Table
 	table.Createstmt = "Create Table PUBLISHER1 (ID int, NATION varchar(255) );"
 	irpctran.RunTranClient(address, table)
+}
+
+func testcall() {
+	testnodeid := 0
+	ip := iutilities.Peers[testnodeid].IP
+	port := iutilities.Peers[testnodeid].Call
+	// address := "10.77.70.161:50054"
+	address := ip + ":" + port
+	println(address)
+	var txnid int64
+	txnid = 1
+	is_Suc := irpccall.RunCallClient(address, txnid)
+	println("irpc.RunCallClient(", address, ",", txnid, "),is_Suc=", is_Suc)
 }
