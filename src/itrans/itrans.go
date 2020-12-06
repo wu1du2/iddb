@@ -39,11 +39,12 @@ func ExecuteCreateStmt(stmt string) int64 {
 	// println(err)
 	stmts, err := db.Prepare(stmt)
 	if err != nil {
-		println("could not prepare: %v", err)
+		println("could not prepare:", err)
+		iutilities.CheckErr(err)
 	}
 	res, err := stmts.Exec()
 	if err != nil {
-		println("could not exec: %v", err)
+		println("could not exec:", err)
 	}
 	println(res)
 	println(err)
