@@ -53,6 +53,7 @@ func main() {
 	//GET INPUT SQL STATEMENT
 	var sqlstmt string
 	testtrans()
+	testcall()
 	for {
 		println("please enter SQL statement end with ; (q to quit)")
 		sqlstmt = scanLine()
