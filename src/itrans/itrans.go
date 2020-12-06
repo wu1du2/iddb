@@ -27,11 +27,20 @@ func ExecuteCreateStmt(stmt string) int64 {
 	Init()
 	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
 	db, err := sql.Open("mysql", mysql)
+	if err != nil {
+		println("could not open: %v", err)
+	}
 
 	println(stmt)
 	println(err)
 	stmts, err := db.Prepare(stmt)
+	if err != nil {
+		println("could not prepare: %v", err)
+	}
 	res, err := stmts.Exec()
+	if err != nil {
+		println("could not exec: %v", err)
+	}
 	println(res)
 	println(err)
 	return 0
