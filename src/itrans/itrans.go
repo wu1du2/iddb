@@ -33,15 +33,15 @@ func ExecuteCreateStmt(stmt string) int64 {
 
 	println(stmt)
 	// println(err)
-	stmts, err := db.Prepare(stmt)
-	if err != nil {
-		println("could not prepare: %v", err)
-	}
-	res, err := stmts.Exec()
-	if err != nil {
-		println("could not exec: %v", err)
-	}
-	println(res)
-	println(err)
+	// stmts, err := db.Prepare(stmt)
+	// if err != nil {
+	// 	println("could not prepare: %v", err)
+	// }
+	// res, err := stmts.Exec()
+	// if err != nil {
+	// 	println("could not exec: %v", err)
+	// }
+	// println(res)
+	// println(err)
 	return 0
 }
