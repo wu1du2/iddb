@@ -38,6 +38,9 @@ func (s *tserver) PushTable(ctx context.Context, in *Table) (*IrpcStatus, error)
 Regitering transmission server
 */
 func RunTranServer() {
+	iutilities.GetMysqlConfig()
+	iutilities.GetPeers()
+	iutilities.GetMe()
 	println("irpctran")
 	lis, err := net.Listen("tcp", tport)
 	if err != nil {
