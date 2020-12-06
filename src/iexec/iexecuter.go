@@ -5,20 +5,22 @@ import (
 	"fmt"
 	"iplan"
 	"irpctran"
-	"strconv"
-	"strings"
 	"iutilities"
 	"reflect"
+	"strconv"
+	"strings"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var site int
+var site int64
 var mysql_user string
 var mysql_passwd string
 var mysql_db string
 var mysql_ip_port string
 var db *sql.DB
 var err error
+
 func RunExecuter(txn_id int64) int64 {
 	// get the plan through txn_id
 	//
@@ -49,7 +51,7 @@ func Init() {
 	mysql_ip_port = iutilities.Mysql.Mysql_ip_port
 	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
 	db, err = sql.Open("mysql", mysql)
-	checkErr(err)
+	iutilities.CheckErr(err)
 }
 
 func RunTree(plan_tree iplan.PlanTree) int64 {
@@ -93,10 +95,10 @@ func TreeIsComplete(plan_tree iplan.PlanTree) bool {
 	}
 }
 
-func FindOneNode(plan_tree iplan.PlanTree, node_id int) int {
+func FindOneNode(plan_tree iplan.PlanTree, node_id int64) int64 {
 	// fmt.Println("go into node")
 	// fmt.Println(node_id)
-	var can_execute_id int
+	var can_execute_id int64
 	// 判断当前节点的状态，如果是ok，则返回-1
 	var current_node iplan.PlanTreeNode
 	current_node = plan_tree.Nodes[node_id]
@@ -163,7 +165,7 @@ func ExecuteOneNode(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree) {
 	ExecuteTransmission(plan_node)
 }
 
-func CleanTmpTable(plan_node_id int, plan_tree iplan.PlanTree) {
+func CleanTmpTable(plan_node_id int64, plan_tree iplan.PlanTree) {
 	nodeType := plan_tree.Nodes[plan_node_id].NodeType
 	if nodeType != 1 {
 		tablename := plan_tree.Nodes[plan_node_id].TmpTable
@@ -172,7 +174,7 @@ func CleanTmpTable(plan_node_id int, plan_tree iplan.PlanTree) {
 		println(query)
 		stmt, err := db.Prepare(query)
 		res, err := stmt.Exec()
-		checkErr(err)
+		iutilities.CheckErr(err)
 		println(res)
 	}
 }
@@ -183,14 +185,14 @@ func ExecuteFilter(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree) {
 	// TODO: assert(plan_node.Right = -1)
 
 	tablename := plan_tree.Nodes[plan_node.Left].TmpTable
-	query := "create table tmp_table_" + strconv.Itoa(plan_node.Nodeid) + " select * from " + tablename + " where " + plan_node.Where
+	query := "create table tmp_table_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select * from " + tablename + " where " + plan_node.Where
 
 	println(query)
 	stmt, err := db.Prepare(query)
 	res, err := stmt.Exec()
-	checkErr(err)
+	iutilities.CheckErr(err)
 	println(res)
-	plan_node.TmpTable = "tmp_table_" + strconv.Itoa(plan_node.Nodeid)
+	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(plan_node.Nodeid, 10)
 	CleanTmpTable(plan_node.Left, plan_tree)
 	if !plan_node.TransferFlag {
 		plan_node.Status = 1
@@ -203,14 +205,14 @@ func ExecuteProjection(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree) 
 	// TODO: assert(plan_node.Right = -1)
 
 	tablename := plan_tree.Nodes[plan_node.Left].TmpTable
-	query := "create table tmp_table_" + strconv.Itoa(plan_node.Nodeid) + " select " + plan_node.Cols + " from " + tablename
+	query := "create table tmp_table_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select " + plan_node.Cols + " from " + tablename
 	println(query)
 
 	stmt, err := db.Prepare(query)
 	res, err := stmt.Exec()
-	checkErr(err)
+	iutilities.CheckErr(err)
 	println(res)
-	plan_node.TmpTable = "tmp_table_" + strconv.Itoa(plan_node.Nodeid)
+	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(plan_node.Nodeid, 10)
 	CleanTmpTable(plan_node.Left, plan_tree)
 	if !plan_node.TransferFlag {
 		plan_node.Status = 1
@@ -225,14 +227,14 @@ func ExecuteJoin(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree) {
 	tablename1 := plan_tree.Nodes[plan_node.Left].TmpTable
 	tablename2 := plan_tree.Nodes[plan_node.Right].TmpTable
 	cols := strings.Split(plan_node.Joint_cols, ",")
-	query := "create table tmp_table_" + strconv.Itoa(plan_node.Nodeid) + " select * from " + tablename1 + "," + tablename2 + " where " + tablename1 + "." + cols[0] + "=" + tablename2 + "." + cols[1]
+	query := "create table tmp_table_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select * from " + tablename1 + "," + tablename2 + " where " + tablename1 + "." + cols[0] + "=" + tablename2 + "." + cols[1]
 	println(query)
 
 	stmt, err := db.Prepare(query)
 	res, err := stmt.Exec()
-	checkErr(err)
+	iutilities.CheckErr(err)
 	println(res)
-	plan_node.TmpTable = "tmp_table_" + strconv.Itoa(plan_node.Nodeid)
+	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(plan_node.Nodeid, 10)
 	CleanTmpTable(plan_node.Left, plan_tree)
 	CleanTmpTable(plan_node.Right, plan_tree)
 	if !plan_node.TransferFlag {
@@ -247,14 +249,14 @@ func ExecuteUnion(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree) {
 
 	tablename1 := plan_tree.Nodes[plan_node.Left].TmpTable
 	tablename2 := plan_tree.Nodes[plan_node.Right].TmpTable
-	query := "create table tmp_table_" + strconv.Itoa(plan_node.Nodeid) + " select * from " + tablename1 + "union" + "select * from " + tablename2
+	query := "create table tmp_table_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select * from " + tablename1 + "union" + "select * from " + tablename2
 	println(query)
 
 	stmt, err := db.Prepare(query)
 	res, err := stmt.Exec()
-	checkErr(err)
+	iutilities.CheckErr(err)
 	println(res)
-	plan_node.TmpTable = "tmp_table_" + strconv.Itoa(plan_node.Nodeid)
+	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(plan_node.Nodeid, 10)
 	CleanTmpTable(plan_node.Left, plan_tree)
 	CleanTmpTable(plan_node.Right, plan_tree)
 	if !plan_node.TransferFlag {
@@ -313,35 +315,35 @@ func Strval(value interface{}) string {
 		key = string(value.(sql.RawBytes))
 	case sql.NullBool:
 		boolnull := value.(sql.NullBool)
-		if boolnull.Valid { 
+		if boolnull.Valid {
 			key = strconv.FormatBool(boolnull.Bool)
 		} else {
 			key = "NULL"
 		}
 	case sql.NullString:
 		stringnull := value.(sql.NullString)
-		if stringnull.Valid { 
+		if stringnull.Valid {
 			key = stringnull.String
 		} else {
 			key = "NULL"
 		}
 	case sql.NullFloat64:
 		float64null := value.(sql.NullFloat64)
-		if float64null.Valid { 
+		if float64null.Valid {
 			key = strconv.FormatFloat(float64null.Float64, 'f', -1, 64)
 		} else {
 			key = "NULL"
 		}
 	case sql.NullInt32:
 		int32null := value.(sql.NullInt32)
-		if int32null.Valid { 
+		if int32null.Valid {
 			key = strconv.Itoa(int(int32null.Int32))
 		} else {
 			key = "NULL"
 		}
 	case sql.NullInt64:
 		int64null := value.(sql.NullInt64)
-		if int64null.Valid { 
+		if int64null.Valid {
 			key = strconv.FormatInt(int64null.Int64, 10)
 		} else {
 			key = "NULL"
@@ -358,7 +360,7 @@ func Strval(value interface{}) string {
 func generateCreateQuery(plan_node *iplan.PlanTreeNode) string {
 	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
 	db, err := sql.Open("mysql", mysql)
-	checkErr(err)
+	iutilities.CheckErr(err)
 	// create table
 	query := "show create table " + plan_node.TmpTable
 	// println(query)
@@ -367,7 +369,7 @@ func generateCreateQuery(plan_node *iplan.PlanTreeNode) string {
 	var table_name sql.NullString
 	var create_sql sql.NullString
 	err = rows.Scan(&table_name, &create_sql)
-	checkErr(err)
+	iutilities.CheckErr(err)
 	fmt.Println(table_name.String)
 	// fmt.Println(create_sql.String + ";")
 	return create_sql.String + ";"
@@ -381,9 +383,9 @@ func generateInsertQuery(plan_node *iplan.PlanTreeNode) string {
 	query := "select * from " + plan_node.TmpTable
 	// println(query)
 	rows, err := db.Query(query)
-	
+
 	tt, err := rows.ColumnTypes()
-	checkErr(err)
+	iutilities.CheckErr(err)
 
 	types := make([]reflect.Type, len(tt))
 	for i, tp := range tt {
@@ -404,7 +406,7 @@ func generateInsertQuery(plan_node *iplan.PlanTreeNode) string {
 			insert_query = insert_query + ", "
 		}
 		err = rows.Scan(values...)
-		checkErr(err)
+		iutilities.CheckErr(err)
 		insert_query = insert_query + "("
 		for j := range values {
 			if j != 0 {
@@ -430,7 +432,7 @@ func getAddress(plan_node *iplan.PlanTreeNode) string {
 }
 
 func ExecuteTransmission(plan_node *iplan.PlanTreeNode) {
-	if (plan_node.TransferFlag) {
+	if plan_node.TransferFlag {
 		address := getAddress(plan_node)
 		fmt.Println(address)
 		create_sql := generateCreateQuery(plan_node)
@@ -440,11 +442,5 @@ func ExecuteTransmission(plan_node *iplan.PlanTreeNode) {
 		fmt.Println(insert_query)
 		// ExecuteRemoteCreateStmt(address,insert_query)
 		plan_node.Status = 1
-	}
-}
-
-func checkErr(err error) {
-	if err != nil {
-		panic(err)
 	}
 }

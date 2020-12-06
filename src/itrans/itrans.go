@@ -12,15 +12,20 @@ var mysql_user string
 var mysql_passwd string
 var mysql_db string
 var mysql_ip_port string
+var db *sql.DB
+var err error
 
 func Init() {
 	// TODO:set site id
 	site = iutilities.GetMe().NodeId
 	// site = 1
-	mysql_user = "root"
-	mysql_passwd = "123456"
-	mysql_db = "test"
-	mysql_ip_port = "127.0.0.1:3306"
+	mysql_user = iutilities.Mysql.Mysql_user
+	mysql_passwd = iutilities.Mysql.Mysql_passwd
+	mysql_db = iutilities.Mysql.Mysql_db
+	mysql_ip_port = iutilities.Mysql.Mysql_ip_port
+	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
+	db, err = sql.Open("mysql", mysql)
+	iutilities.CheckErr(err)
 }
 
 func ExecuteCreateStmt(stmt string) int64 {
@@ -30,18 +35,17 @@ func ExecuteCreateStmt(stmt string) int64 {
 	if err != nil {
 		println("could not open: %v", err)
 	}
-	db = db
 	println(stmt)
 	// println(err)
-	// stmts, err := db.Prepare(stmt)
-	// if err != nil {
-	// 	println("could not prepare: %v", err)
-	// }
-	// res, err := stmts.Exec()
-	// if err != nil {
-	// 	println("could not exec: %v", err)
-	// }
-	// println(res)
-	// println(err)
+	stmts, err := db.Prepare(stmt)
+	if err != nil {
+		println("could not prepare: %v", err)
+	}
+	res, err := stmts.Exec()
+	if err != nil {
+		println("could not exec: %v", err)
+	}
+	println(res)
+	println(err)
 	return 0
 }
