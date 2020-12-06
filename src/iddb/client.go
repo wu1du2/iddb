@@ -97,8 +97,8 @@ func testtrans() {
 	println(address)
 	// address := "localhost:50053"
 	var table irpctran.Table
-	table.Createstmt = "Create Table PUBLISHER2 (ID int, NATION varchar(255) );Insert Into PUBLISHER2 Values (1,'US'),(2,'US'),(3,'CHN');"
-
+	// table.Createstmt = "Create Table PUBLISHER2 (ID int, NATION varchar(255) );Insert Into PUBLISHER2 Values (1,'US'),(2,'US'),(3,'CHN');"
+	table.Createstmt = "Create Table PUBLISHER3 (ID int, NATION varchar(255) );Create Table PUBLISHER4 (ID int, NATION varchar(255) );"
 	irpctran.RunTranClient(address, table)
 }
 
