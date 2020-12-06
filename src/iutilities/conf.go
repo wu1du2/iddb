@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	configfile = "E:/iddb/cnf/iddb.conf"
+	configfile = "/home/centos/config/iddb.conf"
 )
 
 var (
@@ -17,18 +17,18 @@ var (
 )
 
 type MysqlConfig struct {
-	Mysql_user string
-	Mysql_passwd string
-	Mysql_db string
+	Mysql_user    string
+	Mysql_passwd  string
+	Mysql_db      string
 	Mysql_ip_port string
 }
 type tomlConfig struct {
-	NodeId  int64
-	Mysql_user string
-	Mysql_passwd string
-	Mysql_db string
-	Mysql_ip_port string	
-	Cluster map[string]Nodes
+	NodeId        int64
+	Mysql_user    string
+	Mysql_passwd  string
+	Mysql_db      string
+	Mysql_ip_port string
+	Cluster       map[string]Nodes
 }
 
 type Nodes struct {
@@ -61,7 +61,7 @@ func getPeers(config tomlConfig) []Nodes {
 		i := node.NodeId
 		peers[i-1] = node
 	}
-	
+
 	return peers
 }
 

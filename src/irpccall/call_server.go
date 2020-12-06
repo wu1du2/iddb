@@ -8,6 +8,7 @@ package irpccall
 import (
 	"context"
 	"iexec"
+	"iutilities"
 	"log"
 	"net"
 
@@ -18,8 +19,8 @@ type cserver struct {
 	UnimplementedExecuterCallerServer
 }
 
-const (
-	cport = ":50054"
+var (
+	cport = ":" + iutilities.Me.Call
 )
 
 // ExecuterCall implementation, defined in irpc.pb.go

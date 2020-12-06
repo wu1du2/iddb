@@ -8,14 +8,15 @@ package irpctran
 import (
 	"context"
 	"itrans"
+	"iutilities"
 	"log"
 	"net"
 
 	"google.golang.org/grpc"
 )
 
-const (
-	tport = ":50053"
+var (
+	tport = ":" + iutilities.Me.Tran
 )
 
 type tserver struct {
