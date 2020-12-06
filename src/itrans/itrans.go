@@ -24,8 +24,13 @@ func Init() {
 	mysql_db = iutilities.Mysql.Mysql_db
 	mysql_ip_port = iutilities.Mysql.Mysql_ip_port
 	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
+	println(mysql)
 	db, err = sql.Open("mysql", mysql)
-	iutilities.CheckErr(err)
+	if err != nil {
+		println("could not open:", err)
+		iutilities.CheckErr(err)
+	}
+
 }
 
 func ExecuteCreateStmt(stmt string) int64 {
