@@ -39,11 +39,11 @@ type Nodes struct {
 }
 
 func LoadAllConfig() {
-	GetMe()
+	Me = GetMe()
 	PrintMe()
-	GetPeers()
+	Peers = GetPeers()
 	PrintPeers()
-	GetMysqlConfig()
+	Mysql = GetMysqlConfig()
 	PrintMysqlConfig()
 	return
 }
