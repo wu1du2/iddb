@@ -30,6 +30,21 @@ func (s *cserver) ExecuterCall(ctx context.Context, in *IrpcCallReq) (*IrpcStatu
 }
 
 func RunCallServer() {
+	iutilities.Me = iutilities.GetMe()
+	iutilities.Me.Print()
+
+	iutilities.Peers = iutilities.GetPeers()
+	iutilities.Peers[0].Print()
+	iutilities.Peers[1].Print()
+	iutilities.Peers[2].Print()
+	iutilities.Peers[3].Print()
+
+	iutilities.Mysql = iutilities.GetMysqlConfig()
+	println("mysql_user= ", iutilities.Mysql.Mysql_user)
+	println("mysql_passwd= ", iutilities.Mysql.Mysql_passwd)
+	println("mysql_db= ", iutilities.Mysql.Mysql_db)
+	println("mysql_ip_port= ", iutilities.Mysql.Mysql_ip_port)
+
 	println("rpccall")
 	lis, err := net.Listen("tcp", cport)
 	if err != nil {

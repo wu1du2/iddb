@@ -34,7 +34,6 @@ func Init() {
 }
 
 func ExecuteCreateStmt(stmt string) int64 {
-	// iutilities.GetMysqlConfig()
 	Init()
 	// mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
 	// db, err := sql.Open("mysql", mysql)
