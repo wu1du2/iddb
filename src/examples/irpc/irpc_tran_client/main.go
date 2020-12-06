@@ -21,6 +21,6 @@ func main() {
 	println(address)
 	// address := "localhost:50053"
 	var table irpctran.Table
-	table.Createstmt = "Create Table PUBLISHER (ID int, NATION varchar(255) );"
+	table.Createstmt = "Create Table PUBLISHER1 (ID int, NATION varchar(255) );"
 	irpctran.RunTranClient(address, table)
 }
