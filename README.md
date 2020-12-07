@@ -62,8 +62,39 @@ Next, we will introduce the design of iddb. iddb consists of 6 main modules, ipa
 21332132
 
 ### imeta
-123123213
-21332132
+etcd使用方法：
+
+1）在使用前，需要先启动集群：
+a.打开目录：
+cd ~/iddb/src/github.com/coreos/etcd
+
+b.启动集群
+分别在三台机器下运行启动，不建议使用后台运行。
+../../mattn/goreman/goreman -f Procfile_C start
+（不建议：nohup ～/iddb/src/github.com/mattn/goreman/goreman -f Procfile_C start &）
+
+2）代码调用
+a.导入包
+import "imeta"
+
+b.每个事务建立（第一次存入前）必须调用：imeta.Build_Txn(txnid int64)
+初始设置iplan.PlanTree.NodeNum为0，记录在/txnid中
+调用：
+	err := imeta.Build_Txn(txnid int64)
+
+b.Get_Tree获取整棵树，返回iplan.PlanTree类型, iplan.PlanTree.NodeNum为最大节点id
+调用：
+	treex,err := imeta.Get_Tree(txnid int64)
+
+c.Get_Node获取整棵树，返回iplan.PlanTreeNoode
+调用：
+	nodex,err := imeta.Get_Node(txnid int64, nodeid int64)
+
+d.Set_Node,输入事务号和一个node结构。返回成功或失败
+调用：
+	err := imeta.Set_Node(txnid int64, Node_in iplan.PlanTreeNode)
+
+注：node中属性无则为" "，我设置的分隔符为##，请尽量避免使用。
 
 ### iexecuter
 123123213
@@ -116,21 +147,29 @@ the procedure of installing mysql5.7
 environment
 
 (1)packages:
+$cd ~/iddb/src/github.com/coreos
 $git clone https://github.com.cnpmjs.org/coreos/go-semver.git
 $git clone https://github.com.cnpmjs.org/coreos/go-systemd.git
+
+$cd ~/iddb/src/github.com/gogo
 $git clone https://github.com.cnpmjs.org/gogo/protobuf.git
+
+$cd ~/iddb/src/go.uber.org
 $git clone https://github.com.cnpmjs.org/uber-go/zap.git
 $git clone https://github.com.cnpmjs.org/uber-go/multierr.git
 $git clone https://github.com.cnpmjs.org/uber-go/atomic.git
 
 (2)etcd:
+$cd ~/iddb/src/github.com/coreos
 $git clone https://github.com.cnpmjs.org/etcd-io/etcd.git
 
 for version 3.3.25
+$cd etcd
 $git checkout 7d12776
 $./build
 
 (3)goreman (for cluster)
+cd ~/iddb/src/github.com/coreos
 $git clone https://github.com.cnpmjs.org/mattn/goreman.git
 $make
 
@@ -149,13 +188,9 @@ etcd1: bin/etcd --name etcd161 --listen-client-urls http://10.77.70.161:2379,htt
 etcd2: bin/etcd --name etcd162 --listen-client-urls http://10.77.70.162:2379,http://127.0.0.1:2379 --advertise-client-urls http://10.77.70.162:2379 --listen-peer-urls http://10.77.70.162:2380 --initial-advertise-peer-urls http://10.77.70.162:2380 --initial-cluster-token etcd-cluster-1 --initial-cluster 'etcd161=http://10.77.70.161:2380,etcd162=http://10.77.70.162:2380,etcd171=http://10.77.70.171:2380' --initial-cluster-state new --enable-pprof
 
 #171
-etcd: bin/etcd --name etcd171 --listen-client-urls http://10.77.70.171:2379,http://127.0.0.1:2379 --advertise-client-urls http://127.0.0.1:2379 --listen-peer-urls http://10.77.70.171:2380 --initial-advertise-peer-urls http://10.77.70.171:2380 --initial-cluster-token etcd-cluster-1 --initial-cluster 'etcd161=http://10.77.70.161:2380,etcd162=http://10.77.70.162:2380,etcd171=http://10.77.70.171:2380' --initial-cluster-state new --enable-pprof
+etcd3: bin/etcd --name etcd171 --listen-client-urls http://10.77.70.171:2379,http://127.0.0.1:2379 --advertise-client-urls http://127.0.0.1:2379 --listen-peer-urls http://10.77.70.171:2380 --initial-advertise-peer-urls http://10.77.70.171:2380 --initial-cluster-token etcd-cluster-1 --initial-cluster 'etcd161=http://10.77.70.161:2380,etcd162=http://10.77.70.162:2380,etcd171=http://10.77.70.171:2380' --initial-cluster-state new --enable-pprof
 
 (5)run etcd cluster 
-$cd /home/centos/iddb/src/github.com/coreos/etcd
-/home/centos/iddb/src/github.com/mattn/goreman/goreman -f Procfile_C start
-
-$nohup /home/centos/iddb/src/github.com/mattn/goreman/goreman -f Procfile_C start &
 
 ```
 
