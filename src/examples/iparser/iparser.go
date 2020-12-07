@@ -18,7 +18,7 @@ func main() {
 	// Otherwise do something with stmt
 	switch stmt := stmt.(type) {
 	case *sqlparser.Select:
-		//expr := stmt.Where.Expr
+
 		//fmt.Printf("%v", expr.Operator)
 		switch comparisonExpr := stmt.Where.Expr.(type) {
 		case *sqlparser.ComparisonExpr:
