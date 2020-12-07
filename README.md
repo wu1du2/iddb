@@ -65,32 +65,39 @@ Next, we will introduce the design of iddb. iddb consists of 6 main modules, ipa
 etcd使用方法：
 
 1）在使用前，需要先启动集群：
+
 a.打开目录：
-cd ~/iddb/src/github.com/coreos/etcd
+$cd ~/iddb/src/github.com/coreos/etcd
 
 b.启动集群
 分别在三台机器下运行启动，不建议使用后台运行。
-../../mattn/goreman/goreman -f Procfile_C start
+
+$../../mattn/goreman/goreman -f Procfile_C start
 （不建议：nohup ～/iddb/src/github.com/mattn/goreman/goreman -f Procfile_C start &）
 
 2）代码调用
+
 a.导入包
 import "imeta"
 
 b.每个事务建立（第一次存入前）必须调用：imeta.Build_Txn(txnid int64)
 初始设置iplan.PlanTree.NodeNum为0，记录在/txnid中
+
 调用：
 	err := imeta.Build_Txn(txnid int64)
 
 b.Get_Tree获取整棵树，返回iplan.PlanTree类型, iplan.PlanTree.NodeNum为最大节点id
+
 调用：
 	treex,err := imeta.Get_Tree(txnid int64)
 
 c.Get_Node获取整棵树，返回iplan.PlanTreeNoode
+
 调用：
 	nodex,err := imeta.Get_Node(txnid int64, nodeid int64)
 
 d.Set_Node,输入事务号和一个node结构。返回成功或失败
+
 调用：
 	err := imeta.Set_Node(txnid int64, Node_in iplan.PlanTreeNode)
 
