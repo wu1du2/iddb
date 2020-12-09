@@ -135,7 +135,7 @@ func generatePlanTree() iplan.PlanTree {
 	pn0.Right = 2
 	pn0.Parent = -1
 	pn0.Status = 0
-	pn0.Locate = 0
+	pn0.Locate = 2
 	pn0.NodeType = 4
 	pn0.TransferFlag = true
 	pn0.Dest = 1
