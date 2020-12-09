@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	tport = ":" + iutilities.GetMe().Tran
+	tport string
 )
 
 type tserver struct {
@@ -39,7 +39,7 @@ Regitering transmission server
 */
 func RunTranServer() {
 	// iutilities.LoadAllConfig()
-
+	tport = ":" + iutilities.Me.Tran
 	println("irpctran")
 	lis, err := net.Listen("tcp", tport)
 	if err != nil {
