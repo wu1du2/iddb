@@ -6,6 +6,7 @@ import (
 )
 
 func main() {
+	iutilities.Peers = iutilities.GetPeers()
 	testnodeid := 0
 	ip := iutilities.Peers[testnodeid].IP
 	port := iutilities.Peers[testnodeid].Call
