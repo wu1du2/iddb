@@ -100,11 +100,13 @@ func test1() {
 		iutilities.CheckErr(err)
 		return
 	}
+	println("imeta build txn ok")
 	err = imeta.Set_Tree(txnID, plantree)
 	if err != nil {
 		iutilities.CheckErr(err)
 		return
 	}
+	println("imeta set tree ok")
 	var ipaddr string
 	println("end imeta")
 	for _, node := range iutilities.Peers {
