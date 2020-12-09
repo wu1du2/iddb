@@ -210,8 +210,8 @@ func Set_Tree(txnid int64, Tree_in iplan.PlanTree)(error){
 		}
 		//fmt.Println("Build Txn "+node0+" success")
 	}
-	fmt.Println("Tree_in:")
-	fmt.Println(Tree_in)
+	//fmt.Println("Tree_in:")
+	//fmt.Println(Tree_in)
 
 	for i,node_in:=range Tree_in.Nodes{
 		err := Set_Node(txnid, node_in )
