@@ -15,11 +15,15 @@ import (
 	"irpccall"
 	"irpctran"
 	"iutilities"
+	"runtime"
+	"sync"
 
 	// "iparser"
 
 	"os"
 )
+
+var waitgroup sync.WaitGroup
 
 /*
 iddb server设计思路
@@ -30,6 +34,8 @@ iddb server设计思路
 
 func main() {
 	//INIT
+	runtime.GOMAXPROCS(8)
+
 	for i, v := range os.Args {
 		if i == 1 {
 			println(i, v)
@@ -45,5 +51,7 @@ func main() {
 
 	go irpctran.RunTranServer()
 
+	waitgroup.Add(1)
+	waitgroup.Wait()
 	return
 }
