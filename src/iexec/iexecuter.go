@@ -3,13 +3,14 @@ package iexec
 import (
 	"database/sql"
 	"fmt"
+	"imeta"
 	"iplan"
 	"irpctran"
 	"iutilities"
 	"reflect"
 	"strconv"
 	"strings"
-	"imeta"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -60,7 +61,7 @@ func RunTree(txn_id int64) int64 {
 	var plan_tree iplan.PlanTree
 	for {
 		// TODO:获取etcd tree
-		plan_tree = imeta.Get_Tree(txn_id)
+		plan_tree, err = imeta.Get_Tree(txn_id)
 		// 检测树是否完全执行完毕
 		if TreeIsComplete(plan_tree) {
 			break
@@ -74,7 +75,7 @@ func RunTree(txn_id int64) int64 {
 		var pn *iplan.PlanTreeNode
 		pn = &plan_tree.Nodes[execute_id]
 		// 执行某个节点
-		ExecuteOneNode(pn, plan_tree)
+		ExecuteOneNode(pn, plan_tree, txn_id)
 		print("executed node")
 		println(pn.Nodeid)
 		print("current node state ")
@@ -148,21 +149,21 @@ func FindOneNode(plan_tree iplan.PlanTree, node_id int64) int64 {
 	return -1
 }
 
-func ExecuteOneNode(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree) {
+func ExecuteOneNode(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_id int64) {
 	switch {
 	case plan_node.NodeType == 1 /*Table*/ :
 		break
 	case plan_node.NodeType == 2 /*Select or Filter*/ :
-		ExecuteFilter(plan_node, plan_tree)
+		ExecuteFilter(plan_node, plan_tree, txn_id)
 		break
 	case plan_node.NodeType == 3 /*projuection*/ :
-		ExecuteProjection(plan_node, plan_tree)
+		ExecuteProjection(plan_node, plan_tree, txn_id)
 		break
 	case plan_node.NodeType == 4 /*join*/ :
-		ExecuteJoin(plan_node, plan_tree)
+		ExecuteJoin(plan_node, plan_tree, txn_id)
 		break
 	case plan_node.NodeType == 5 /*union*/ :
-		ExecuteUnion(plan_node, plan_tree)
+		ExecuteUnion(plan_node, plan_tree, txn_id)
 		break
 	}
 	ExecuteTransmission(plan_node)
@@ -182,47 +183,47 @@ func CleanTmpTable(plan_node_id int64, plan_tree iplan.PlanTree) {
 	}
 }
 
-func ExecuteFilter(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree) {
+func ExecuteFilter(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_id int64) {
 	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
 	db, err := sql.Open("mysql", mysql)
 	// TODO: assert(plan_node.Right = -1)
 
 	tablename := plan_tree.Nodes[plan_node.Left].TmpTable
-	query := "create table tmp_table_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select * from " + tablename + " where " + plan_node.Where
+	query := "create table tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select * from " + tablename + " where " + plan_node.Where
 
 	println(query)
 	stmt, err := db.Prepare(query)
 	res, err := stmt.Exec()
 	iutilities.CheckErr(err)
 	println(res)
-	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(plan_node.Nodeid, 10)
+	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10)
 	CleanTmpTable(plan_node.Left, plan_tree)
 	if !plan_node.TransferFlag {
 		plan_node.Status = 1
 	}
 }
 
-func ExecuteProjection(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree) {
+func ExecuteProjection(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_id int64) {
 	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
 	db, err := sql.Open("mysql", mysql)
 	// TODO: assert(plan_node.Right = -1)
 
 	tablename := plan_tree.Nodes[plan_node.Left].TmpTable
-	query := "create table tmp_table_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select " + plan_node.Cols + " from " + tablename
+	query := "create table tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select " + plan_node.Cols + " from " + tablename
 	println(query)
 
 	stmt, err := db.Prepare(query)
 	res, err := stmt.Exec()
 	iutilities.CheckErr(err)
 	println(res)
-	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(plan_node.Nodeid, 10)
+	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10)
 	CleanTmpTable(plan_node.Left, plan_tree)
 	if !plan_node.TransferFlag {
 		plan_node.Status = 1
 	}
 }
 
-func ExecuteJoin(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree) {
+func ExecuteJoin(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_id int64) {
 	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
 	db, err := sql.Open("mysql", mysql)
 	// TODO: assert(plan_node.Right != -1)
@@ -230,14 +231,14 @@ func ExecuteJoin(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree) {
 	tablename1 := plan_tree.Nodes[plan_node.Left].TmpTable
 	tablename2 := plan_tree.Nodes[plan_node.Right].TmpTable
 	cols := strings.Split(plan_node.Joint_cols, ",")
-	query := "create table tmp_table_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select * from " + tablename1 + "," + tablename2 + " where " + tablename1 + "." + cols[0] + "=" + tablename2 + "." + cols[1]
+	query := "create table tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select * from " + tablename1 + "," + tablename2 + " where " + tablename1 + "." + cols[0] + "=" + tablename2 + "." + cols[1]
 	println(query)
 
 	stmt, err := db.Prepare(query)
 	res, err := stmt.Exec()
 	iutilities.CheckErr(err)
 	println(res)
-	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(plan_node.Nodeid, 10)
+	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10)
 	CleanTmpTable(plan_node.Left, plan_tree)
 	CleanTmpTable(plan_node.Right, plan_tree)
 	if !plan_node.TransferFlag {
@@ -245,21 +246,21 @@ func ExecuteJoin(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree) {
 	}
 }
 
-func ExecuteUnion(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree) {
+func ExecuteUnion(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_id int64) {
 	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
 	db, err := sql.Open("mysql", mysql)
 	// TODO: assert(plan_node.Right != -1)
 
 	tablename1 := plan_tree.Nodes[plan_node.Left].TmpTable
 	tablename2 := plan_tree.Nodes[plan_node.Right].TmpTable
-	query := "create table tmp_table_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select * from " + tablename1 + "union" + "select * from " + tablename2
+	query := "create table tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select * from " + tablename1 + "union" + "select * from " + tablename2
 	println(query)
 
 	stmt, err := db.Prepare(query)
 	res, err := stmt.Exec()
 	iutilities.CheckErr(err)
 	println(res)
-	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(plan_node.Nodeid, 10)
+	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10)
 	CleanTmpTable(plan_node.Left, plan_tree)
 	CleanTmpTable(plan_node.Right, plan_tree)
 	if !plan_node.TransferFlag {
