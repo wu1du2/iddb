@@ -6,8 +6,8 @@ import (
 	"github.com/toml"
 )
 
-const (
-	configfile = "/home/centos/config/iddb.conf"
+var (
+	Configfile = "/home/centos/config/iddb.conf"
 )
 
 var (
@@ -99,7 +99,7 @@ func printMe(config tomlConfig) {
 
 func PrintMe() {
 	var config tomlConfig
-	if _, err := toml.DecodeFile(configfile, &config); err != nil {
+	if _, err := toml.DecodeFile(Configfile, &config); err != nil {
 		fmt.Println(err)
 		return
 	}
@@ -118,7 +118,7 @@ func printMysqlConfig(config tomlConfig) {
 
 func PrintMysqlConfig() {
 	var config tomlConfig
-	if _, err := toml.DecodeFile(configfile, &config); err != nil {
+	if _, err := toml.DecodeFile(Configfile, &config); err != nil {
 		fmt.Println(err)
 		return
 	}
@@ -128,7 +128,7 @@ func PrintMysqlConfig() {
 
 func GetMe() Nodes {
 	var config tomlConfig
-	if _, err := toml.DecodeFile(configfile, &config); err != nil {
+	if _, err := toml.DecodeFile(Configfile, &config); err != nil {
 		fmt.Println(err)
 	}
 	return getMe(config)
@@ -136,7 +136,7 @@ func GetMe() Nodes {
 
 func GetPeers() []Nodes {
 	var config tomlConfig
-	if _, err := toml.DecodeFile(configfile, &config); err != nil {
+	if _, err := toml.DecodeFile(Configfile, &config); err != nil {
 		fmt.Println(err)
 	}
 	return getPeers(config)
@@ -144,7 +144,7 @@ func GetPeers() []Nodes {
 
 func GetMysqlConfig() MysqlConfig {
 	var config tomlConfig
-	if _, err := toml.DecodeFile(configfile, &config); err != nil {
+	if _, err := toml.DecodeFile(Configfile, &config); err != nil {
 		fmt.Println(err)
 	}
 	return getMysqlConfig(config)
