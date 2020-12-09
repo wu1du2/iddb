@@ -48,8 +48,6 @@ func main() {
 
 	runtime.GOMAXPROCS(8)
 
-	imeta.Connect_etcd()
-
 	var sqlstmt string
 
 	test1()
@@ -93,6 +91,7 @@ func test1() {
 	// plantree, err = iparser.parse(sqlstmt)
 	// plantree, err = iqueryanalyzer.analyze(plantree)
 	// plantree, err = ioptimizer.optimize(plantree)
+	imeta.Connect_etcd()
 	plantree = generatePlanTree()
 	println("start imeta")
 	err = imeta.Build_Txn(txnID)
