@@ -20,7 +20,7 @@ type cserver struct {
 }
 
 var (
-	cport = ":" + iutilities.GetMe().Call
+	cport string
 )
 
 // ExecuterCall implementation, defined in irpc.pb.go
@@ -30,8 +30,8 @@ func (s *cserver) ExecuterCall(ctx context.Context, in *IrpcCallReq) (*IrpcStatu
 }
 
 func RunCallServer() {
-	iutilities.LoadAllConfig()
-
+	// iutilities.LoadAllConfig()
+	cport = ":" + iutilities.Me.Call
 	println("rpccall")
 	lis, err := net.Listen("tcp", cport)
 	if err != nil {

@@ -11,6 +11,7 @@ import (
 	// "iexecuter"
 	// "log"
 	// "net"
+
 	"irpccall"
 	"irpctran"
 	"iutilities"
@@ -33,15 +34,19 @@ iddb client设计思路
 func main() {
 	//INIT
 	for i, v := range os.Args {
-		println(i, v)
-	}
+		if i == 1 {
+			println(i, v)
+			iutilities.Configfile = v
+			println("iutilities.Configfile= ", iutilities.Configfile)
+		}
 
+	}
 	iutilities.LoadAllConfig()
 
 	//GET INPUT SQL STATEMENT
 	var sqlstmt string
-	testtrans()
-	testcall()
+	// testtrans()
+	// testcall()
 	for {
 		println("please enter SQL statement end with ; (q to quit)")
 		sqlstmt = scanLine()
@@ -54,22 +59,6 @@ func main() {
 
 	return
 }
-
-func getMe() iutilities.Nodes {
-	return iutilities.GetMe()
-}
-
-func getPeers() []iutilities.Nodes {
-	return iutilities.GetPeers()
-}
-
-func getMysqlConfig() iutilities.MysqlConfig {
-	return iutilities.GetMysqlConfig()
-}
-
-// func parse(sql string)(){
-
-// }
 
 func scanLine() string {
 	var c byte

@@ -17,7 +17,7 @@ func foo() {
 }
 
 func main() {
-	runtime.GOMAXPROCS()
+	runtime.GOMAXPROCS(8)
 	go foo()
 	//time.Sleep(1 * time.Second)
 	for {
