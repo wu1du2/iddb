@@ -69,7 +69,7 @@ func RunTree(txn_id int64) int64 {
 		}
 		// 从tree中找可用代码
 		fmt.Println(plan_tree)
-		execute_id := FindOneNode(plan_tree, 0)
+		execute_id := FindOneNode(plan_tree, 1)
 		fmt.Println(execute_id)
 		if execute_id == -1 {
 			continue
@@ -93,7 +93,7 @@ func RunTree(txn_id int64) int64 {
 
 func TreeIsComplete(plan_tree iplan.PlanTree) bool {
 	var root_node iplan.PlanTreeNode
-	root_node = plan_tree.Nodes[0]
+	root_node = plan_tree.Nodes[1]
 	if root_node.Status == 1 {
 		return true
 	} else {

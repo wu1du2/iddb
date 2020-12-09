@@ -131,7 +131,7 @@ func generatePlanTree() iplan.PlanTree {
 	*/
 	// 根结点0
 	pn0 := &plan_tree.Nodes[0]
-	pn0.Nodeid = 0
+	pn0.Nodeid = 1
 	pn0.Left = 1
 	pn0.Right = 2
 	pn0.Parent = -1
@@ -143,7 +143,7 @@ func generatePlanTree() iplan.PlanTree {
 	pn0.Joint_cols = "id,customer_id"
 	// 结点1
 	pn1 := &plan_tree.Nodes[1]
-	pn1.Nodeid = 1
+	pn1.Nodeid = 2
 	pn1.Left = 3
 	pn1.Right = -1
 	pn1.Parent = 0
@@ -153,7 +153,7 @@ func generatePlanTree() iplan.PlanTree {
 	pn1.Where = "id > 2"
 	// 结点2
 	pn2 := &plan_tree.Nodes[2]
-	pn2.Nodeid = 2
+	pn2.Nodeid = 3
 	pn2.Left = 4
 	pn2.Right = -1
 	pn2.Parent = 0
@@ -163,7 +163,7 @@ func generatePlanTree() iplan.PlanTree {
 	pn2.Cols = "customer_id,quantity"
 	// 结点3 data节点
 	pn3 := &plan_tree.Nodes[3]
-	pn3.Nodeid = 3
+	pn3.Nodeid = 4
 	pn3.Left = -1
 	pn3.Right = -1
 	pn3.Parent = 1
@@ -173,7 +173,7 @@ func generatePlanTree() iplan.PlanTree {
 	pn3.TmpTable = "customer"
 	// 结点4 data节点
 	pn4 := &plan_tree.Nodes[4]
-	pn4.Nodeid = 4
+	pn4.Nodeid = 5
 	pn4.Left = -1
 	pn4.Right = -1
 	pn4.Parent = 2
