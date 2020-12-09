@@ -68,7 +68,7 @@ func RunTree(txn_id int64) int64 {
 			break
 		}
 		// 从tree中找可用代码
-		println(plan_tree)
+		fmt.Println(plan_tree)
 		execute_id := FindOneNode(plan_tree, 0)
 		fmt.Println(execute_id)
 		if execute_id == -1 {
