@@ -30,7 +30,7 @@ func (s *cserver) ExecuterCall(ctx context.Context, in *IrpcCallReq) (*IrpcStatu
 }
 
 func RunCallServer() {
-	iutilities.LoadAllConfig()
+	// iutilities.LoadAllConfig()
 
 	println("rpccall")
 	lis, err := net.Listen("tcp", cport)

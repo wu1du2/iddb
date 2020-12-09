@@ -10,7 +10,6 @@ func main() {
 	testnodeid := 0
 	ip := iutilities.Peers[testnodeid].IP
 	port := iutilities.Peers[testnodeid].Call
-	// address := "10.77.70.161:50054"
 	address := ip + ":" + port
 	println(address)
 	var txnid int64

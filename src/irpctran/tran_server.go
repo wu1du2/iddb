@@ -38,7 +38,7 @@ func (s *tserver) PushTable(ctx context.Context, in *Table) (*IrpcStatus, error)
 Regitering transmission server
 */
 func RunTranServer() {
-	iutilities.LoadAllConfig()
+	// iutilities.LoadAllConfig()
 
 	println("irpctran")
 	lis, err := net.Listen("tcp", tport)
