@@ -94,6 +94,7 @@ func test1() {
 	// plantree, err = iqueryanalyzer.analyze(plantree)
 	// plantree, err = ioptimizer.optimize(plantree)
 	plantree = generatePlanTree()
+	println("start imeta")
 	err = imeta.Build_Txn(txnID)
 	if err != nil {
 		iutilities.CheckErr(err)
@@ -105,12 +106,14 @@ func test1() {
 		return
 	}
 	var ipaddr string
-
+	println("end imeta")
 	for _, node := range iutilities.Peers {
 		ipaddr = node.IP + ":" + node.Call
+		println("call node to work ", node.NodeId)
 		go irpccall.RunCallClient(ipaddr, txnID)
 	}
 	var waitgroup sync.WaitGroup
+	println("client end!")
 	waitgroup.Add(1)
 	waitgroup.Wait()
 }
