@@ -100,6 +100,7 @@ func test1() {
 		return
 	}
 	println("imeta build txn ok")
+	fmt.Println(plantree)
 	err = imeta.Set_Tree(txnID, plantree)
 	if err != nil {
 		iutilities.CheckErr(err)
