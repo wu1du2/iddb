@@ -12,14 +12,17 @@ import (
 	// "log"
 	// "net"
 
+	"imeta"
+	"iplan"
 	"irpccall"
 	"irpctran"
 	"iutilities"
+	"sync"
 
 	// "iparser"
-
 	"fmt"
 	"os"
+	"runtime"
 	"strings"
 )
 
@@ -33,6 +36,7 @@ iddb client设计思路
 
 func main() {
 	//INIT
+	var waitgroup sync.WaitGroup
 	for i, v := range os.Args {
 		if i == 1 {
 			println(i, v)
@@ -42,11 +46,11 @@ func main() {
 
 	}
 	iutilities.LoadAllConfig()
-
-	//GET INPUT SQL STATEMENT
+	runtime.GOMAXPROCS(8)
 	var sqlstmt string
-	// testtrans()
-	// testcall()
+
+	test1()
+
 	for {
 		println("please enter SQL statement end with ; (q to quit)")
 		sqlstmt = scanLine()
@@ -77,8 +81,40 @@ func scanLine() string {
 	return string(b)
 }
 
+func test1() {
+	txnID := 10001
+	sqlstmt := "select * from Publisher"
+	var plantree iplan.PlanTree
+	var err error
+	plantree, err = iparser.parse(sqlstmt)
+	plantree, err = iqueryanalyzer.analyze(plantree)
+	plantree, err = ioptimizer.optimize(plantree)
+	if err != nil {
+		iutilities.CheckErr(err)
+		return
+	}
+	err = imeta.Build_Txn(txnID)
+	if err != nil {
+		iutilities.CheckErr(err)
+		return
+	}
+	err = imeta.Set_Tree(txnID, plantree)
+	if err != nil {
+		iutilities.CheckErr(err)
+		return
+	}
+	var ipaddr string
+	for _, node := range iutilities.Peers {
+		ipaddr = node.IP + ":" + node.Call
+		go irpccall.RunCallClient(ipaddr, txnID)
+	}
+
+	waitgroup.Add(1)
+	waitgroup.Wait()
+}
+
 func testtrans() {
-	iutilities.Peers = iutilities.GetPeers()
+	// iutilities.Peers = iutilities.GetPeers()
 	testnodeid := 0
 	ip := iutilities.Peers[testnodeid].IP
 	port := iutilities.Peers[testnodeid].Tran
