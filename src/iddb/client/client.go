@@ -132,8 +132,8 @@ func generatePlanTree() iplan.PlanTree {
 	// 根结点0
 	pn0 := &plan_tree.Nodes[0]
 	pn0.Nodeid = 1
-	pn0.Left = 1
-	pn0.Right = 2
+	pn0.Left = 2
+	pn0.Right = 3
 	pn0.Parent = -1
 	pn0.Status = 0
 	pn0.Locate = 2
@@ -144,7 +144,7 @@ func generatePlanTree() iplan.PlanTree {
 	// 结点1
 	pn1 := &plan_tree.Nodes[1]
 	pn1.Nodeid = 2
-	pn1.Left = 3
+	pn1.Left = 4
 	pn1.Right = -1
 	pn1.Parent = 0
 	pn1.Status = 0
@@ -154,7 +154,7 @@ func generatePlanTree() iplan.PlanTree {
 	// 结点2
 	pn2 := &plan_tree.Nodes[2]
 	pn2.Nodeid = 3
-	pn2.Left = 4
+	pn2.Left = 5
 	pn2.Right = -1
 	pn2.Parent = 0
 	pn2.Status = 0
