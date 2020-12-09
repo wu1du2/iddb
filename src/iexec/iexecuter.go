@@ -9,7 +9,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-
+	"imeta"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -24,6 +24,7 @@ var err error
 func RunExecuter(txn_id int64) int64 {
 	// get the plan through txn_id
 	//
+	RunTree(txn_id)
 	println("executed successfully")
 	return 0
 }
@@ -54,11 +55,12 @@ func Init() {
 	iutilities.CheckErr(err)
 }
 
-func RunTree(plan_tree iplan.PlanTree) int64 {
+func RunTree(txn_id int64) int64 {
 	Init()
+	var plan_tree iplan.PlanTree
 	for {
 		// TODO:获取etcd tree
-
+		plan_tree = imeta.Get_Tree(txn_id)
 		// 检测树是否完全执行完毕
 		if TreeIsComplete(plan_tree) {
 			break
@@ -80,6 +82,7 @@ func RunTree(plan_tree iplan.PlanTree) int64 {
 		current_node = plan_tree.Nodes[execute_id]
 		fmt.Println(current_node)
 		// TODO:更新etcd状态
+		imeta.Set_Node(txn_id, current_node)
 	}
 	println("executed successfully")
 	return 0
