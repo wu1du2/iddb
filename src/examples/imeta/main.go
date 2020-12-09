@@ -21,7 +21,7 @@ func main() {
 func test_imeta()(error){	
 	var tag int64
 	for true{
-		fmt.Println("1:Get_Tree; 2:Get_Node; 3:Set_Node; 4:Build_txn 0: exit")
+		fmt.Println("1:Get_Tree; 2:Get_Node; 3:Set_Node;4: Build_txn; 5:Set_Tree 0: exit")
 		fmt.Scanf("%d",&tag)
 		fmt.Println(tag)
 		if (tag==1) {
@@ -84,6 +84,27 @@ func test_imeta()(error){
 			var tid int64
 			fmt.Scanf("%d",&tid)
 			err := imeta.Build_Txn(tid)
+			if(err != nil){
+				return err
+			}
+		}
+		if (tag==5){
+			fmt.Println("get tree:")
+			var tid int64
+			fmt.Scanf("%d",&tid)
+
+			treex,err := imeta.Get_Tree(tid)
+			if(err != nil){
+				fmt.Println("err")
+				return err
+			}
+			fmt.Println("--------------")
+
+			fmt.Println("set tree:")
+			var tidd int64
+			fmt.Scanf("%d",&tidd)
+
+			err = imeta.Set_Tree(tidd,treex)
 			if(err != nil){
 				return err
 			}

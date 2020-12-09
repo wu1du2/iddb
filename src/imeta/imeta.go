@@ -194,5 +194,37 @@ func Set_Node(txnid int64, Node_in iplan.PlanTreeNode)(error){
 	return nil
 }
 
+func Set_Tree(txnid int64, Tree_in iplan.PlanTree)(error){
+	kv := clientv3.NewKV(Cli)
 
+	node0 :=  "/"+strconv.FormatInt(txnid,10)	
+	nodenum := 	Tree_in.NodeNum
+
+	if putResp, err := kv.Put(context.TODO(),node0,strconv.FormatInt(nodenum,10),clientv3.WithPrevKV());err !=nil {
+		fmt.Println(err)
+		return err
+	}else{
+		if putResp.PrevKv !=nil {
+			fmt.Println("Not New")
+			fmt.Println(string(putResp.PrevKv.Value))
+		}
+		//fmt.Println("Build Txn "+node0+" success")
+	}
+	fmt.Println("Tree_in:")
+	fmt.Println(Tree_in)
+
+	for i,node_in:=range Tree_in.Nodes{
+		err := Set_Node(txnid, node_in )
+		if(err != nil){
+			return err
+		}
+		if( i>int(nodenum) ) {
+			break
+		}
+	}
+	fmt.Println("Set Tree success")
+
+	return nil
+
+}
 
