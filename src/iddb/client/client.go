@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"strconv"
 	"strings"
 )
 
@@ -34,15 +35,25 @@ iddb client设计思路
 4.生成生成txnid(全局唯一，严格递增)
 */
 
+var txnID int64
+var err error
+
 func main() {
 	//INIT
+
+	txnID = 10001
+
 	for i, v := range os.Args {
+		// if i == 1 {
+		// 	println(i, v)
+		// 	iutilities.Configfile = v
+		// 	println("iutilities.Configfile= ", iutilities.Configfile)
+		// }
+
 		if i == 1 {
 			println(i, v)
-			iutilities.Configfile = v
-			println("iutilities.Configfile= ", iutilities.Configfile)
+			txnID, err = strconv.ParseInt(v, 10, 64)
 		}
-
 	}
 	iutilities.LoadAllConfig()
 
@@ -83,8 +94,7 @@ func scanLine() string {
 }
 
 func test1() {
-	var txnID int64
-	txnID = 10001
+
 	// sqlstmt := "select * from Publisher"
 	var plantree iplan.PlanTree
 	var err error
