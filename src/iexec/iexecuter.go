@@ -381,7 +381,7 @@ func generateCreateQuery(plan_node *iplan.PlanTreeNode) string {
 	return create_sql.String + ";"
 }
 
-func generateInsertQuery(plan_node *iplan.PlanTreeNode) string, bool {
+func generateInsertQuery(plan_node *iplan.PlanTreeNode) (string, bool) {
 	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
 	db, err := sql.Open("mysql", mysql)
 
@@ -428,10 +428,10 @@ func generateInsertQuery(plan_node *iplan.PlanTreeNode) string, bool {
 		i++
 	}
 	insert_query = insert_query + ";"
-	if i ==0 {
+	if i == 0 {
 		return insert_query, false
 	} else {
-		return insert_query,true
+		return insert_query, true
 	}
 
 }
