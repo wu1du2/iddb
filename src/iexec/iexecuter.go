@@ -45,8 +45,8 @@ func ExecuteRemoteCreateStmt(address string, create_sql string) {
 
 func Init() {
 	// TODO:set site id
-	// site = iutilities.Me.NodeId
-	site = 1
+	site = iutilities.Me.NodeId
+	// site = 1
 	mysql_user = iutilities.Mysql.Mysql_user
 	mysql_passwd = iutilities.Mysql.Mysql_passwd
 	mysql_db = iutilities.Mysql.Mysql_db
