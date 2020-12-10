@@ -314,11 +314,11 @@ func Strval(value interface{}) string {
 		it := value.(uint64)
 		key = strconv.FormatUint(it, 10)
 	case string:
-		key = value.(string)
+		key = "'" + value.(string) + "'"
 	case []byte:
-		key = string(value.([]byte))
+		key = "'" + string(value.([]byte)) + "'"
 	case sql.RawBytes:
-		key = string(value.(sql.RawBytes))
+		key = "'" + string(value.(sql.RawBytes)) + "'"
 	case sql.NullBool:
 		boolnull := value.(sql.NullBool)
 		if boolnull.Valid {
@@ -329,7 +329,7 @@ func Strval(value interface{}) string {
 	case sql.NullString:
 		stringnull := value.(sql.NullString)
 		if stringnull.Valid {
-			key = stringnull.String
+			key = "'" + stringnull.String + "'"
 		} else {
 			key = "NULL"
 		}
