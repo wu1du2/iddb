@@ -149,7 +149,7 @@ func generatePlanTree() iplan.PlanTree {
 	pn0.Locate = 1
 	pn0.NodeType = 4
 	pn0.TransferFlag = true
-	pn0.Dest = 1
+	pn0.Dest = 0
 	pn0.Joint_cols = "id,customer_id"
 	// 结点1
 	pn1 := &plan_tree.Nodes[1]
