@@ -12,6 +12,7 @@ import (
 	// "log"
 	// "net"
 
+	"imeta"
 	"irpccall"
 	"irpctran"
 	"iutilities"
@@ -35,7 +36,7 @@ iddb server设计思路
 func main() {
 	//INIT
 	runtime.GOMAXPROCS(8)
-
+	imeta.Connect_etcd()
 	for i, v := range os.Args {
 		if i == 1 {
 			println(i, v)

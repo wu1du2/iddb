@@ -147,7 +147,8 @@ func test_tree() {
 	pn4.Locate = 0
 	pn4.NodeType = 1
 	pn4.TmpTable = "orders"
-	iexec.RunTree(plan_tree)
+	var txn_id int64
+	iexec.RunTree(txn_id)
 }
 
 func checkErr(err error) {
