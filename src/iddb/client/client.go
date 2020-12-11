@@ -1,7 +1,9 @@
 package main
 
 import (
-	// "iparser"
+	"iparser"
+	"iqueryanalyzer"
+
 	// "iqueryanalyzer"
 	// "iqueryoptimizer"
 	// "imeta"
@@ -17,13 +19,12 @@ import (
 	"irpccall"
 	"irpctran"
 	"iutilities"
+	"strconv"
 	"sync"
 
 	// "iparser"
 	"fmt"
-	"os"
 	"runtime"
-	"strconv"
 	"strings"
 )
 
@@ -35,41 +36,90 @@ iddb client设计思路
 4.生成生成txnid(全局唯一，严格递增)
 */
 
-var txnID int64
-var err error
+var (
+	txnID     int64
+	err       error
+	ipaddr    string
+	plantree  iplan.PlanTree
+	waitgroup sync.WaitGroup
+)
 
 func main() {
 	//INIT
 
 	txnID = 10001
 
-	for i, v := range os.Args {
-		// if i == 1 {
-		// 	println(i, v)
-		// 	iutilities.Configfile = v
-		// 	println("iutilities.Configfile= ", iutilities.Configfile)
-		// }
+	// for i, v := range os.Args {
+	// 	if i == 1 {
+	// 		println(i, v)
+	// 		iutilities.Configfile = v
+	// 		println("iutilities.Configfile= ", iutilities.Configfile)
+	// 	}
 
-		if i == 1 {
-			println(i, v)
-			txnID, err = strconv.ParseInt(v, 10, 64)
-		}
-	}
+	// 	if i == 1 {
+	// 		println(i, v)
+	// 		txnID, err = strconv.ParseInt(v, 10, 64)
+	// 	}
+	// }
 	iutilities.LoadAllConfig()
 
 	runtime.GOMAXPROCS(8)
 
 	var sqlstmt string
 
-	test1()
+	// test1()
 
 	for {
+		println("please enter TxnId: ")
+		txnID, err = strconv.ParseInt(scanLine(), 10, 64)
+		if err != nil {
+			iutilities.CheckErr(err)
+		} else {
+			println("txnID=", txnID)
+		}
+
 		println("please enter SQL statement end with ; (q to quit)")
 		sqlstmt = scanLine()
 		println(sqlstmt)
 		if strings.EqualFold(sqlstmt, "q") {
 			break
 		}
+
+		plantree = iparser.Parse(sqlstmt, txnID)
+		plantree = iqueryanalyzer.Analyze(plantree)
+		// plantree, err = ioptimizer.Optimize(plantree)
+
+		fmt.Println("plantree is ", plantree)
+
+		imeta.Connect_etcd()
+		println("start imeta")
+
+		err = imeta.Build_Txn(txnID)
+		if err != nil {
+			iutilities.CheckErr(err)
+			return
+		}
+
+		println("imeta build txn ok")
+
+		err = imeta.Set_Tree(txnID, plantree)
+		if err != nil {
+			iutilities.CheckErr(err)
+			return
+		}
+		println("imeta set tree ok")
+
+		println("end imeta")
+		for _, node := range iutilities.Peers {
+			ipaddr = node.IP + ":" + node.Call
+			println("call node to work ", node.NodeId)
+			go irpccall.RunCallClient(ipaddr, txnID)
+		}
+
+		println("client end!")
+
+		waitgroup.Add(1)
+		waitgroup.Wait()
 
 	}
 
@@ -97,7 +147,7 @@ func test1() {
 
 	// sqlstmt := "select * from Publisher"
 	var plantree iplan.PlanTree
-	var err error
+
 	// plantree, err = iparser.parse(sqlstmt)
 	// plantree, err = iqueryanalyzer.analyze(plantree)
 	// plantree, err = ioptimizer.optimize(plantree)
