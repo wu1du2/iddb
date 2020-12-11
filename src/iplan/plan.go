@@ -2,7 +2,7 @@ package iplan
 
 const (
 	//MaxNodeNum define the max num of the plantree nodes
-	MaxNodeNum = 10
+	MaxNodeNum = 100
 )
 
 //PlanTreeNode is the basic node for a PlanTree

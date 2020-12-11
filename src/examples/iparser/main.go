@@ -2,7 +2,7 @@ package main
 
 import (
 	"iparser"
-	// "iplan"
+	"iqueryanalyzer"
 )
 
 func main() {
@@ -11,6 +11,10 @@ func main() {
 	from Customer,Orders
 	where Customer.id=Orders.customer_id`
 
-	iparser.Parse(sql, 0)
+	logicalPlanTree := iparser.Parse(sql, 0)
+	physicalPlanTree := iqueryanalyzer.Analyze(logicalPlanTree)
+	for _, node := range physicalPlanTree.Nodes {
+		println(node.TmpTable)
 
+	}
 }
