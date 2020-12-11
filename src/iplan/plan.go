@@ -30,3 +30,15 @@ type PlanTree struct {
 	NodeNum int64
 	Nodes   [MaxNodeNum]PlanTreeNode
 }
+
+type FragNode struct{
+	FragId int64  //1,2,3,4
+	FragCondition string 
+	SiteNum int64   //1,2,3,4
+	Ip string //10.77.10.161
+}
+
+type FragTree struct{
+	FragNum int64
+	Frags	[10]FragNode
+}

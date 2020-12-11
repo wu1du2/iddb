@@ -10,7 +10,8 @@ import (
 
 func main() {
 	imeta.Connect_etcd()
-	err := test_imeta()
+	//err := test_imeta()
+	err := test_frag()
 	if( err!=nil ){
 		fmt.Println("err")
 	}
@@ -23,7 +24,7 @@ func test_imeta()(error){
 	for true{
 		fmt.Println("1:Get_Tree; 2:Get_Node; 3:Set_Node;4: Build_txn; 5:Set_Tree 0: exit")
 		fmt.Scanf("%d",&tag)
-		fmt.Println(tag)
+		//fmt.Println(tag)
 		if (tag==1) {
 			var nid int64
 			fmt.Println("input txn id")
@@ -117,4 +118,58 @@ func test_imeta()(error){
 	return nil
 }
 
+
+func test_frag()(error){	
+	var tag int64
+	for true{
+		fmt.Println("1:Get_Tree; 2:Set_Tree;  0: exit")
+		fmt.Scanf("%d",&tag)
+		//fmt.Println(tag)
+		if (tag == 1) {
+			var tablename string
+			fmt.Println("input tabelname")
+			fmt.Scanf("%s",&tablename)
+			fmt.Println(tablename)
+			//var treex iplan.PlanTree
+			treey,err := imeta.Get_FragTree(tablename)
+			if(err != nil){
+				fmt.Println("err")
+				return err
+			}
+			fmt.Println("--------------")
+			fmt.Println(treey)
+		}
+		if (tag == 2){
+			FragN := 4
+			var Treey iplan.FragTree
+			Treey.FragNum = int64(FragN)
+			i := 1
+			for {
+				Treey.Frags[i].FragId = int64(i)
+				Treey.Frags[i].FragCondition = "id>1000"
+				Treey.Frags[i].SiteNum = int64(i)
+				Treey.Frags[i].Ip = "10.77.70.161"
+				i=i+1
+				if(i > FragN){
+					break
+				}
+			}
+			//fmt.Println("Tree in:")
+			//fmt.Println(Treey)
+
+			var tablename string
+			fmt.Println("input tabelname")
+			fmt.Scanf("%s",&tablename)
+			err := imeta.Set_FragTree(tablename, Treey)
+			if(err != nil){
+				return err
+			}
+		}
+		if (tag == 0){
+			fmt.Println("bye bye")
+			break
+		}
+	}
+	return nil
+}
 
