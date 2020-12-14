@@ -101,6 +101,9 @@ func Get_Tree(txnid int64) (iplan.PlanTree, error) {
 			}
 			//Nodes attr
 			println("ikey=", ikey)
+			if ikey == -1 {
+				ikey = 0
+			}
 			tree_return.Nodes[ikey].Nodeid, err = strconv.ParseInt(ivalues[0], 10, 64)
 			tree_return.Nodes[ikey].Left, err = strconv.ParseInt(ivalues[1], 10, 64)
 			tree_return.Nodes[ikey].Right, err = strconv.ParseInt(ivalues[2], 10, 64)
