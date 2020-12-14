@@ -62,6 +62,7 @@ func RunTree(txn_id int64) int64 {
 	var plan_tree iplan.PlanTree
 	for {
 		// TODO:获取etcd tree
+		println("txn_id:", txn_id)
 		plan_tree, err = imeta.Get_Tree(txn_id)
 		// 检测树是否完全执行完毕
 		if TreeIsComplete(plan_tree) {
