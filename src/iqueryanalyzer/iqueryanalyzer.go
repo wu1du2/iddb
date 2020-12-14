@@ -22,6 +22,7 @@ var nodeid int64
 // }
 
 func createUnionNode(TmpTableName string) (node iplan.PlanTreeNode) {
+	node = iparser.InitalPlanTreeNode()
 	node.Nodeid = nodeid
 	node.Status = 0
 	node.TmpTable = TmpTableName
@@ -56,7 +57,7 @@ func Analyze(logicalPlanTree iplan.PlanTree) (physicalPlanTree iplan.PlanTree) {
 				customerTableNode2.Locate = 2
 				customerTableNode2.TransferFlag = true
 				customerTableNode2.Dest = 1
-				physicalPlanTree.Nodes[nodeid] = customerTableNode1
+				physicalPlanTree.Nodes[nodeid] = customerTableNode2
 				physicalPlanTree.Nodes[nodeid].Parent = node.Nodeid
 				physicalPlanTree.Nodes[idx].Right = physicalPlanTree.Nodes[nodeid].Nodeid
 				nodeid++

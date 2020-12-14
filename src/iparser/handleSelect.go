@@ -22,7 +22,8 @@ func GetTmpTableName() (TmpTableName string) {
 	return TmpTableName
 }
 
-func initalPlanTreeNode() (node iplan.PlanTreeNode) {
+//InitalPlanTreeNode init node
+func InitalPlanTreeNode() (node iplan.PlanTreeNode) {
 	node.Nodeid = -1
 	node.Left = -1
 	node.Right = -1
@@ -39,22 +40,10 @@ func initalPlanTreeNode() (node iplan.PlanTreeNode) {
 	return node
 }
 
-func initalPlanTree() (planTree iplan.PlanTree) {
+//InitalPlanTree init PlanTree
+func InitalPlanTree() (planTree iplan.PlanTree) {
 	for i := 0; i < iplan.MaxNodeNum; i++ {
-		planTree.Nodes[i] = initalPlanTreeNode()
-		// planTree.Nodes[i].Nodeid = -1
-		// planTree.Nodes[i].Left = -1
-		// planTree.Nodes[i].Right = -1
-		// planTree.Nodes[i].Parent = -1
-		// planTree.Nodes[i].Status = -1
-		// planTree.Nodes[i].TmpTable = ""
-		// planTree.Nodes[i].Locate = -1
-		// planTree.Nodes[i].TransferFlag = false
-		// planTree.Nodes[i].Dest = -1
-		// planTree.Nodes[i].NodeType = -1
-		// planTree.Nodes[i].Where = ""
-		// planTree.Nodes[i].Cols = ""
-		// planTree.Nodes[i].Joint_cols = ""
+		planTree.Nodes[i] = InitalPlanTreeNode()
 
 	}
 	planTree.NodeNum = 0
@@ -62,7 +51,7 @@ func initalPlanTree() (planTree iplan.PlanTree) {
 }
 
 func createProjectionNode(TmpTableName string, Cols string) (node iplan.PlanTreeNode) {
-	node = initalPlanTreeNode()
+	node = InitalPlanTreeNode()
 	node.Nodeid = nodeid
 	// nodeid++
 	node.Status = 0
@@ -77,7 +66,7 @@ func createProjectionNode(TmpTableName string, Cols string) (node iplan.PlanTree
 }
 
 func createWhereNode(TmpTableName string, Where string) (node iplan.PlanTreeNode) {
-	node = initalPlanTreeNode()
+	node = InitalPlanTreeNode()
 	node.Nodeid = nodeid
 	// nodeid++
 	node.Status = 0
@@ -92,7 +81,7 @@ func createWhereNode(TmpTableName string, Where string) (node iplan.PlanTreeNode
 }
 
 func createJoinNode(TmpTableName string) (node iplan.PlanTreeNode) {
-	node = initalPlanTreeNode()
+	node = InitalPlanTreeNode()
 	node.Nodeid = nodeid
 	// nodeid++
 	node.Status = 0
@@ -106,7 +95,7 @@ func createJoinNode(TmpTableName string) (node iplan.PlanTreeNode) {
 }
 
 func createTableNode(tablename string) (node iplan.PlanTreeNode) {
-	node = initalPlanTreeNode()
+	node = InitalPlanTreeNode()
 	node.Nodeid = nodeid
 	// nodeid++
 	node.Status = 1
@@ -121,7 +110,7 @@ func createTableNode(tablename string) (node iplan.PlanTreeNode) {
 
 //HandleSelect for handle select statment
 func HandleSelect(sel *sqlparser.Select) iplan.PlanTree {
-	planTree := initalPlanTree()
+	planTree := InitalPlanTree()
 
 	//handle projection; root node is projectionnode
 	planTree.Nodes[nodeid] = createProjectionNode(GetTmpTableName(), sqlparser.String(sel.SelectExprs))
