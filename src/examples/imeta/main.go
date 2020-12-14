@@ -154,6 +154,7 @@ func test_frag()(error){
 					break
 				}
 			}
+			Treey.Frags[0].FragId = int64(-1)
 			//fmt.Println("Tree in:")
 			//fmt.Println(Treey)
 
