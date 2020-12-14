@@ -131,6 +131,6 @@ func Analyze(logicalPlanTree iplan.PlanTree) (physicalPlanTree iplan.PlanTree) {
 		}
 
 	}
-
+	physicalPlanTree.NodeNum = nodeid
 	return physicalPlanTree
 }
