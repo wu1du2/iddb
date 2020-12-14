@@ -100,6 +100,7 @@ func Get_Tree(txnid int64) (iplan.PlanTree, error) {
 				fmt.Println("node" + string(mykv.Key) + "has wrong  attribute number:" + strconv.Itoa(len(ivalues)))
 			}
 			//Nodes attr
+			println("ikey=", ikey)
 			tree_return.Nodes[ikey].Nodeid, err = strconv.ParseInt(ivalues[0], 10, 64)
 			tree_return.Nodes[ikey].Left, err = strconv.ParseInt(ivalues[1], 10, 64)
 			tree_return.Nodes[ikey].Right, err = strconv.ParseInt(ivalues[2], 10, 64)
