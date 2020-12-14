@@ -99,11 +99,23 @@ func Get_Tree(txnid int64) (iplan.PlanTree, error){
 				fmt.Println("node"+string(mykv.Key)+"has wrong  attribute number:"+strconv.Itoa(len(ivalues)))
 			}
 			//Nodes attr
+<<<<<<< HEAD
 			tree_return.Nodes[ikey].Nodeid,err = strconv.ParseInt(ivalues[0],10,64)
 			tree_return.Nodes[ikey].Left,err = strconv.ParseInt(ivalues[1],10,64)
 			tree_return.Nodes[ikey].Right,err = strconv.ParseInt(ivalues[2],10,64)
 			tree_return.Nodes[ikey].Parent,err = strconv.ParseInt(ivalues[3],10,64)
 			tree_return.Nodes[ikey].Status,err = strconv.ParseInt(ivalues[4],10,64)
+=======
+			println("ikey=", ikey)
+			if ikey == -1 {
+				ikey = 0
+			}
+			tree_return.Nodes[ikey].Nodeid, err = strconv.ParseInt(ivalues[0], 10, 64)
+			tree_return.Nodes[ikey].Left, err = strconv.ParseInt(ivalues[1], 10, 64)
+			tree_return.Nodes[ikey].Right, err = strconv.ParseInt(ivalues[2], 10, 64)
+			tree_return.Nodes[ikey].Parent, err = strconv.ParseInt(ivalues[3], 10, 64)
+			tree_return.Nodes[ikey].Status, err = strconv.ParseInt(ivalues[4], 10, 64)
+>>>>>>> 94b79c860ff28419c5bb14686923517a94f2df78
 			tree_return.Nodes[ikey].TmpTable = ivalues[5]
 			tree_return.Nodes[ikey].Locate,err = strconv.ParseInt(ivalues[6],10,64)
 			tree_return.Nodes[ikey].TransferFlag,err = strconv.ParseBool(ivalues[7])
