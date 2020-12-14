@@ -71,6 +71,7 @@ func Get_Tree(txnid int64) (iplan.PlanTree, error) {
 			tree_return.NodeNum = Nnum
 		}
 		for i, mykv := range getResp.Kvs {
+			println("kvs:", i, " ,", mykv.Key, " ,", mykv.Value)
 			if i > int(Nnum) {
 				break
 			}
