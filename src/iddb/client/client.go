@@ -79,7 +79,10 @@ func main() {
 		}
 
 		println("please enter SQL statement end with ; (q to quit)")
-		sqlstmt = scanLine()
+		// sqlstmt = scanLine()
+		sqlstmt = `select Customer.name,Orders.quantity
+		from Customer,Orders
+		where Customer.id=Orders.customer_id`
 		println(sqlstmt)
 		if strings.EqualFold(sqlstmt, "q") {
 			break
