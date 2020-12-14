@@ -40,10 +40,10 @@ func Analyze(logicalPlanTree iplan.PlanTree) (physicalPlanTree iplan.PlanTree) {
 			// metaTableNode := node
 			// metaTableNode.Locate = getLocate(metaTableNode.TmpTable)
 			tableName := node.TmpTable
-			if tableName == "Customer" {
+			if tableName == "customer" {
 				customerTableNode1 := node
 				customerTableNode1.Nodeid = nodeid
-				customerTableNode1.TmpTable = "Customer_1"
+				customerTableNode1.TmpTable = "customer_1"
 				customerTableNode1.Locate = 1
 				customerTableNode1.TransferFlag = false
 				physicalPlanTree.Nodes[nodeid] = customerTableNode1
@@ -53,7 +53,7 @@ func Analyze(logicalPlanTree iplan.PlanTree) (physicalPlanTree iplan.PlanTree) {
 
 				customerTableNode2 := node
 				customerTableNode2.Nodeid = nodeid
-				customerTableNode2.TmpTable = "Customer_2"
+				customerTableNode2.TmpTable = "customer_2"
 				customerTableNode2.Locate = 2
 				customerTableNode2.TransferFlag = true
 				customerTableNode2.Dest = 1
@@ -65,7 +65,7 @@ func Analyze(logicalPlanTree iplan.PlanTree) (physicalPlanTree iplan.PlanTree) {
 				physicalPlanTree.Nodes[idx].NodeType = 5 //chang from table to union
 				physicalPlanTree.Nodes[idx].Status = 0
 
-			} else if tableName == "Orders" {
+			} else if tableName == "orders" {
 				//1
 				// physicalPlanTree.Nodes[nodeid] = createUnionNode(iparser.GetTmpTableName())
 				physicalPlanTree.Nodes[idx].NodeType = 5 //chang from table to union
@@ -74,7 +74,7 @@ func Analyze(logicalPlanTree iplan.PlanTree) (physicalPlanTree iplan.PlanTree) {
 				//2
 				ordersTableNode4 := node
 				ordersTableNode4.Nodeid = nodeid
-				ordersTableNode4.TmpTable = "Orders_4"
+				ordersTableNode4.TmpTable = "orders_4"
 				ordersTableNode4.Locate = 4
 				ordersTableNode4.TransferFlag = true
 				ordersTableNode4.Dest = 1
@@ -90,7 +90,7 @@ func Analyze(logicalPlanTree iplan.PlanTree) (physicalPlanTree iplan.PlanTree) {
 				//4
 				ordersTableNode3 := node
 				ordersTableNode3.Nodeid = nodeid
-				ordersTableNode3.TmpTable = "Orders_3"
+				ordersTableNode3.TmpTable = "orders_3"
 				ordersTableNode3.Locate = 3
 				ordersTableNode3.TransferFlag = true
 				ordersTableNode3.Dest = 1
@@ -106,7 +106,7 @@ func Analyze(logicalPlanTree iplan.PlanTree) (physicalPlanTree iplan.PlanTree) {
 				//6
 				ordersTableNode2 := node
 				ordersTableNode2.Nodeid = nodeid
-				ordersTableNode2.TmpTable = "Orders_2"
+				ordersTableNode2.TmpTable = "orders_2"
 				ordersTableNode2.Locate = 2
 				ordersTableNode2.TransferFlag = true
 				ordersTableNode2.Dest = 1
@@ -117,7 +117,7 @@ func Analyze(logicalPlanTree iplan.PlanTree) (physicalPlanTree iplan.PlanTree) {
 				//7
 				ordersTableNode1 := node
 				ordersTableNode1.Nodeid = nodeid
-				ordersTableNode1.TmpTable = "Orders_1"
+				ordersTableNode1.TmpTable = "orders_1"
 				ordersTableNode1.Locate = 1
 				ordersTableNode1.TransferFlag = false
 				physicalPlanTree.Nodes[nodeid] = ordersTableNode1
