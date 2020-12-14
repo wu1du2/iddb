@@ -88,8 +88,8 @@ func main() {
 			break
 		}
 
-		plantree = iparser.Parse(sqlstmt, txnID)
-		plantree = iqueryanalyzer.Analyze(plantree)
+		plantree1 := iparser.Parse(sqlstmt, txnID)
+		plantree = iqueryanalyzer.Analyze(plantree1)
 		// plantree, err = ioptimizer.Optimize(plantree)
 
 		fmt.Println("plantree is ", plantree)
