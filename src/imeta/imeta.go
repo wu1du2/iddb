@@ -71,7 +71,6 @@ func Get_Tree(txnid int64) (iplan.PlanTree, error) {
 			tree_return.NodeNum = Nnum
 		}
 		for i, mykv := range getResp.Kvs {
-			println("kvs:", i, " ,", mykv.Key, " ,", mykv.Value)
 			if i > int(Nnum) {
 				break
 			}
@@ -167,7 +166,13 @@ func Get_Node(txnid int64, nodeid int64) (iplan.PlanTreeNode, error) {
 func Set_Node(txnid int64, Node_in iplan.PlanTreeNode) error {
 	kv := clientv3.NewKV(Cli)
 	//key value
-	ikey := "/" + strconv.FormatInt(txnid, 10) + "/" + strconv.FormatInt(Node_in.Nodeid, 10)
+	var ikey string
+	if int(Node_in.Nodeid) < 0 || int(Node_in.Nodeid) >= iplan.MaxNodeNum {
+		ikey = "/" + strconv.FormatInt(txnid, 10) + "/0"
+		Node_in.Nodeid = int64(0)
+	} else {
+		ikey = "/" + strconv.FormatInt(txnid, 10) + "/" + strconv.FormatInt(Node_in.Nodeid, 10)
+	}
 	var ivalue string
 	ivalue = strconv.FormatInt(Node_in.Nodeid, 10) + "##" + strconv.FormatInt(Node_in.Left, 10) + "##" + strconv.FormatInt(Node_in.Right, 10) + "##"
 	ivalue = ivalue + strconv.FormatInt(Node_in.Parent, 10) + "##" + strconv.FormatInt(Node_in.Status, 10) + "##" + Node_in.TmpTable + "##" + strconv.FormatInt(Node_in.Locate, 10) + "##"
@@ -228,7 +233,6 @@ func Set_Tree(txnid int64, Tree_in iplan.PlanTree) error {
 			break
 		}
 	}
-	fmt.Println(Tree_in)
 	fmt.Println("Set Tree success")
 
 	return nil
@@ -310,7 +314,13 @@ func Set_FragTree(tablename string, Treey_in iplan.FragTree) error {
 	}
 
 	for i, fg := range Treey_in.Frags {
-		ikey := "/" + tablename + "/" + strconv.FormatInt(fg.FragId, 10)
+		var ikey string
+		if int(fg.FragId) < 0 || int(fg.FragId) >= iplan.MaxFragNum {
+			ikey = "/" + tablename + "/0"
+			fg.FragId = int64(0)
+		} else {
+			ikey = "/" + tablename + "/" + strconv.FormatInt(fg.FragId, 10)
+		}
 		var ivalue string
 		ivalue = strconv.FormatInt(fg.FragId, 10) + "##" + fg.FragCondition + "##" + strconv.FormatInt(fg.SiteNum, 10) + "##" + fg.Ip
 

@@ -10,8 +10,8 @@ import (
 
 func main() {
 	imeta.Connect_etcd()
-	//err := test_imeta()
-	err := test_frag()
+	err := test_imeta()
+	//err := test_frag()
 	if( err!=nil ){
 		fmt.Println("err")
 	}
