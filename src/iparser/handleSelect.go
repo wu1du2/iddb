@@ -143,7 +143,7 @@ func HandleSelect(sel *sqlparser.Select) iplan.PlanTree {
 		planTree.Nodes[nodeid-1].Left = planTree.Nodes[nodeid].Nodeid
 		nodeid++
 		planTree.Nodes[nodeid] = createTableNode(sqlparser.String(sel.From[1]))
-		planTree.Nodes[nodeid].Parent = planTree.Nodes[nodeid-1].Nodeid
+		planTree.Nodes[nodeid].Parent = planTree.Nodes[nodeid-2].Nodeid
 		planTree.Nodes[nodeid-2].Right = planTree.Nodes[nodeid].Nodeid
 		nodeid++
 	case 3:
