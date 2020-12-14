@@ -119,10 +119,10 @@ func main() {
 			go irpccall.RunCallClient(ipaddr, txnID)
 		}
 
-		println("client end!")
-
 		waitgroup.Add(1)
 		waitgroup.Wait()
+
+		println("client end!")
 
 	}
 
