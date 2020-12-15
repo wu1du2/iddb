@@ -27,6 +27,8 @@ func createUnionNode(TmpTableName string) (node iplan.PlanTreeNode) {
 	node.Status = 0
 	node.TmpTable = TmpTableName
 	node.NodeType = 5
+	node.Locate = 1
+	node.TransferFlag = false
 
 	return node
 }
