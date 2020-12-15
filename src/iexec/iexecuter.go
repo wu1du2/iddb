@@ -234,7 +234,7 @@ func ExecuteJoin(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_id
 	tablename1 := plan_tree.Nodes[plan_node.Left].TmpTable
 	tablename2 := plan_tree.Nodes[plan_node.Right].TmpTable
 	cols := strings.Split(plan_node.Joint_cols, ",")
-	query := "create table tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select * from " + tablename1 + "," + tablename2 + " where " + tablename1 + "." + cols[0] + "=" + tablename2 + "." + cols[1]
+	query := "create table tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select * from " + tablename1 + "," + tablename2 + " where " + tablename1 + "." + cols[0] + "=" + tablename2 + "." + cols[1] + ";"
 	println(query)
 
 	stmt, err := db.Prepare(query)
@@ -256,7 +256,7 @@ func ExecuteUnion(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_i
 
 	tablename1 := plan_tree.Nodes[plan_node.Left].TmpTable
 	tablename2 := plan_tree.Nodes[plan_node.Right].TmpTable
-	query := "create table tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select * from " + tablename1 + "union" + "select * from " + tablename2
+	query := "create table tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select * from " + tablename1 + " union" + " select * from " + tablename2 + ";"
 	println(query)
 
 	stmt, err := db.Prepare(query)

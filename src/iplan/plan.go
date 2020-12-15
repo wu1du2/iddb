@@ -3,6 +3,7 @@ package iplan
 const (
 	//MaxNodeNum define the max num of the plantree nodes
 	MaxNodeNum = 100
+	MaxFragNum = 10
 )
 
 //PlanTreeNode is the basic node for a PlanTree
@@ -40,5 +41,5 @@ type FragNode struct {
 
 type FragTree struct {
 	FragNum int64
-	Frags   [10]FragNode
+	Frags   [MaxFragNum]FragNode
 }
