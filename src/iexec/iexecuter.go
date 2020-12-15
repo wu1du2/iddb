@@ -192,7 +192,7 @@ func ExecuteFilter(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_
 	// TODO: assert(plan_node.Right = -1)
 
 	tablename := plan_tree.Nodes[plan_node.Left].TmpTable
-	query := "create table tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select * from " + tablename + " where " + plan_node.Where
+	query := "create table tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select * from " + tablename + " " + plan_node.Where
 
 	println(query)
 	stmt, err := db.Prepare(query)
