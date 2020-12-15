@@ -59,7 +59,7 @@ func createProjectionNode(TmpTableName string, Cols string) (node iplan.PlanTree
 	node.NodeType = 3
 	node.Cols = Cols
 
-	node.Locate = 1
+	node.Locate = 0
 	node.TransferFlag = false
 
 	return node
@@ -74,7 +74,7 @@ func createWhereNode(TmpTableName string, Where string) (node iplan.PlanTreeNode
 	node.NodeType = 2
 	node.Where = Where
 
-	node.Locate = 1
+	node.Locate = 0
 	node.TransferFlag = false
 
 	return node
@@ -88,7 +88,7 @@ func createJoinNode(TmpTableName string) (node iplan.PlanTreeNode) {
 	node.TmpTable = TmpTableName
 	node.NodeType = 4
 
-	node.Locate = 1
+	node.Locate = 0
 	node.TransferFlag = false
 
 	return node
@@ -102,7 +102,7 @@ func createTableNode(tablename string) (node iplan.PlanTreeNode) {
 	node.TmpTable = tablename
 	node.NodeType = 1
 
-	node.Locate = 1
+	node.Locate = 0
 	node.TransferFlag = false
 
 	return node
