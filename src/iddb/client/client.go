@@ -83,7 +83,7 @@ func main() {
 		// sqlstmt = `select customer.name,orders.quantity
 		// from customer,orders
 		// where customer.id=orders.customer_id`
-		sqlstmt = `select customer.name,orders.quantity
+		sqlstmt = `select *
 		from customer,orders
 		where 1=1`
 		println(sqlstmt)
