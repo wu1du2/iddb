@@ -84,7 +84,8 @@ func main() {
 		// from customer,orders
 		// where customer.id=orders.customer_id`
 		sqlstmt = `select customer.name,orders.quantity
-		from customer,orders`
+		from customer,orders
+		where 1=1`
 		println(sqlstmt)
 		if strings.EqualFold(sqlstmt, "q") {
 			break
