@@ -1,5 +1,7 @@
 package iplan
 
+import "fmt"
+
 const (
 	//MaxNodeNum define the max num of the plantree nodes
 	MaxNodeNum = 100
@@ -42,4 +44,12 @@ type FragNode struct {
 type FragTree struct {
 	FragNum int64
 	Frags   [MaxFragNum]FragNode
+}
+
+func (pt *PlanTree) Print() {
+	var i int64
+	for i = 0; i < pt.NodeNum; i++ {
+		fmt.Println(pt.Nodes[i+1])
+	}
+	return
 }
