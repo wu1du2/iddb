@@ -95,7 +95,9 @@ func main() {
 		plantree = iqueryanalyzer.Analyze(plantree1)
 		// plantree, err = ioptimizer.Optimize(plantree)
 
-		fmt.Println("plantree is ", plantree)
+		// fmt.Println("plantree is ", plantree)
+
+		plantree.Print()
 
 		imeta.Connect_etcd()
 		println("start imeta")
