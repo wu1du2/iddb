@@ -56,7 +56,7 @@ func Get_Tree(txnid int64) (iplan.PlanTree, error) {
 		var a iplan.PlanTree
 		return a, err
 	} else {
-		fmt.Println("Get_Tree:")
+		// fmt.Println("Get_Tree:")
 		//fmt.Println(getResp.Kvs)
 		var tree_return iplan.PlanTree
 		var Nnum int64

@@ -5,7 +5,7 @@ import (
 	"iqueryanalyzer"
 
 	// "iqueryanalyzer"
-	// "iqueryoptimizer"
+	"iqueryoptimizer"
 	// "imeta"
 	// "irpc"
 	// "iexecuter"
@@ -93,7 +93,7 @@ func main() {
 
 		plantree1 := iparser.Parse(sqlstmt, txnID)
 		plantree = iqueryanalyzer.Analyze(plantree1)
-		// plantree, err = ioptimizer.Optimize(plantree)
+		plantree = iqueryoptimizer.Optimize(plantree)
 
 		// fmt.Println("plantree is ", plantree)
 
