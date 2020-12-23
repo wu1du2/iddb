@@ -15,7 +15,6 @@ func main() {
 	if( err!=nil ){
 		fmt.Println("err")
 	}
-
 	//imeta.Disconnect_etcd()
 }
 
@@ -69,8 +68,10 @@ func test_imeta()(error){
 			nodex.Dest = 161
 			nodex.NodeType = 2
 			nodex.Where = "name=abc"
+			nodex.Rel_cols = "id,name,dep"
 			nodex.Cols = "name"
-			nodex.Joint_cols = " "
+			nodex.Joint_type = 1
+			nodex.Joint_cols = "id"
 			//fmt.Println(nodex)
 			err := imeta.Set_Node(tid, nodex)
 			fmt.Println("--------------")
@@ -118,7 +119,7 @@ func test_imeta()(error){
 	return nil
 }
 
-
+/*
 func test_frag()(error){	
 	var tag int64
 	for true{
@@ -154,7 +155,6 @@ func test_frag()(error){
 					break
 				}
 			}
-			Treey.Frags[0].FragId = int64(-1)
 			//fmt.Println("Tree in:")
 			//fmt.Println(Treey)
 
@@ -173,4 +173,6 @@ func test_frag()(error){
 	}
 	return nil
 }
+*/
+
 
