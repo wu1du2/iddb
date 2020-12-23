@@ -77,29 +77,25 @@ $../../mattn/goreman/goreman -f Procfile_C start
 
 2）代码调用
 
-a.导入包
-import "imeta"
+数据结构位于iplan/plan.go
+函数位于imeta/imeta.go
+调用 示例位于example/imeta/main.go
 
-b.每个事务建立（第一次存入前）必须调用：imeta.Build_Txn(txnid int64)
-初始设置iplan.PlanTree.NodeNum为0，记录在/txnid中
+interface:
 
-调用：
-	err := imeta.Build_Txn(txnid int64)
+一、查询树
+1. imeta/imeta.go: Build_Txn(txnid int64) error
 
-b.Get_Tree获取整棵树，返回iplan.PlanTree类型, iplan.PlanTree.NodeNum为最大节点id
+2. imeta/imeta.go: Set_Node(txnid int64, Node_in iplan.PlanTreeNode) error
 
-调用：
-	treex,err := imeta.Get_Tree(txnid int64)
+3. imeta/imeta.go: Set_Tree(txnid int64, Tree_in iplan.PlanTree) error
 
-c.Get_Node获取整棵树，返回iplan.PlanTreeNoode
+4. imeta/imeta.go: Get_Node(txnid int64, nodeid int64) (iplan.PlanTreeNode, error)
 
-调用：
-	nodex,err := imeta.Get_Node(txnid int64, nodeid int64)
+二、分片信息
+1. imeta/imeta.go: Set_FragTree(tablename string, Treey_in iplan.FragTree) error
 
-d.Set_Node,输入事务号和一个node结构。返回成功或失败
-
-调用：
-	err := imeta.Set_Node(txnid int64, Node_in iplan.PlanTreeNode)
+2. imeta/imeta.go: Get_FragTree(tablename string) (iplan.FragTree, error) 
 
 注：node中属性无则为" "，我设置的分隔符为##，请尽量避免使用。
 

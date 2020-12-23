@@ -5,7 +5,7 @@ import (
 	"iqueryanalyzer"
 
 	// "iqueryanalyzer"
-	// "iqueryoptimizer"
+	"iqueryoptimizer"
 	// "imeta"
 	// "irpc"
 	// "iexecuter"
@@ -80,9 +80,12 @@ func main() {
 
 		println("please enter SQL statement end with ; (q to quit)")
 		// sqlstmt = scanLine()
-		sqlstmt = `select customer.name,orders.quantity
+		// sqlstmt = `select customer.name,orders.quantity
+		// from customer,orders
+		// where customer.id=orders.customer_id`
+		sqlstmt = `select *
 		from customer,orders
-		where customer.id=orders.customer_id`
+		where 1=1`
 		println(sqlstmt)
 		if strings.EqualFold(sqlstmt, "q") {
 			break
@@ -90,9 +93,11 @@ func main() {
 
 		plantree1 := iparser.Parse(sqlstmt, txnID)
 		plantree = iqueryanalyzer.Analyze(plantree1)
-		// plantree, err = ioptimizer.Optimize(plantree)
+		plantree = iqueryoptimizer.Optimize(plantree)
 
-		fmt.Println("plantree is ", plantree)
+		// fmt.Println("plantree is ", plantree)
+
+		plantree.Print()
 
 		imeta.Connect_etcd()
 		println("start imeta")
@@ -163,7 +168,8 @@ func test1() {
 		return
 	}
 	println("imeta build txn ok")
-	fmt.Println(plantree)
+	// fmt.Println(plantree)
+	plantree.Print()
 	err = imeta.Set_Tree(txnID, plantree)
 	if err != nil {
 		iutilities.CheckErr(err)
