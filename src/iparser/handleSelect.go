@@ -4,16 +4,15 @@ import (
 	"fmt"
 	"github.com/xwb1989/sqlparser"
 	"iplan"
+	"os"
 	// "reflect"
 )
 
 //nodeid globally save the nodeid
-var nodeid int64 = 1
+// var nodeid int64 = 1
 
 //Tmptableid globally save the tmptableid
 var Tmptableid int64 = 0
-
-// var plantree iplan.PlanTree
 
 //GetTmpTableName can get latest TmpTableName
 func GetTmpTableName() (TmpTableName string) {
@@ -21,6 +20,9 @@ func GetTmpTableName() (TmpTableName string) {
 	Tmptableid++
 	return TmpTableName
 }
+
+var logicalPlanTree iplan.PlanTree
+var root int64
 
 //InitalPlanTreeNode init node
 func InitalPlanTreeNode() (node iplan.PlanTreeNode) {
@@ -50,114 +52,136 @@ func InitalPlanTree() (planTree iplan.PlanTree) {
 	return planTree
 }
 
-func createProjectionNode(TmpTableName string, Cols string) (node iplan.PlanTreeNode) {
-	node = InitalPlanTreeNode()
-	node.Nodeid = nodeid
-	// nodeid++
-	node.Status = 0
-	node.TmpTable = TmpTableName
-	node.NodeType = 3
-	node.Cols = Cols
-
-	node.Locate = 0
-	node.TransferFlag = false
-
-	return node
+//findEmptyNode will return the idx of first empty node
+func findEmptyNode() int64 {
+	for i, node := range logicalPlanTree.Nodes {
+		if i != 0 && node.Nodeid == -1 {
+			return int64(i)
+		}
+	}
+	println("Error when creating node, no empty node left!")
+	return -1
 }
 
-func createWhereNode(TmpTableName string, Where string) (node iplan.PlanTreeNode) {
-	node = InitalPlanTreeNode()
-	node.Nodeid = nodeid
-	// nodeid++
-	node.Status = 0
-	node.TmpTable = TmpTableName
-	node.NodeType = 2
-	node.Where = Where
+//AddTableNode add table node
+func AddTableNode(newNode iplan.PlanTreeNode) {
+	if logicalPlanTree.NodeNum == 0 {
+		root = findEmptyNode()
+		newNode.Nodeid = root
+		logicalPlanTree.Nodes[root] = newNode
+		logicalPlanTree.NodeNum++
+	} else {
+		pos := findEmptyNode()
+		newNode.Nodeid = pos
+		logicalPlanTree.Nodes[pos] = newNode
+		logicalPlanTree.NodeNum++
 
-	node.Locate = 0
-	node.TransferFlag = false
+		newroot := findEmptyNode()
+		logicalPlanTree.Nodes[newroot] = CreateJoinNode(GetTmpTableName())
+		logicalPlanTree.NodeNum++
 
-	return node
+		logicalPlanTree.Nodes[newroot].Nodeid = newroot
+		logicalPlanTree.Nodes[newroot].Left = root
+		logicalPlanTree.Nodes[newroot].Right = pos
+		logicalPlanTree.Nodes[pos].Parent = newroot
+		logicalPlanTree.Nodes[root].Parent = newroot
+		root = newroot
+
+	}
+
 }
 
-func createJoinNode(TmpTableName string) (node iplan.PlanTreeNode) {
-	node = InitalPlanTreeNode()
-	node.Nodeid = nodeid
-	// nodeid++
-	node.Status = 0
-	node.TmpTable = TmpTableName
-	node.NodeType = 4
-
-	node.Locate = 0
-	node.TransferFlag = false
-
-	return node
+//AddSelectionNode add selection node
+func AddSelectionNode(newNode iplan.PlanTreeNode) {
+	newroot := findEmptyNode()
+	newNode.Nodeid = newroot
+	newNode.Left = root
+	logicalPlanTree.Nodes[newroot] = newNode
+	logicalPlanTree.NodeNum++
+	logicalPlanTree.Nodes[root].Parent = newroot
+	root = newroot
 }
 
-func createTableNode(tablename string) (node iplan.PlanTreeNode) {
-	node = InitalPlanTreeNode()
-	node.Nodeid = nodeid
-	// nodeid++
-	node.Status = 1
-	node.TmpTable = tablename
+//AddProjectionNode add projection node
+func AddProjectionNode(newNode iplan.PlanTreeNode) {
+	newroot := findEmptyNode()
+	newNode.Nodeid = newroot
+	newNode.Left = root
+	logicalPlanTree.Nodes[newroot] = newNode
+	logicalPlanTree.NodeNum++
+	logicalPlanTree.Nodes[root].Parent = newroot
+	root = newroot
+}
+
+//CreateTableNode create table node
+func CreateTableNode(tableName string) iplan.PlanTreeNode {
+	node := InitalPlanTreeNode()
 	node.NodeType = 1
-
-	node.Locate = 0
-	node.TransferFlag = false
+	node.TmpTable = tableName
 
 	return node
 }
 
-//HandleSelect for handle select statment
-func HandleSelect(sel *sqlparser.Select) iplan.PlanTree {
-	planTree := InitalPlanTree()
+//CreateSelectionNode create selection nnode
+func CreateSelectionNode(TmpTableName string, where string) iplan.PlanTreeNode {
+	node := InitalPlanTreeNode()
+	node.NodeType = 2
+	node.TmpTable = TmpTableName
+	node.Where = where
+	return node
+}
 
-	//handle projection; root node is projectionnode
-	planTree.Nodes[nodeid] = createProjectionNode(GetTmpTableName(), sqlparser.String(sel.SelectExprs))
-	nodeid++
-	// println(planTree.Nodes[0].Cols)
+//CreateProjectionNode create projection node
+func CreateProjectionNode(TmpTableName string, cols string) iplan.PlanTreeNode {
+	node := InitalPlanTreeNode()
+	node.NodeType = 3
+	node.TmpTable = TmpTableName
+	node.Cols = cols
+	return node
+}
 
-	//handle where
-	planTree.Nodes[nodeid] = createWhereNode(GetTmpTableName(), sqlparser.String(sel.Where))
+//CreateJoinNode create join node
+func CreateJoinNode(TmpTableName string) iplan.PlanTreeNode {
+	node := InitalPlanTreeNode()
+	node.NodeType = 4
+	node.TmpTable = TmpTableName
+	return node
+}
 
-	planTree.Nodes[nodeid].Parent = planTree.Nodes[nodeid-1].Nodeid
-	planTree.Nodes[nodeid-1].Left = planTree.Nodes[nodeid].Nodeid
-	nodeid++
-	//handle join; only when there are more than 2 tables
-	if len(sel.From) > 1 {
-		planTree.Nodes[nodeid] = createJoinNode(GetTmpTableName())
-		planTree.Nodes[nodeid].Parent = planTree.Nodes[nodeid-1].Nodeid
-		planTree.Nodes[nodeid-1].Left = planTree.Nodes[nodeid].Nodeid
-		nodeid++
+//CreateUnionNode create union node
+func CreateUnionNode(TmpTableName string) iplan.PlanTreeNode {
+	node := InitalPlanTreeNode()
+	node.NodeType = 5
+	node.TmpTable = TmpTableName
+
+	return node
+}
+
+//buildSelect for handle select statment
+func buildSelect(sel *sqlparser.Select) iplan.PlanTree {
+	logicalPlanTree = InitalPlanTree()
+	if sel.From == nil {
+		fmt.Println("cannot build plan tree without From")
+		os.Exit(1)
+	}
+	for _, table := range sel.From {
+		tableName := sqlparser.String(table)
+		AddTableNode(CreateTableNode(tableName))
 	}
 
-	//Handle from/tablenode
-	switch len(sel.From) {
-	case 1:
-		// println(sqlparser.String(sel.From))
-		createTableNode(sqlparser.String(sel.From))
-	case 2:
-		// println(sqlparser.String(sel.From[0]))
-		planTree.Nodes[nodeid] = createTableNode(sqlparser.String(sel.From[0]))
-		planTree.Nodes[nodeid].Parent = planTree.Nodes[nodeid-1].Nodeid
-		planTree.Nodes[nodeid-1].Left = planTree.Nodes[nodeid].Nodeid
-		nodeid++
-		planTree.Nodes[nodeid] = createTableNode(sqlparser.String(sel.From[1]))
-		planTree.Nodes[nodeid].Parent = planTree.Nodes[nodeid-2].Nodeid
-		planTree.Nodes[nodeid-2].Right = planTree.Nodes[nodeid].Nodeid
-		nodeid++
-	case 3:
-	case 4:
-	default:
-		println("The num of tables is bigger than 4, not support yet!")
+	if sel.Where != nil {
+		whereString := sqlparser.String(sel.Where.Expr)
+		whereString = resetCols(whereString)
+		AddSelectionNode(CreateSelectionNode(GetTmpTableName(), whereString))
 	}
-	// for i := 0; i < len(sel.From); i++ {
-	// 	planTree.Nodes[nodeid] = createTableNode(sqlparser.String(sel.From[i]))
-	// 	planTree.Nodes[nodeid].Parent = planTree.Nodes[nodeid-1].Nodeid
-	// 	planTree.Nodes[nodeid-1].Left = planTree.Nodes[nodeid].Nodeid
-	// 	nodeid++
-	// }
-	planTree.NodeNum = nodeid
-	return planTree
 
+	if sel.SelectExprs == nil {
+		fmt.Println("cannot build plan tree without select")
+		os.Exit(1)
+	}
+	projectionString := sqlparser.String(sel.SelectExprs)
+	projectionString = resetCols(projectionString)
+	AddProjectionNode(CreateProjectionNode(GetTmpTableName(), projectionString))
+	logicalPlanTree.Root = root
+	return logicalPlanTree
 }

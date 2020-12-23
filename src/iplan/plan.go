@@ -17,7 +17,7 @@ type PlanTreeNode struct {
 	Locate       int64  // the sitenum,n for site_n
 	TransferFlag bool   //true for transer, false for not
 	Dest         int64  //the sitenum of the dest
-	NodeType     int64  //1 for table, 2 for select, 3 for projuection, 4 for join, 5 for union
+	NodeType     int64  //1 for table, 2 for select, 3 for projection, 4 for join, 5 for union
 	//detail string//according to node_type, (1)table_name for table, (2)where_condition for select, (3)col_name for projection, (4)join_type for join, (5)nil for union
 	Where string
 	Cols  string
@@ -29,17 +29,21 @@ type PlanTreeNode struct {
 //PlanTree saves the tree nodes which are built by iparser
 type PlanTree struct {
 	NodeNum int64
+	Root    int64 //add rootnum to find root
 	Nodes   [MaxNodeNum]PlanTreeNode
 }
 
 type FragNode struct {
 	FragId        int64 //1,2,3,4
+	FragName      string
+	SiteNum       int64 //1,2,3,4
 	FragCondition string
-	SiteNum       int64  //1,2,3,4
 	Ip            string //10.77.10.161
 }
 
 type FragTree struct {
-	FragNum int64
-	Frags   [MaxFragNum]FragNode
+	FragNum   int64
+	Frags     [MaxFragNum]FragNode
+	FragType  int64 //0 for Horizontal, 1 for vertical
+	TableName string
 }

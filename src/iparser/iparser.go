@@ -22,7 +22,7 @@ func Parse(sql string, TxnID int64) (planTree iplan.PlanTree) {
 	// Otherwise do something with stmt
 	switch stmt.(type) {
 	case *sqlparser.Select:
-		planTree = HandleSelect(stmt.(*sqlparser.Select))
+		planTree = buildSelect(stmt.(*sqlparser.Select))
 
 	case *sqlparser.Update:
 		// return handleUpdate(stmt.(*sqlparser.Update))

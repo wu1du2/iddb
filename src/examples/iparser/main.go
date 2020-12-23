@@ -1,23 +1,28 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
 	"iparser"
 	"iqueryanalyzer"
 )
 
 func main() {
-	// sql := "SELECT t1.a,t2.b FROM t1,t2 WHERE t1.a=t2.a and t1.b=t2.b"
+	// sql := "SELECT t1.a,t2.b FROM t1,t2"
+
 	sql := `select customer.name,orders.quantity
 	from customer,orders
 	where customer.id=orders.customer_id`
 
-	logicalPlanTree := iparser.Parse(sql, 0)
-	// fmt.Println(logicalPlanTree)
-	physicalPlanTree := iqueryanalyzer.Analyze(logicalPlanTree)
-	// for _, node := range physicalPlanTree.Nodes {
-	// 	println(node.TmpTable)
+	// sql := `select *
+	// from customer,orders
+	// where customer.id=orders.customer_id
+	// and customer.id=1`
 
-	// }
-	fmt.Println(physicalPlanTree)
+	logicalPlanTree := iparser.Parse(sql, 0)
+
+	// iqueryanalyzer.ShowPlanTree(logicalPlanTree)
+	physicalPlanTree := iqueryanalyzer.Analyze(logicalPlanTree)
+
+	iqueryanalyzer.ShowPlanTree(physicalPlanTree)
+
 }
