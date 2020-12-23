@@ -5,6 +5,7 @@ import (
 	"github.com/xwb1989/sqlparser"
 	"iplan"
 	"os"
+	"strings"
 	// "reflect"
 )
 
@@ -19,6 +20,33 @@ func GetTmpTableName() (TmpTableName string) {
 	TmpTableName = "Transaction_" + fmt.Sprintf("%d", TransactionID) + "_TmpTable_" + fmt.Sprintf("%d", Tmptableid)
 	Tmptableid++
 	return TmpTableName
+}
+
+func resetCols(strin string) (strout string) {
+	arr := strings.Fields(strin)
+	for i, str := range arr {
+		switch str {
+		case "publisher.id":
+			arr[i] = "pid"
+		case "publisher.name":
+			arr[i] = "pname"
+		case "publisher.nation":
+			arr[i] = "pnation"
+		case "book.id":
+			arr[i] = "bid"
+		case "book.title":
+			arr[i] = "btitle"
+		case "book.authors":
+			arr[i] = "bauthors"
+		case "book.publisher_id":
+			arr[i] = "bpid"
+		case "book.copies":
+			arr[i] = "bcopies"
+		case "customer.":
+			arr[i] = ""
+		}
+	}
+	return strout
 }
 
 var logicalPlanTree iplan.PlanTree
@@ -171,7 +199,7 @@ func buildSelect(sel *sqlparser.Select) iplan.PlanTree {
 
 	if sel.Where != nil {
 		whereString := sqlparser.String(sel.Where.Expr)
-		whereString = resetCols(whereString)
+		// whereString = resetCols(whereString)
 		AddSelectionNode(CreateSelectionNode(GetTmpTableName(), whereString))
 	}
 
@@ -180,7 +208,7 @@ func buildSelect(sel *sqlparser.Select) iplan.PlanTree {
 		os.Exit(1)
 	}
 	projectionString := sqlparser.String(sel.SelectExprs)
-	projectionString = resetCols(projectionString)
+	// projectionString = resetCols(projectionString)
 	AddProjectionNode(CreateProjectionNode(GetTmpTableName(), projectionString))
 	logicalPlanTree.Root = root
 	return logicalPlanTree
