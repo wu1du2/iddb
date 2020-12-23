@@ -18,6 +18,9 @@ func main() {
 	// where customer.id=orders.customer_id
 	// and customer.id=1`
 
+	// sql := `insert into customer(id,name,rank) values(3000,'Able',1)`
+	// iparser.Parse(sql, 0)
+
 	logicalPlanTree := iparser.Parse(sql, 0)
 
 	// iqueryanalyzer.ShowPlanTree(logicalPlanTree)

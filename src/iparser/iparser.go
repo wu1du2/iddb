@@ -28,6 +28,7 @@ func Parse(sql string, TxnID int64) (planTree iplan.PlanTree) {
 		// return handleUpdate(stmt.(*sqlparser.Update))
 	case *sqlparser.Insert:
 		// return handleInsert(stmt.(*sqlparser.Insert))
+		buildInsert(stmt.(*sqlparser.Insert))
 	case *sqlparser.Delete:
 		// return handleDelete(stmt.(*sqlparser.Delete))
 	}

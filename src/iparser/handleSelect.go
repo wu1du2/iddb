@@ -22,8 +22,16 @@ func GetTmpTableName() (TmpTableName string) {
 	return TmpTableName
 }
 
-func resetCols(strin string) (strout string) {
-	arr := strings.Fields(strin)
+//ResetCols reset cols to get a unique colname
+func ResetCols(strin string) (strout string) {
+	strout = ""
+	f := func(c rune) bool {
+		if c == ' ' || c == ',' {
+			return true
+		}
+		return false
+	}
+	arr := strings.FieldsFunc(strin, f)
 	for i, str := range arr {
 		switch str {
 		case "publisher.id":
@@ -31,20 +39,33 @@ func resetCols(strin string) (strout string) {
 		case "publisher.name":
 			arr[i] = "pname"
 		case "publisher.nation":
-			arr[i] = "pnation"
+			arr[i] = "nation"
 		case "book.id":
 			arr[i] = "bid"
 		case "book.title":
-			arr[i] = "btitle"
+			arr[i] = "title"
 		case "book.authors":
-			arr[i] = "bauthors"
+			arr[i] = "authors"
 		case "book.publisher_id":
 			arr[i] = "bpid"
 		case "book.copies":
-			arr[i] = "bcopies"
-		case "customer.":
-			arr[i] = ""
+			arr[i] = "copies"
+		case "customer.id":
+			arr[i] = "cid"
+		case "customer.name":
+			arr[i] = "cname"
+		case "customer.rank":
+			arr[i] = "rank"
+		case "orders.customer_id":
+			arr[i] = "ocid"
+		case "orders.book_id":
+			arr[i] = "obid"
+		case "orders.quantity":
+			arr[i] = "quantity"
 		}
+	}
+	for _, str := range arr {
+		strout += str + " "
 	}
 	return strout
 }
@@ -199,7 +220,7 @@ func buildSelect(sel *sqlparser.Select) iplan.PlanTree {
 
 	if sel.Where != nil {
 		whereString := sqlparser.String(sel.Where.Expr)
-		// whereString = resetCols(whereString)
+		whereString = ResetCols(whereString)
 		AddSelectionNode(CreateSelectionNode(GetTmpTableName(), whereString))
 	}
 
@@ -208,8 +229,14 @@ func buildSelect(sel *sqlparser.Select) iplan.PlanTree {
 		os.Exit(1)
 	}
 	projectionString := sqlparser.String(sel.SelectExprs)
-	// projectionString = resetCols(projectionString)
+	projectionString = ResetCols(projectionString)
 	AddProjectionNode(CreateProjectionNode(GetTmpTableName(), projectionString))
 	logicalPlanTree.Root = root
 	return logicalPlanTree
+}
+
+func buildInsert(sel *sqlparser.Insert) {
+	fmt.Println(sqlparser.String(sel.Table))
+	fmt.Println(sqlparser.String(sel.Columns))
+	fmt.Println(sqlparser.String(sel.Rows))
 }

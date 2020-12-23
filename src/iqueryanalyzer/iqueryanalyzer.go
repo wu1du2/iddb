@@ -9,9 +9,8 @@ import (
 
 var physicalPlanTree iplan.PlanTree
 
-// var Fragment iplan.FragTree
-
-func getFragTree(tableName string) (fragTree iplan.FragTree) {
+//GetFragTree return FragTree accroding to tablename
+func GetFragTree(tableName string) (fragTree iplan.FragTree) {
 	switch tableName {
 	case "publisher":
 		fragTree.TableName = "publisher"
@@ -169,7 +168,7 @@ func min(a int64, b int64) (min int64, info string) {
 }
 
 func splitTableNode(tableNode iplan.PlanTreeNode) {
-	fragTree := getFragTree(tableNode.TmpTable)
+	fragTree := GetFragTree(tableNode.TmpTable)
 	var root int64 = -1
 	for i := int64(0); i < fragTree.FragNum; i++ {
 		root = addTableNode(createTableNode(fragTree.Frags[i].FragName, fragTree.Frags[i].SiteNum), root, fragTree.FragType)
