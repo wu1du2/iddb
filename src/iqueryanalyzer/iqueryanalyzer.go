@@ -105,8 +105,7 @@ func addTableNode(newNode iplan.PlanTreeNode, root int64, fragType int64) int64 
 			physicalPlanTree.Nodes[newroot] = iparser.CreateUnionNode(iparser.GetTmpTableName())
 			physicalPlanTree.NodeNum++
 		} else {
-			physicalPlanTree.Nodes[newroot] = iparser.CreateJoinNode(iparser.GetTmpTableName())
-			physicalPlanTree.Nodes[newroot].Joint_cols = "id"
+			physicalPlanTree.Nodes[newroot] = iparser.CreateJoinNode(iparser.GetTmpTableName(), 2)
 			physicalPlanTree.NodeNum++
 		}
 

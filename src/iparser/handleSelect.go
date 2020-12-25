@@ -129,7 +129,7 @@ func AddTableNode(newNode iplan.PlanTreeNode) {
 		logicalPlanTree.NodeNum++
 
 		newroot := findEmptyNode()
-		logicalPlanTree.Nodes[newroot] = CreateJoinNode(GetTmpTableName())
+		logicalPlanTree.Nodes[newroot] = CreateJoinNode(GetTmpTableName(), 0)
 		logicalPlanTree.NodeNum++
 
 		logicalPlanTree.Nodes[newroot].Nodeid = newroot
@@ -193,10 +193,11 @@ func CreateProjectionNode(TmpTableName string, cols string) iplan.PlanTreeNode {
 }
 
 //CreateJoinNode create join node
-func CreateJoinNode(TmpTableName string) iplan.PlanTreeNode {
+func CreateJoinNode(TmpTableName string, JointType int64) iplan.PlanTreeNode {
 	node := InitalPlanTreeNode()
 	node.NodeType = 4
 	node.TmpTable = TmpTableName
+	node.Joint_type = JointType
 	return node
 }
 
