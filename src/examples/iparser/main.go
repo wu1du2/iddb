@@ -9,10 +9,24 @@ import (
 
 func main() {
 	//test_old()
-	test_new()
+	test_delete()
 }
 
-func test_new(){
+func test_delete(){
+
+	//sql := `Delete from Orders`
+	//sql := `Delete from Book where copies = 100`
+	sql := `delete from Publisher where nation = 'PRC'`
+	//sql := `delete from Customer where name='Xiaohong' AND rank=1`
+	//sql := `delete from Customer where rank = 1`
+
+	i,str,j := iparser.HandleDelete(sql)
+	fmt.Println(i)
+	fmt.Println(str)
+	fmt.Println(j)
+}
+
+func test_insert(){
 
 	//sql := `insert into customer(id,name,rank) values(3000,'Able',1)`
 	sql := `insert into Customer(id, name, rank) values(300001, 'Xiaoming', 1)`
@@ -25,11 +39,7 @@ func test_new(){
 	fmt.Println(i)
 	fmt.Println(str)
 	fmt.Println(j)
-
-
 }
-
-
 
 func test_old(){
 	// sql := "SELECT t1.a,t2.b FROM t1,t2"
