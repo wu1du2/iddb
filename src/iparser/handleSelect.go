@@ -86,7 +86,9 @@ func InitalPlanTreeNode() (node iplan.PlanTreeNode) {
 	node.Dest = -1
 	node.NodeType = -1
 	node.Where = ""
+	node.Rel_cols = ""
 	node.Cols = ""
+	node.Joint_type = -1
 	node.Joint_cols = ""
 	return node
 }
@@ -97,6 +99,7 @@ func InitalPlanTree() (planTree iplan.PlanTree) {
 		planTree.Nodes[i] = InitalPlanTreeNode()
 
 	}
+	planTree.Root = -1
 	planTree.NodeNum = 0
 	return planTree
 }
