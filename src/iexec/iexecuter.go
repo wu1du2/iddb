@@ -107,13 +107,13 @@ func FindOneNode(plan_tree iplan.PlanTree, node_id int64) int64 {
 	// fmt.Println("go into node")
 	// fmt.Println(node_id)
 	var can_execute_id int64
+	can_execute_id = -1
 	// 判断当前节点的状态，如果是ok，则返回-1
 	var current_node iplan.PlanTreeNode
 	current_node = plan_tree.Nodes[node_id]
 	fmt.Println("current_node is :")
 	fmt.Println(current_node)
 	if current_node.Status == 1 {
-		can_execute_id = -1
 		// fmt.Println("current node has done")
 		return can_execute_id
 	}
