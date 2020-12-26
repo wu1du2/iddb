@@ -470,6 +470,11 @@ func ExecuteTransmission(plan_node *iplan.PlanTreeNode) {
 		fmt.Println(create_sql)
 		ExecuteRemoteCreateStmt(address, create_sql)
 		insert_query, issuccess := generateInsertQuery(plan_node)
+		if len(insert_query) > 200 {
+			println(insert_query[1:200])
+		} else {
+			println(insert_query)
+		}
 		fmt.Println(insert_query)
 		if issuccess {
 			ExecuteRemoteCreateStmt(address, insert_query)
