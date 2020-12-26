@@ -176,7 +176,8 @@ func ExecuteOneNode(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn
 
 func CleanTmpTable(plan_node_id int64, plan_tree iplan.PlanTree) {
 	nodeType := plan_tree.Nodes[plan_node_id].NodeType
-	if nodeType != 1 {
+	Locate := plan_tree.Nodes[plan_node_id].Locate
+	if (nodeType != 1 || Locate != site) {
 		tablename := plan_tree.Nodes[plan_node_id].TmpTable
 		// TODO: assert(plan_node.Right = -1)
 		query := "drop table if exists " + tablename
@@ -259,8 +260,8 @@ func ExecuteJoin(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_id
 	iutilities.CheckErr(err)
 	println(res)
 	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10)
-	// CleanTmpTable(plan_node.Left, plan_tree)
-	// CleanTmpTable(plan_node.Right, plan_tree)
+	CleanTmpTable(plan_node.Left, plan_tree)
+	CleanTmpTable(plan_node.Right, plan_tree)
 	if !plan_node.TransferFlag {
 		plan_node.Status = 1
 	}
@@ -281,8 +282,8 @@ func ExecuteUnion(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_i
 	iutilities.CheckErr(err)
 	println(res)
 	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10)
-	// CleanTmpTable(plan_node.Left, plan_tree)
-	// CleanTmpTable(plan_node.Right, plan_tree)
+	CleanTmpTable(plan_node.Left, plan_tree)
+	CleanTmpTable(plan_node.Right, plan_tree)
 	if !plan_node.TransferFlag {
 		plan_node.Status = 1
 	}
