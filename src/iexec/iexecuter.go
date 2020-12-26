@@ -79,10 +79,11 @@ func RunTree(txn_id int64) int64 {
 		var pn *iplan.PlanTreeNode
 		pn = &plan_tree.Nodes[execute_id]
 		// 执行某个节点
-		ExecuteOneNode(pn, plan_tree, txn_id)
 		print("executed node")
 		println(pn.Nodeid)
 		print("current node state ")
+		ExecuteOneNode(pn, plan_tree, txn_id)
+
 		var current_node iplan.PlanTreeNode
 		current_node = plan_tree.Nodes[execute_id]
 		fmt.Println(current_node)
@@ -177,7 +178,7 @@ func ExecuteOneNode(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn
 func CleanTmpTable(plan_node_id int64, plan_tree iplan.PlanTree) {
 	nodeType := plan_tree.Nodes[plan_node_id].NodeType
 	Locate := plan_tree.Nodes[plan_node_id].Locate
-	if (nodeType != 1 || Locate != site) {
+	if nodeType != 1 || Locate != site {
 		tablename := plan_tree.Nodes[plan_node_id].TmpTable
 		// TODO: assert(plan_node.Right = -1)
 		query := "drop table if exists " + tablename
