@@ -431,11 +431,11 @@ func generateInsertQuery(plan_node *iplan.PlanTreeNode) (string, bool) {
 		if i != 0 {
 			insert_query = insert_query + ", "
 		}
-		// todo: 只插入前100条，之后需要修改
-		if i > 100 {
+		// todo: 只插入前10条，之后需要修改
+		if i > 10 {
 			break
 		}
-		// todo: 只插入前100条，之后需要修改
+		// todo: 只插入前10条，之后需要修改
 		err = rows.Scan(values...)
 		iutilities.CheckErr(err)
 		insert_query = insert_query + "("
@@ -476,14 +476,16 @@ func ExecuteTransmission(plan_node *iplan.PlanTreeNode) {
 		ExecuteRemoteCreateStmt(address, create_sql)
 		insert_query, issuccess := generateInsertQuery(plan_node)
 		println("query length is: ", len(insert_query))
-		if len(insert_query) > 200 {
+		// if len(insert_query) > 200 {
 
-			println(insert_query[0:200])
+		// 	println(insert_query[0:200])
 
-		} else {
-			println(insert_query)
-		}
+		// } else {
+		// 	println(insert_query)
+		// }
+
 		fmt.Println(insert_query)
+
 		if issuccess {
 			ExecuteRemoteCreateStmt(address, insert_query)
 		}
