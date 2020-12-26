@@ -40,11 +40,13 @@ func ExecuteCreateStmt(stmt string) int64 {
 	// if err != nil {
 	// 	println("could not open: %v", err)
 	// }
-	if len(stmt) > 1000 {
-		println(stmt[1:200])
-	} else {
-		println(stmt)
-	}
+	// println("stmt length is :", len(stmt))
+	// if len(stmt) > 1000 {
+	// 	println(stmt[0:200])
+	// } else {
+	// 	println(stmt)
+	// }
+	println(stmt)
 
 	// println(err)
 	stmts, err := db.Prepare(stmt)

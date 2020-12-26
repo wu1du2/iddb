@@ -112,8 +112,8 @@ func FindOneNode(plan_tree iplan.PlanTree, node_id int64) int64 {
 	// 判断当前节点的状态，如果是ok，则返回-1
 	var current_node iplan.PlanTreeNode
 	current_node = plan_tree.Nodes[node_id]
-	fmt.Println("current_node is :")
-	fmt.Println(current_node)
+	// fmt.Println("current_node is :")
+	// fmt.Println(current_node)
 	if current_node.Status == 1 {
 		// fmt.Println("current node has done")
 		return can_execute_id
@@ -475,7 +475,17 @@ func ExecuteTransmission(plan_node *iplan.PlanTreeNode) {
 		fmt.Println(create_sql)
 		ExecuteRemoteCreateStmt(address, create_sql)
 		insert_query, issuccess := generateInsertQuery(plan_node)
+		println("query length is: ", len(insert_query))
+		// if len(insert_query) > 200 {
+
+		// 	println(insert_query[0:200])
+
+		// } else {
+		// 	println(insert_query)
+		// }
+
 		fmt.Println(insert_query)
+
 		if issuccess {
 			ExecuteRemoteCreateStmt(address, insert_query)
 		}
