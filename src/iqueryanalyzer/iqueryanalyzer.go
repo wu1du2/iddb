@@ -150,9 +150,9 @@ func ShowPlanTree(planTree iplan.PlanTree) {
 	fmt.Printf("NodeNum is %d\n", planTree.NodeNum)
 	fmt.Printf("root is %d\n", planTree.Root)
 	for _, node := range planTree.Nodes {
-		if node.Nodeid != -1 {
-			fmt.Println(node)
-		}
+		// if node.Nodeid != -1 {
+		fmt.Println(node)
+		// }
 	}
 }
 func min(a int64, b int64) (min int64, info string) {
@@ -225,7 +225,7 @@ func Analyze(logicalPlanTree iplan.PlanTree) iplan.PlanTree {
 	}
 	for i, node := range physicalPlanTree.Nodes {
 		if node.Nodeid == -1 {
-			continue
+			physicalPlanTree.Nodes[i].Nodeid = 0 //               !!!!!!!!
 		} else if node.NodeType == 1 && node.TransferFlag == false {
 			physicalPlanTree.Nodes[i].Status = 1
 		} else {
