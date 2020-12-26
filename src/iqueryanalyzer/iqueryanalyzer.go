@@ -141,7 +141,7 @@ func replace(old int64, new int64) {
 		fmt.Println("parent and child relationship is wrong")
 	}
 	physicalPlanTree.Nodes[old] = iparser.InitalPlanTreeNode()
-	physicalPlanTree.NodeNum--
+	// physicalPlanTree.NodeNum--
 
 }
 
@@ -225,13 +225,17 @@ func Analyze(logicalPlanTree iplan.PlanTree) iplan.PlanTree {
 	}
 	for i, node := range physicalPlanTree.Nodes {
 		if node.Nodeid == -1 {
-			physicalPlanTree.Nodes[i].Nodeid = 0 //               !!!!!!!!
+			continue
+			// physicalPlanTree.Nodes[i].Nodeid = 0 //               !!!!!!!!
 		} else if node.NodeType == 1 && node.TransferFlag == false {
 			physicalPlanTree.Nodes[i].Status = 1
 		} else {
 			physicalPlanTree.Nodes[i].Status = 0
 		}
 	}
+	// for i, node := range physicalPlanTree.Nodes {
+	// 	if i != 0 && node.Nodeid == -1
+	// }
 
 	return physicalPlanTree
 }
