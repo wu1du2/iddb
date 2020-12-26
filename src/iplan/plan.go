@@ -51,6 +51,9 @@ type FragTree struct {
 
 func (pt *PlanTree) Print() {
 	for _, node := range pt.Nodes {
+		if node.Nodeid == -1 {
+			continue
+		}
 		fmt.Println(node)
 	}
 	return
