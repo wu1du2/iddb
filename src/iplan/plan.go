@@ -50,9 +50,8 @@ type FragTree struct {
 }
 
 func (pt *PlanTree) Print() {
-	var i int64
-	for i = 0; i < pt.NodeNum; i++ {
-		fmt.Println(pt.Nodes[i+1])
+	for _, node := range pt.Nodes {
+		fmt.Println(node)
 	}
 	return
 }
