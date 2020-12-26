@@ -26,6 +26,10 @@ drop table if exists customer_0;
 create table customer_0 select cid,cname from customer;
 drop table if exists orders_0;
 create table orders_0 select * from orders where ocid < 307000 and obid < 215000;
+alter table publisher_0 add primary key(pid);
+alter table book_0 add primary key(bid);
+alter table customer_0 add primary key(cid);
+alter table orders_0 add primary key(ocid, obid, quantity);
 /*site 1*/
 drop table if exists publisher_1;
 create table publisher_1 select * from publisher where pid < 104000 and nation = 'USA';
@@ -35,6 +39,10 @@ drop table if exists customer_1;
 create table customer_1 select cid,rank from customer;
 drop table if exists orders_1;
 create table orders_1 select * from orders where ocid < 307000 and obid >= 215000;
+alter table publisher_1 add primary key(pid);
+alter table book_1 add primary key(bid);
+alter table customer_1 add primary key(cid);
+alter table orders_1 add primary key(ocid, obid, quantity);
 /*site 2*/
 drop table if exists publisher_2;
 create table publisher_2 select * from publisher where pid >= 104000 and nation = 'PRC';
@@ -42,8 +50,13 @@ drop table if exists book_2;
 create table book_2 select * from book where bid >= 2050000 and bid >= 210000;
 drop table if exists orders_2;
 create table orders_2 select * from orders where ocid >= 307000 and obid < 215000;
+alter table publisher_2 add primary key(pid);
+alter table book_2 add primary key(bid);
+alter table orders_2 add primary key(ocid, obid, quantity);
 /*site 3*/
 drop table if exists publisher_3;
 create table publisher_3 select * from publisher where pid >= 104000 and nation = 'USA';
 drop table if exists orders_3;
 create table orders_3 select * from orders where ocid >= 307000 and obid >= 215000;
+alter table publisher_3 add primary key(pid);
+alter table orders_3 add primary key(ocid, obid, quantity);
