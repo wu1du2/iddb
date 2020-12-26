@@ -428,14 +428,14 @@ func generateInsertQuery(plan_node *iplan.PlanTreeNode) (string, bool) {
 	}
 	i := 0
 	for rows.Next() {
-		if i != 0 {
-			insert_query = insert_query + ", "
-		}
 		// todo: 只插入前100条，之后需要修改
-		if i > 100 {
+		if i > 10 {
 			break
 		}
 		// todo: 只插入前100条，之后需要修改
+		if i != 0 {
+			insert_query = insert_query + ", "
+		}
 		err = rows.Scan(values...)
 		iutilities.CheckErr(err)
 		insert_query = insert_query + "("
