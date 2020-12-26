@@ -150,18 +150,21 @@ func ShowPlanTree(planTree iplan.PlanTree) {
 	fmt.Printf("NodeNum is %d\n", planTree.NodeNum)
 	fmt.Printf("root is %d\n", planTree.Root)
 	for _, node := range planTree.Nodes {
-		// if node.Nodeid != -1 {
-		fmt.Println(node)
-		// }
+		if node.Nodeid != -1 {
+			fmt.Println(node)
+		}
 	}
 }
 func min(a int64, b int64) (min int64, info string) {
 	if a < b {
 		min = a
 		info = "Left"
-	} else {
+	} else if a > b {
 		min = b
 		info = "Right"
+	} else {
+		min = a
+		info = "Equal"
 	}
 	return min, info
 }
@@ -191,6 +194,7 @@ func getLocate(i int64) (locate int64) {
 			physicalPlanTree.Nodes[physicalPlanTree.Nodes[i].Right].TransferFlag = false
 			physicalPlanTree.Nodes[physicalPlanTree.Nodes[i].Left].TransferFlag = true
 			physicalPlanTree.Nodes[physicalPlanTree.Nodes[i].Left].Dest = locate
+		case "Equal":
 
 		}
 	} else if physicalPlanTree.Nodes[i].Left == -1 && physicalPlanTree.Nodes[i].Right != -1 {

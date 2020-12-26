@@ -22,8 +22,8 @@ func GetTmpTableName() (TmpTableName string) {
 	return TmpTableName
 }
 
-//ResetCols reset cols to get a unique colname
-func ResetCols(strin string) (strout string) {
+//ResetColsForWhere reset cols to get a unique colname
+func ResetColsForWhere(strin string) (strout string) {
 	strout = ""
 	f := func(c rune) bool {
 		if c == ' ' || c == ',' {
@@ -66,6 +66,59 @@ func ResetCols(strin string) (strout string) {
 	}
 	for _, str := range arr {
 		strout += str + " "
+	}
+	return strout
+}
+
+//ResetColsForProjection reset cols to get a unique colname
+func ResetColsForProjection(strin string) (strout string) {
+	strout = ""
+	f := func(c rune) bool {
+		if c == ' ' || c == ',' {
+			return true
+		}
+		return false
+	}
+	arr := strings.FieldsFunc(strin, f)
+	for i, str := range arr {
+		switch str {
+		case "publisher.id":
+			arr[i] = "pid"
+		case "publisher.name":
+			arr[i] = "pname"
+		case "publisher.nation":
+			arr[i] = "nation"
+		case "book.id":
+			arr[i] = "bid"
+		case "book.title":
+			arr[i] = "title"
+		case "book.authors":
+			arr[i] = "authors"
+		case "book.publisher_id":
+			arr[i] = "bpid"
+		case "book.copies":
+			arr[i] = "copies"
+		case "customer.id":
+			arr[i] = "cid"
+		case "customer.name":
+			arr[i] = "cname"
+		case "customer.rank":
+			arr[i] = "rank"
+		case "orders.customer_id":
+			arr[i] = "ocid"
+		case "orders.book_id":
+			arr[i] = "obid"
+		case "orders.quantity":
+			arr[i] = "quantity"
+		}
+	}
+	length := len(arr)
+	for i, str := range arr {
+		strout += str
+		if i < length-1 {
+			strout += ","
+		}
+
 	}
 	return strout
 }
@@ -224,7 +277,7 @@ func buildSelect(sel *sqlparser.Select) iplan.PlanTree {
 
 	if sel.Where != nil {
 		whereString := sqlparser.String(sel.Where.Expr)
-		whereString = ResetCols(whereString)
+		whereString = ResetColsForWhere(whereString)
 		AddSelectionNode(CreateSelectionNode(GetTmpTableName(), whereString))
 	}
 
@@ -233,7 +286,7 @@ func buildSelect(sel *sqlparser.Select) iplan.PlanTree {
 		os.Exit(1)
 	}
 	projectionString := sqlparser.String(sel.SelectExprs)
-	projectionString = ResetCols(projectionString)
+	projectionString = ResetColsForProjection(projectionString)
 	AddProjectionNode(CreateProjectionNode(GetTmpTableName(), projectionString))
 	logicalPlanTree.Root = root
 	return logicalPlanTree
