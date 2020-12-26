@@ -107,13 +107,13 @@ func FindOneNode(plan_tree iplan.PlanTree, node_id int64) int64 {
 	// fmt.Println("go into node")
 	// fmt.Println(node_id)
 	var can_execute_id int64
+	can_execute_id = -1
 	// 判断当前节点的状态，如果是ok，则返回-1
 	var current_node iplan.PlanTreeNode
 	current_node = plan_tree.Nodes[node_id]
 	fmt.Println("current_node is :")
 	fmt.Println(current_node)
 	if current_node.Status == 1 {
-		can_execute_id = -1
 		// fmt.Println("current node has done")
 		return can_execute_id
 	}
@@ -176,7 +176,8 @@ func ExecuteOneNode(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn
 
 func CleanTmpTable(plan_node_id int64, plan_tree iplan.PlanTree) {
 	nodeType := plan_tree.Nodes[plan_node_id].NodeType
-	if nodeType != 1 {
+	Locate := plan_tree.Nodes[plan_node_id].Locate
+	if (nodeType != 1 || Locate != site) {
 		tablename := plan_tree.Nodes[plan_node_id].TmpTable
 		// TODO: assert(plan_node.Right = -1)
 		query := "drop table if exists " + tablename
@@ -259,8 +260,8 @@ func ExecuteJoin(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_id
 	iutilities.CheckErr(err)
 	println(res)
 	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10)
-	// CleanTmpTable(plan_node.Left, plan_tree)
-	// CleanTmpTable(plan_node.Right, plan_tree)
+	CleanTmpTable(plan_node.Left, plan_tree)
+	CleanTmpTable(plan_node.Right, plan_tree)
 	if !plan_node.TransferFlag {
 		plan_node.Status = 1
 	}
@@ -281,8 +282,8 @@ func ExecuteUnion(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_i
 	iutilities.CheckErr(err)
 	println(res)
 	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10)
-	// CleanTmpTable(plan_node.Left, plan_tree)
-	// CleanTmpTable(plan_node.Right, plan_tree)
+	CleanTmpTable(plan_node.Left, plan_tree)
+	CleanTmpTable(plan_node.Right, plan_tree)
 	if !plan_node.TransferFlag {
 		plan_node.Status = 1
 	}
