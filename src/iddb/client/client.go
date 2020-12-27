@@ -45,22 +45,8 @@ var (
 )
 
 func main() {
-	//INIT
+	txnID = 576
 
-	txnID = 10001
-
-	// for i, v := range os.Args {
-	// 	if i == 1 {
-	// 		println(i, v)
-	// 		iutilities.Configfile = v
-	// 		println("iutilities.Configfile= ", iutilities.Configfile)
-	// 	}
-
-	// 	if i == 1 {
-	// 		println(i, v)
-	// 		txnID, err = strconv.ParseInt(v, 10, 64)
-	// 	}
-	// }
 	iutilities.LoadAllConfig()
 
 	runtime.GOMAXPROCS(8)
@@ -81,13 +67,13 @@ func main() {
 		println("please enter SQL statement end with ; (q to quit)")
 		// sqlstmt = scanLine()
 
-		sqlstmt = `select customer.name,orders.quantity
-		from customer,orders
-		where customer.id=orders.customer_id`
-
-		// sqlstmt = `select *
+		// sqlstmt = `select customer.name,orders.quantity
 		// from customer,orders
-		// where 1=1`
+		// where customer.id=orders.customer_id`
+
+		sqlstmt = `select *
+		from customer`
+
 		println(sqlstmt)
 		if strings.EqualFold(sqlstmt, "q") {
 			break
