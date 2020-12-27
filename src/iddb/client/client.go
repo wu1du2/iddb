@@ -40,20 +40,45 @@ var (
 	err      error
 	ipaddr   string
 	plantree iplan.PlanTree
+	queries  [10]string
 )
 
 func main() {
 	txnID = 576
-
 	iutilities.LoadAllConfig()
-
 	runtime.GOMAXPROCS(8)
-
 	var sqlstmt string
+	queries[0] = `
+	select *
+	from customer`
 
-	// test1()
+	queries[1] = `
+	select publisher.name
+	from publisher`
 
-	for {
+	queries[2] = `
+	select book.title
+	from book
+	where copies>5000`
+
+	queries[3] = `
+	select customer_id,quantity
+	from orders
+	where quantity<8`
+
+	queries[4] = `
+	select book.title, book.copies, publisher.name, publisher.nation
+	from book, publisher
+	where book.publisher_id = publisher.id
+	and publisher.nation='USA'
+	and book.copies>1000`
+
+	queries[5] = `
+	select customer.name, orders.quantity
+	from customer,orders
+	where customer.id=orders.customer_id`
+
+	for qid := 0; qid < 6; qid++ {
 		println("please enter TxnId: ")
 		txnID, err = strconv.ParseInt(scanLine(), 10, 64)
 		if err != nil {
@@ -69,8 +94,7 @@ func main() {
 		// from customer,orders
 		// where customer.id=orders.customer_id`
 
-		sqlstmt = `select *
-		from customer`
+		sqlstmt = queries[qid]
 
 		println(sqlstmt)
 		if strings.EqualFold(sqlstmt, "q") {
@@ -113,7 +137,9 @@ func main() {
 
 		iutilities.Waitgroup.Wait()
 
-		println("client end!")
+		println("txn", txnID, "end!")
+
+		txnID += 1
 
 	}
 
