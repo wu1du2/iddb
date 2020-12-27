@@ -123,7 +123,7 @@ func main() {
 
 	for qid := 0; qid < 9; qid++ {
 
-		if qid == 4 {
+		if qid == 4 || qid == 7 {
 			txnID += 1
 			continue
 		}
