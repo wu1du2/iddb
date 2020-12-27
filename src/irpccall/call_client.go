@@ -7,6 +7,7 @@ package irpccall
 
 import (
 	"context"
+	"iutilities"
 	"log"
 	"time"
 
@@ -22,6 +23,7 @@ output:
 	1 for succeed, 0 for failed
 */
 func RunCallClient(caddress string, txnid int64) int64 {
+	defer iutilities.Waitgroup.Done()
 	println("rpccall client", caddress)
 	// Set up a connection to the server.
 	conn, err := grpc.Dial(caddress, grpc.WithInsecure(), grpc.WithBlock())

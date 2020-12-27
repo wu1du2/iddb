@@ -20,7 +20,6 @@ import (
 	"irpctran"
 	"iutilities"
 	"strconv"
-	"sync"
 
 	// "iparser"
 	"fmt"
@@ -37,11 +36,10 @@ iddb client设计思路
 */
 
 var (
-	txnID     int64
-	err       error
-	ipaddr    string
-	plantree  iplan.PlanTree
-	waitgroup sync.WaitGroup
+	txnID    int64
+	err      error
+	ipaddr   string
+	plantree iplan.PlanTree
 )
 
 func main() {
@@ -109,11 +107,11 @@ func main() {
 		for _, node := range iutilities.Peers {
 			ipaddr = node.IP + ":" + node.Call
 			println("call node to work ", node.NodeId)
+			iutilities.Waitgroup.Add(1)
 			go irpccall.RunCallClient(ipaddr, txnID)
 		}
 
-		waitgroup.Add(1)
-		waitgroup.Wait()
+		iutilities.Waitgroup.Wait()
 
 		println("client end!")
 
@@ -171,10 +169,9 @@ func test1() {
 		println("call node to work ", node.NodeId)
 		go irpccall.RunCallClient(ipaddr, txnID)
 	}
-	var waitgroup sync.WaitGroup
 	println("client end!")
-	waitgroup.Add(1)
-	waitgroup.Wait()
+	// waitgroup.Add(1)
+	// waitgroup.Wait()
 }
 
 func generatePlanTree() iplan.PlanTree {
