@@ -78,16 +78,17 @@ func main() {
 	from customer,orders
 	where customer.id=orders.customer_id`
 
-	for qid := 0; qid < 6; qid++ {
-		println("please enter TxnId: ")
-		txnID, err = strconv.ParseInt(scanLine(), 10, 64)
-		if err != nil {
-			iutilities.CheckErr(err)
-		} else {
-			println("txnID=", txnID)
-		}
+	println("please enter TxnId: ")
+	txnID, err = strconv.ParseInt(scanLine(), 10, 64)
+	if err != nil {
+		iutilities.CheckErr(err)
+	} else {
+		println("txnID=", txnID)
+	}
 
-		println("please enter SQL statement end with ; (q to quit)")
+	for qid := 0; qid < 6; qid++ {
+
+		// println("please enter SQL statement end with ; (q to quit)")
 		// sqlstmt = scanLine()
 
 		// sqlstmt = `select customer.name,orders.quantity
