@@ -78,6 +78,41 @@ func main() {
 	from customer,orders
 	where customer.id=orders.customer_id`
 
+	queries[6] = `
+	select customer.name, customer.rank, orders.quantity
+	from customer,orders
+	where customer.id=orders.customer_id
+	and customer.rank=1`
+
+	queries[7] = `
+	select customer.name, orders.quantity, book.title
+	from customer,orders,book
+	where customer.id=orders.customer_id
+	and book.id=orders.book_id
+	and customer.rank=1
+	and book.copies>5000`
+
+	queries[8] = `
+	select customer.name, book.title, publisher.name, orders.quantity
+	from customer, book, publisher, orders
+	where customer.id=orders.customer_id
+	and book.id=orders.book_id
+	and book.publisher_id=publisher.id
+	and book.id>220000
+	and publisher.nation='USA'
+	and orders.quantity>1`
+
+	queries[9] = `
+	select customer.name, book.title, publisher.name, orders.quantity
+	from customer, book, publisher, orders
+	where customer.id=orders.customer_id
+	and book.id=orders.book_id
+	and book.publisher_id=publisher.id
+	and customer.id>308000
+	and book.copies>100
+	and orders.quantity>1
+	and publisher.nation='PRC'`
+
 	println("please enter TxnId: ")
 	txnID, err = strconv.ParseInt(scanLine(), 10, 64)
 	if err != nil {
@@ -88,6 +123,10 @@ func main() {
 
 	for qid := 0; qid < 6; qid++ {
 
+		if qid == 5 {
+			txnID += 1
+			continue
+		}
 		// println("please enter SQL statement end with ; (q to quit)")
 		// sqlstmt = scanLine()
 
