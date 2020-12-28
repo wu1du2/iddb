@@ -15,7 +15,7 @@ import (
 	"github.com/xwb1989/sqlparser"
 )
 
-var txnID = 4451
+var txnID int64 = 5501
 
 func HandleDelete(sql string) (int64, [8]string, [8]int64) {
 	var TotalNum int64
@@ -76,7 +76,6 @@ func HandleDelete(sql string) (int64, [8]string, [8]int64) {
 		println("strwhere2=", strwhere)
 		sqlstmt := "select cid from customer" + strwhere
 		println(sqlstmt)
-		var txnID int64
 		//txnID needs to be unique!
 
 		plantree := iparser.Parse(sqlstmt, txnID)
