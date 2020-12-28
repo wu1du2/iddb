@@ -35,7 +35,7 @@ func HandleDelete(sql string) (int64, [8]string, [8]int64) {
 		TotalNum = 4
 		i := 0
 		for i < int(TotalNum) {
-			siten[i] = int64(i + 1)
+			siten[i] = int64(i)
 			strwhere := sqlparser.String(sel.Where)
 			strings.Replace(strwhere, "customer_id", "ocid", -1)
 			strings.Replace(strwhere, "book_id", "obid", -1)
@@ -46,7 +46,7 @@ func HandleDelete(sql string) (int64, [8]string, [8]int64) {
 		TotalNum = 3
 		i := 0
 		for i < int(TotalNum) {
-			siten[i] = int64(i + 1)
+			siten[i] = int64(i)
 			strwhere := sqlparser.String(sel.Where)
 			strings.Replace(strwhere, "id", "bid", -1)
 			strings.Replace(strwhere, "publisher_id", "bpid", -1)
@@ -57,7 +57,7 @@ func HandleDelete(sql string) (int64, [8]string, [8]int64) {
 		TotalNum = 4
 		i := 0
 		for i < int(TotalNum) {
-			siten[i] = int64(i + 1)
+			siten[i] = int64(i)
 			strwhere := sqlparser.String(sel.Where)
 			strings.Replace(strwhere, "id", "pid", -1)
 			strings.Replace(strwhere, "name", "pname", -1)
@@ -112,10 +112,10 @@ func HandleDelete(sql string) (int64, [8]string, [8]int64) {
 		i := 0
 		for i < int(TotalNum) {
 			//delete from customer_0123 where cid=res[0]
-			siten[i] = int64(1)
+			siten[i] = int64(0)
 			outsql[i] = "delete from customer_0 where cid=" + strconv.Itoa(res[j])
 			i = i + 1
-			siten[i] = int64(2)
+			siten[i] = int64(1)
 			outsql[i] = "delete from customer_1 where cid=" + strconv.Itoa(res[j])
 			i = i + 1
 			j = j + 1
