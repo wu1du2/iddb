@@ -553,6 +553,9 @@ func GetResult(plan_tree iplan.PlanTree, txnID int64) []int {
 		println("txn ", txnID, "not finished!")
 	} else {
 		mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
+
+		println("mysql=", mysql)
+
 		db, err := sql.Open("mysql", mysql)
 
 		plan_node := plan_tree.Nodes[plan_tree.Root]
