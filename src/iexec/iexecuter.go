@@ -499,7 +499,7 @@ func PrintResult(plan_tree iplan.PlanTree, txnID int64) {
 	} else {
 		mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
 		db, err := sql.Open("mysql", mysql)
-		
+
 		plan_node := plan_tree.Nodes[plan_tree.Root]
 
 		query := "select * from " + plan_node.TmpTable
@@ -507,7 +507,7 @@ func PrintResult(plan_tree iplan.PlanTree, txnID int64) {
 		rows, err := db.Query(query)
 		tt, err := rows.ColumnTypes()
 		iutilities.CheckErr(err)
-	
+
 		types := make([]reflect.Type, len(tt))
 		for i, tp := range tt {
 			// ScanType
@@ -554,14 +554,14 @@ func GetResult(plan_tree iplan.PlanTree, txnID int64) []int {
 	} else {
 		mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
 		db, err := sql.Open("mysql", mysql)
-		
+
 		plan_node := plan_tree.Nodes[plan_tree.Root]
 
 		query := "select * from " + plan_node.TmpTable
-		// println(query)
+		println("getresult ", query)
 		rows, err := db.Query(query)
 		iutilities.CheckErr(err)
-	
+
 		i := 0
 		for rows.Next() {
 			var id int
