@@ -67,8 +67,10 @@ func HandleDelete(sql string) (int64, [8]string, [8]int64) {
 	case "customer":
 		//step1 find cid
 		strwhere := sqlparser.String(sel.Where)
+		println("strwhere1=",strwhere)
 		strings.Replace(strwhere, "id", "cid", -1)
 		strings.Replace(strwhere, "name", "cname", -1)
+		println("strwhere2=",strwhere)
 		sqlstmt := "select cid from customer" + strwhere
 		println(sqlstmt)
 		var txnID int64
