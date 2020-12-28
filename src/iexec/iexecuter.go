@@ -513,6 +513,7 @@ func PrintResult(plan_tree iplan.PlanTree, txnID int64) {
 			// ScanType
 			scanType := tp.ScanType()
 			types[i] = scanType
+
 		}
 		// fmt.Println(" ")
 		values := make([]interface{}, len(tt))
@@ -545,13 +546,4 @@ func PrintResult(plan_tree iplan.PlanTree, txnID int64) {
 		fmt.Print("total count:")
 		fmt.Println(rows)
 	}
-}
-
-func GetResult(plan_tree iplan.PlanTree, txnID int64) string {
-	if TreeIsComplete(plan_tree) != true {
-		println("txn ", txnID, "not finished!")
-	} else {
-
-	}
-	return ""
 }
