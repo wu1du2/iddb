@@ -59,18 +59,18 @@ func HandleDelete(sql string) (int64, [8]string, [8]int64) {
 		for i < int(TotalNum) {
 			siten[i] = int64(i)
 			strwhere := sqlparser.String(sel.Where)
-			strings.Replace(strwhere, "id", "pid", -1)
-			strings.Replace(strwhere, "name", "pname", -1)
+			strwhere = strings.Replace(strwhere, "id", "pid", -1)
+			strwhere = strings.Replace(strwhere, "name", "pname", -1)
 			outsql[i] = "delete from publisher_" + strconv.Itoa(i) + strwhere
 			i = i + 1
 		}
 	case "customer":
 		//step1 find cid
 		strwhere := sqlparser.String(sel.Where)
-		println("strwhere1=",strwhere)
-		strings.Replace(strwhere, "id", "cid", -1)
-		strings.Replace(strwhere, "name", "cname", -1)
-		println("strwhere2=",strwhere)
+		println("strwhere1=", strwhere)
+		strwhere = strings.Replace(strwhere, "id", "cid", -1)
+		strwhere = strings.Replace(strwhere, "name", "cname", -1)
+		println("strwhere2=", strwhere)
 		sqlstmt := "select cid from customer" + strwhere
 		println(sqlstmt)
 		var txnID int64
