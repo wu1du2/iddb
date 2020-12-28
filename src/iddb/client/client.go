@@ -235,6 +235,13 @@ func test_insert() {
 	for i, ins_stmt := range ins_stmts {
 		println(i, ins_stmt)
 
+		N, sqls, siteid := iparser.HandleInsert(ins_HandleInsert)
+		i:=0
+		for i<N {
+			RunRemoteStmt(siteid[i], sqls[i])
+			i=i+1
+		}
+
 		//iparser.HandleInsert()
 
 		//func RunRemoteStmt(siteid int64, stmt string)
@@ -263,6 +270,12 @@ func test_delete() {
 	for i, del_stmt := range del_stmts {
 		println(i, del_stmt)
 
+		N, sqls, siteid := ihandledelete.HandleDelete(ins_HandleInsert)
+		i:=0
+		for i<N {
+			RunRemoteStmt(siteid[i], sqls[i])
+			i=i+1
+		}
 		//iparser.HandleInsert()
 
 		//func RunRemoteStmt(siteid int64, stmt string)
