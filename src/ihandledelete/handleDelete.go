@@ -70,6 +70,7 @@ func HandleDelete(sql string) (int64, [8]string, [8]int64) {
 		strings.Replace(strwhere, "id", "cid", -1)
 		strings.Replace(strwhere, "name", "cname", -1)
 		sqlstmt := "select cid from customer" + strwhere
+		println(sqlstmt)
 		var txnID int64
 		//txnID needs to be unique!
 		txnID = 4433
