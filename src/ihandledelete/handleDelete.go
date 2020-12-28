@@ -1,10 +1,17 @@
-package iparser
+package ihandledelete
 
 import (
 	"fmt"
 	//"strings"
+	"iexec"
+	"imeta"
+	"iparser"
+	"iqueryanalyzer"
+	"iqueryoptimizer"
+	"irpccall"
+	"iutilities"
 	"strconv"
-	//"iqueryanalyzer"
+
 	"github.com/xwb1989/sqlparser"
 )
 
@@ -48,6 +55,42 @@ func HandleDelete(sql string) (int64, [4]string, [4]int64) {
 			i = i + 1
 		}
 	case "customer":
+		//step1 find cid
+		sqlstmt := "select cid from customer where xxxx"
+		var txnID int64
+		//txnID needs to be unique!
+		txnID = 4433
+		plantree := iparser.Parse(sqlstmt, txnID)
+		plantree = iqueryanalyzer.Analyze(plantree)
+		plantree = iqueryoptimizer.Optimize(plantree)
+
+		ipaddr0 := iutilities.Peers[0].IP + ":" + iutilities.Peers[0].Call
+
+		ipaddr1 := iutilities.Peers[1].IP + ":" + iutilities.Peers[1].Call
+
+		iutilities.Waitgroup.Add(1)
+		go irpccall.RunCallClient(ipaddr0, txnID)
+
+		iutilities.Waitgroup.Add(1)
+		go irpccall.RunCallClient(ipaddr1, txnID)
+
+		iutilities.Waitgroup.Wait()
+
+		plantree, err = imeta.Get_Tree(txnID)
+
+		if err != nil {
+			iutilities.CheckErr(err)
+		}
+
+		res := iexec.GetResult(plantree, txnID)
+
+		println(res)
+
+		//step2 delete by cid
+
+		//delete from customer_0 where cid=xxx
+		//delete from customer_1 where cid=xxx
+
 		fmt.Println("...")
 	}
 	return TotalNum, outsql, siten

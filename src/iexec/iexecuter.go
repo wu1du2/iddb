@@ -546,3 +546,12 @@ func PrintResult(plan_tree iplan.PlanTree, txnID int64) {
 		fmt.Println(rows)
 	}
 }
+
+func GetResult(plan_tree iplan.PlanTree, txnID int64) string {
+	if TreeIsComplete(plan_tree) != true {
+		println("txn ", txnID, "not finished!")
+	} else {
+
+	}
+	return ""
+}
