@@ -569,14 +569,6 @@ func GetResult(plan_tree iplan.PlanTree, txnID int64) []int {
 			mySlice = append(mySlice, id)
 			i++
 		}
-		count_query := "select count(*) from " + plan_node.TmpTable
-		rows, err = db.Query(count_query)
-
-		rows.Next()
-		fmt.Print("total count:")
-		fmt.Println(rows)
-
-		return mySlice
 	}
 	return mySlice
 }
