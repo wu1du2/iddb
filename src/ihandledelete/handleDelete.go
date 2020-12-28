@@ -81,6 +81,24 @@ func HandleDelete(sql string) (int64, [8]string, [8]int64) {
 
 		ipaddr1 := iutilities.Peers[1].IP + ":" + iutilities.Peers[1].Call
 
+		imeta.Connect_etcd()
+		println("start imeta")
+
+		err = imeta.Build_Txn(txnID)
+		if err != nil {
+			iutilities.CheckErr(err)
+		}
+
+		println("imeta build txn ok")
+
+		err = imeta.Set_Tree(txnID, plantree)
+		if err != nil {
+			iutilities.CheckErr(err)
+		}
+		println("imeta set tree ok")
+
+		println("end imeta")
+
 		iutilities.Waitgroup.Add(1)
 		go irpccall.RunCallClient(ipaddr0, txnID)
 
