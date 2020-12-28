@@ -513,7 +513,6 @@ func PrintResult(plan_tree iplan.PlanTree, txnID int64) {
 			// ScanType
 			scanType := tp.ScanType()
 			types[i] = scanType
-
 		}
 		// fmt.Println(" ")
 		values := make([]interface{}, len(tt))
@@ -546,4 +545,38 @@ func PrintResult(plan_tree iplan.PlanTree, txnID int64) {
 		fmt.Print("total count:")
 		fmt.Println(rows)
 	}
+}
+
+func GetResult(plan_tree iplan.PlanTree, txnID int64) []int {
+	mySlice := make([]int, 0)
+	if TreeIsComplete(plan_tree) != true {
+		println("txn ", txnID, "not finished!")
+	} else {
+		mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
+		db, err := sql.Open("mysql", mysql)
+		
+		plan_node := plan_tree.Nodes[plan_tree.Root]
+
+		query := "select * from " + plan_node.TmpTable
+		// println(query)
+		rows, err := db.Query(query)
+		iutilities.CheckErr(err)
+	
+		i := 0
+		for rows.Next() {
+			var id int
+			err = rows.Scan(&id)
+			mySlice = append(mySlice, id)
+			i++
+		}
+		count_query := "select count(*) from " + plan_node.TmpTable
+		rows, err = db.Query(count_query)
+
+		rows.Next()
+		fmt.Print("total count:")
+		fmt.Println(rows)
+
+		return mySlice
+	}
+	return mySlice
 }
