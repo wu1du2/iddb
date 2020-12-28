@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"ihandledelete"
 	"iparser"
 	"iqueryanalyzer"
 	//"github.com/xwb1989/sqlparser"
@@ -21,7 +22,7 @@ func test_delete() {
 	//sql := `delete from Customer where name='Xiaohong' AND rank=1`
 	//sql := `delete from Customer where rank = 1`
 
-	i, str, j := iparser.HandleDelete(sql)
+	i, str, j := ihandledelete.HandleDelete(sql)
 	fmt.Println(i)
 	fmt.Println(str)
 	fmt.Println(j)
