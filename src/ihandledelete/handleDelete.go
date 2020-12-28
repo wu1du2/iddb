@@ -3,13 +3,13 @@ package ihandledelete
 import (
 	"fmt"
 	"strings"
-	// "iexec"
-	// "imeta"
-	// "iparser"
-	// "iqueryanalyzer"
-	// "iqueryoptimizer"
-	// "irpccall"
-	// "iutilities"
+	"iexec"
+	"imeta"
+	"iparser"
+	"iqueryanalyzer"
+	"iqueryoptimizer"
+	"irpccall"
+	"iutilities"
 	"strconv"
 
 	"github.com/xwb1989/sqlparser"
@@ -65,41 +65,41 @@ func HandleDelete(sql string) (int64, [8]string, [8]int64) {
 			i = i + 1
 		}
 	case "customer":
-		// //step1 find cid
-		// strwhere :=sqlparser.String(sel.Where)
-		// strings.Replace(strwhere,"id","cid",-1)
-		// strings.Replace(strwhere,"name","cname",-1)
-		// sqlstmt := "select cid from customer"+strwhere
-		// var txnID int64
-		// //txnID needs to be unique!
-		// txnID = 4433
-		// plantree := iparser.Parse(sqlstmt, txnID)
-		// plantree = iqueryanalyzer.Analyze(plantree)
-		// plantree = iqueryoptimizer.Optimize(plantree)
+		//step1 find cid
+		strwhere :=sqlparser.String(sel.Where)
+		strings.Replace(strwhere,"id","cid",-1)
+		strings.Replace(strwhere,"name","cname",-1)
+		sqlstmt := "select cid from customer"+strwhere
+		var txnID int64
+		//txnID needs to be unique!
+		txnID = 4433
+		plantree := iparser.Parse(sqlstmt, txnID)
+		plantree = iqueryanalyzer.Analyze(plantree)
+		plantree = iqueryoptimizer.Optimize(plantree)
 
-		// ipaddr0 := iutilities.Peers[0].IP + ":" + iutilities.Peers[0].Call
+		ipaddr0 := iutilities.Peers[0].IP + ":" + iutilities.Peers[0].Call
 
-		// ipaddr1 := iutilities.Peers[1].IP + ":" + iutilities.Peers[1].Call
+		ipaddr1 := iutilities.Peers[1].IP + ":" + iutilities.Peers[1].Call
 
-		// iutilities.Waitgroup.Add(1)
-		// go irpccall.RunCallClient(ipaddr0, txnID)
+		iutilities.Waitgroup.Add(1)
+		go irpccall.RunCallClient(ipaddr0, txnID)
 
-		// iutilities.Waitgroup.Add(1)
-		// go irpccall.RunCallClient(ipaddr1, txnID)
+		iutilities.Waitgroup.Add(1)
+		go irpccall.RunCallClient(ipaddr1, txnID)
 
-		// iutilities.Waitgroup.Wait()
+		iutilities.Waitgroup.Wait()
 
-		// plantree, err = imeta.Get_Tree(txnID)
+		plantree, err = imeta.Get_Tree(txnID)
 
-		// if err != nil {
-		// 	iutilities.CheckErr(err)
-		// }
+		if err != nil {
+			iutilities.CheckErr(err)
+		}
 
-		// res := iexec.GetResult(plantree, txnID)
+		res := iexec.GetResult(plantree, txnID)
 
-		// println(res)
-		fmt.Println("customer--")
-		res :=[] int {11,22,33 } 
+		println(res)
+
+		//res :=[] int {11,22,33 } 
 
 		//step2 delete by cid
 		//TotalNum = 4
