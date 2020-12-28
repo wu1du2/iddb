@@ -271,11 +271,11 @@ func test_insert() {
 		j := 0
 		for int64(j) < N {
 			println("insert_stmt", j, siteid[j], sqls[j])
+			println("press any key to continue")
+			_ = scanLine()
 			RunRemoteStmt(siteid[j], sqls[j])
 			j++
 		}
-		println("press any key to continue")
-		_ = scanLine()
 
 	}
 	return
@@ -304,11 +304,11 @@ func test_delete() {
 		j := 0
 		for int64(j) < N {
 			println("delete_stmt", j, siteid[j], sqls[j])
+			println("press any key to continue")
+			_ = scanLine()
 			RunRemoteStmt(siteid[j], sqls[j])
 			j = j + 1
 		}
-		println("press any key to continue")
-		_ = scanLine()
 
 	}
 	return

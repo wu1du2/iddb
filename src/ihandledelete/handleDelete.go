@@ -2,7 +2,6 @@ package ihandledelete
 
 import (
 	"fmt"
-	"strings"
 	"iexec"
 	"imeta"
 	"iparser"
@@ -11,6 +10,7 @@ import (
 	"irpccall"
 	"iutilities"
 	"strconv"
+	"strings"
 
 	"github.com/xwb1989/sqlparser"
 )
@@ -36,10 +36,10 @@ func HandleDelete(sql string) (int64, [8]string, [8]int64) {
 		i := 0
 		for i < int(TotalNum) {
 			siten[i] = int64(i + 1)
-			strwhere :=sqlparser.String(sel.Where)
-			strings.Replace(strwhere,"customer_id","ocid",-1)
-			strings.Replace(strwhere,"book_id","obid",-1)
-			outsql[i] = "delete from orders_" + strconv.Itoa(i+1) + strwhere
+			strwhere := sqlparser.String(sel.Where)
+			strings.Replace(strwhere, "customer_id", "ocid", -1)
+			strings.Replace(strwhere, "book_id", "obid", -1)
+			outsql[i] = "delete from orders_" + strconv.Itoa(i) + strwhere
 			i = i + 1
 		}
 	case "book":
@@ -47,10 +47,10 @@ func HandleDelete(sql string) (int64, [8]string, [8]int64) {
 		i := 0
 		for i < int(TotalNum) {
 			siten[i] = int64(i + 1)
-			strwhere :=sqlparser.String(sel.Where)
-			strings.Replace(strwhere,"id","bid",-1)
-			strings.Replace(strwhere,"publisher_id","bpid",-1)
-			outsql[i] = "delete from book_" + strconv.Itoa(i+1) + strwhere
+			strwhere := sqlparser.String(sel.Where)
+			strings.Replace(strwhere, "id", "bid", -1)
+			strings.Replace(strwhere, "publisher_id", "bpid", -1)
+			outsql[i] = "delete from book_" + strconv.Itoa(i) + strwhere
 			i = i + 1
 		}
 	case "publisher":
@@ -58,18 +58,18 @@ func HandleDelete(sql string) (int64, [8]string, [8]int64) {
 		i := 0
 		for i < int(TotalNum) {
 			siten[i] = int64(i + 1)
-			strwhere :=sqlparser.String(sel.Where)
-			strings.Replace(strwhere,"id","pid",-1)
-			strings.Replace(strwhere,"name","pname",-1)
-			outsql[i] = "delete from publisher_" + strconv.Itoa(i+1) + strwhere
+			strwhere := sqlparser.String(sel.Where)
+			strings.Replace(strwhere, "id", "pid", -1)
+			strings.Replace(strwhere, "name", "pname", -1)
+			outsql[i] = "delete from publisher_" + strconv.Itoa(i) + strwhere
 			i = i + 1
 		}
 	case "customer":
 		//step1 find cid
-		strwhere :=sqlparser.String(sel.Where)
-		strings.Replace(strwhere,"id","cid",-1)
-		strings.Replace(strwhere,"name","cname",-1)
-		sqlstmt := "select cid from customer"+strwhere
+		strwhere := sqlparser.String(sel.Where)
+		strings.Replace(strwhere, "id", "cid", -1)
+		strings.Replace(strwhere, "name", "cname", -1)
+		sqlstmt := "select cid from customer" + strwhere
 		var txnID int64
 		//txnID needs to be unique!
 		txnID = 4433
@@ -99,26 +99,26 @@ func HandleDelete(sql string) (int64, [8]string, [8]int64) {
 
 		println(res)
 
-		//res :=[] int {11,22,33 } 
+		//res :=[] int {11,22,33 }
 
 		//step2 delete by cid
 		//TotalNum = 4
-		if len(res)>4{
+		if len(res) > 4 {
 			TotalNum = 8
-		}else{
-			TotalNum = int64(2*len(res))
+		} else {
+			TotalNum = int64(2 * len(res))
 		}
 		j := 0
 		i := 0
-		for i<int(TotalNum){
-			//delete from customer_0123 where cid=res[0]	
+		for i < int(TotalNum) {
+			//delete from customer_0123 where cid=res[0]
 			siten[i] = int64(1)
-			outsql[i] = "delete from customer_1 where cid="+strconv.Itoa(res[j])
-			i=i+1
+			outsql[i] = "delete from customer_0 where cid=" + strconv.Itoa(res[j])
+			i = i + 1
 			siten[i] = int64(2)
-			outsql[i] = "delete from customer_2 where cid="+strconv.Itoa(res[j])
-			i=i+1
-			j = j+1
+			outsql[i] = "delete from customer_1 where cid=" + strconv.Itoa(res[j])
+			i = i + 1
+			j = j + 1
 		}
 	}
 	return TotalNum, outsql, siten
