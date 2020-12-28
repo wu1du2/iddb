@@ -497,6 +497,52 @@ func PrintResult(plan_tree iplan.PlanTree, txnID int64) {
 	if TreeIsComplete(plan_tree) != true {
 		println("txn ", txnID, "not finished!")
 	} else {
+		mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
+		db, err := sql.Open("mysql", mysql)
+		
+		plan_node := plan_tree.Nodes[plan_tree.Root]
 
+		query := "select * from " + plan_node.TmpTable
+		// println(query)
+		rows, err := db.Query(query)
+		tt, err := rows.ColumnTypes()
+		iutilities.CheckErr(err)
+	
+		types := make([]reflect.Type, len(tt))
+		for i, tp := range tt {
+			// ScanType
+			scanType := tp.ScanType()
+			types[i] = scanType
+		}
+		// fmt.Println(" ")
+		values := make([]interface{}, len(tt))
+		for i := range values {
+			values[i] = reflect.New(types[i]).Interface()
+		}
+		i := 0
+		for rows.Next() {
+			// todo: 只插入前100条，之后需要修改
+			if i > 30 {
+				break
+			}
+			// todo: 只插入前100条，之后需要修改
+			err = rows.Scan(values...)
+			iutilities.CheckErr(err)
+			fmt.Print("|")
+			for j := range values {
+
+				value := reflect.ValueOf(values[j]).Elem().Interface()
+				fmt.Print(Strval(value))
+				fmt.Print("|")
+			}
+			fmt.Println(" ")
+			i++
+		}
+		count_query := "select count(*) from " + plan_node.TmpTable
+		rows, err = db.Query(count_query)
+
+		rows.Next()
+		fmt.Print("total count:")
+		fmt.Println(rows)
 	}
 }
