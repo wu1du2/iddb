@@ -8,7 +8,7 @@ import (
 	"iqueryoptimizer"
 	// "imeta"
 	// "irpc"
-	// "iexecuter"
+	"iexec"
 	// "context"
 	// "iexecuter"
 	// "log"
@@ -17,7 +17,6 @@ import (
 	"imeta"
 	"iplan"
 	"irpccall"
-	"irpctran"
 	"iutilities"
 	"strconv"
 
@@ -47,6 +46,10 @@ func main() {
 	txnID = 576
 	iutilities.LoadAllConfig()
 	runtime.GOMAXPROCS(8)
+
+	test_insert()
+	test_delete()
+
 	var sqlstmt string
 	queries[0] = `
 	select *
@@ -177,6 +180,15 @@ func main() {
 
 		iutilities.Waitgroup.Wait()
 
+		plantree, err = imeta.Get_Tree(txnID)
+
+		if err != nil {
+			iutilities.CheckErr(err)
+			return
+		}
+
+		iexec.PrintResult(plantree, txnID)
+
 		println("txn", txnID, "end!")
 
 		txnID += 1
@@ -203,132 +215,64 @@ func scanLine() string {
 	return string(b)
 }
 
-func test1() {
+func test_insert() {
+	var ins_stmts [5]string
+	ins_stmts[0] = `
+	insert into customer(id, name, rank) values(300001, 'Xiaoming', 1)`
 
-	// sqlstmt := "select * from Publisher"
-	var plantree iplan.PlanTree
+	ins_stmts[1] = `
+	insert into publisher(id, name, nation) values(104001,'High Education Press', 'PRC')`
 
-	// plantree, err = iparser.parse(sqlstmt)
-	// plantree, err = iqueryanalyzer.analyze(plantree)
-	// plantree, err = ioptimizer.optimize(plantree)
-	imeta.Connect_etcd()
-	plantree = generatePlanTree()
-	println("start imeta")
-	err = imeta.Build_Txn(txnID)
-	if err != nil {
-		iutilities.CheckErr(err)
-		return
+	ins_stmts[2] = `
+	insert into customer(id, name, rank) values(300002,'Xiaohong', 1)`
+
+	ins_stmts[3] = `
+	insert into book (id, title, authors, publisher_id, copies) values(205001, 'DDB', 'Oszu', 104001, 100)`
+
+	ins_stmts[4] = `
+	insert into orders (customer_id, book_id, quantity) values(300001, 205001,5)`
+
+	for i, ins_stmt := range ins_stmts {
+		println(i, ins_stmt)
+
+		//iparser.HandleInsert()
+
+		//func RunRemoteStmt(siteid int64, stmt string)
+
 	}
-	println("imeta build txn ok")
-	// fmt.Println(plantree)
-	plantree.Print()
-	err = imeta.Set_Tree(txnID, plantree)
-	if err != nil {
-		iutilities.CheckErr(err)
-		return
-	}
-	println("imeta set tree ok")
-	var ipaddr string
-	println("end imeta")
-	for _, node := range iutilities.Peers {
-		ipaddr = node.IP + ":" + node.Call
-		println("call node to work ", node.NodeId)
-		go irpccall.RunCallClient(ipaddr, txnID)
-	}
-	println("client end!")
-	// waitgroup.Add(1)
-	// waitgroup.Wait()
+	return
 }
 
-func generatePlanTree() iplan.PlanTree {
-	fmt.Println("try to create plantree")
-	var plan_tree iplan.PlanTree
-	plan_tree.NodeNum = 5
-	/*
-	       0
-	   1       2
-	   3       4
-	*/
-	// 根结点0
-	pn0 := &plan_tree.Nodes[0]
-	pn0.Nodeid = 1
-	pn0.Left = 2
-	pn0.Right = 3
-	pn0.Parent = -1
-	pn0.Status = 0
-	pn0.Locate = 0
-	pn0.NodeType = 4
-	pn0.TransferFlag = true
-	pn0.Dest = 1
-	pn0.Joint_cols = "id,customer_id"
-	// 结点1
-	pn1 := &plan_tree.Nodes[1]
-	pn1.Nodeid = 2
-	pn1.Left = 4
-	pn1.Right = -1
-	pn1.Parent = 0
-	pn1.Status = 0
-	pn1.Locate = 0
-	pn1.NodeType = 2
-	pn1.Where = "id > 2"
-	// 结点2
-	pn2 := &plan_tree.Nodes[2]
-	pn2.Nodeid = 3
-	pn2.Left = 5
-	pn2.Right = -1
-	pn2.Parent = 0
-	pn2.Status = 0
-	pn2.Locate = 0
-	pn2.NodeType = 3
-	pn2.Cols = "customer_id,quantity"
-	// 结点3 data节点
-	pn3 := &plan_tree.Nodes[3]
-	pn3.Nodeid = 4
-	pn3.Left = -1
-	pn3.Right = -1
-	pn3.Parent = 1
-	pn3.Status = 1
-	pn3.Locate = 0
-	pn3.NodeType = 1
-	pn3.TmpTable = "customer"
-	// 结点4 data节点
-	pn4 := &plan_tree.Nodes[4]
-	pn4.Nodeid = 5
-	pn4.Left = -1
-	pn4.Right = -1
-	pn4.Parent = 2
-	pn4.Status = 1
-	pn4.Locate = 0
-	pn4.NodeType = 1
-	pn4.TmpTable = "orders"
-	return plan_tree
+func test_delete() {
+	var del_stmts [5]string
+	del_stmts[0] = `
+	delete from orders`
+
+	del_stmts[1] = `
+	delete from book where copies = 100`
+
+	del_stmts[2] = `
+	delete from publisher where nation = 'PRC'`
+
+	del_stmts[3] = `
+	delete from customer where name='Xiaohong' AND rank=1`
+
+	del_stmts[4] = `
+	delete from customer where rank = 1`
+
+	for i, del_stmt := range del_stmts {
+		println(i, del_stmt)
+
+		//iparser.HandleInsert()
+
+		//func RunRemoteStmt(siteid int64, stmt string)
+
+	}
+	return
 }
 
-func testtrans() {
-	// iutilities.Peers = iutilities.GetPeers()
-	testnodeid := 0
-	ip := iutilities.Peers[testnodeid].IP
-	port := iutilities.Peers[testnodeid].Tran
-	address := ip + ":" + port
-	println(address)
-	// address := "localhost:50053"
-	var table irpctran.Table
-	// table.Createstmt = "Create Table PUBLISHER2 (ID int, NATION varchar(255) );"
-	table.Createstmt = "Create Table PUBLISHER5 (ID int, NATION varchar(255) );"
-	irpctran.RunTranClient(address, table)
-	table.Createstmt = "Insert Into PUBLISHER5 Values (1,'US'),(2,'US'),(3,'CHN');"
-	irpctran.RunTranClient(address, table)
-}
-
-func testcall() {
-	testnodeid := 0
-	ip := iutilities.Peers[testnodeid].IP
-	port := iutilities.Peers[testnodeid].Call
-	// address := "10.77.70.161:50054"
-	address := ip + ":" + port
-	println(address)
-	var txnid int64
-	txnid = 1
-	is_Suc := irpccall.RunCallClient(address, txnid)
-	println("irpc.RunCallClient(", address, ",", txnid, "),is_Suc=", is_Suc)
+func RunRemoteStmt(siteid int64, stmt string) {
+	node := iutilities.Peers[siteid]
+	ipaddr = node.IP + ":" + node.Tran
+	iexec.ExecuteRemoteCreateStmt(ipaddr, stmt)
 }

@@ -492,3 +492,11 @@ func ExecuteTransmission(plan_node *iplan.PlanTreeNode) {
 		plan_node.Status = 1
 	}
 }
+
+func PrintResult(plan_tree iplan.PlanTree, txnID int64) {
+	if TreeIsComplete(plan_tree) != true {
+		println("txn ", txnID, "not finished!")
+	} else {
+
+	}
+}

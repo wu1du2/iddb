@@ -8,15 +8,16 @@ import (
 )
 
 func main() {
-	test_old()
-	// test_delete()
+	// test_old()
+	test_delete()
+	test_insert()
 }
 
 func test_delete() {
 
 	//sql := `Delete from Orders`
 	//sql := `Delete from Book where copies = 100`
-	sql := `delete from Publisher where nation = 'PRC'`
+	sql := `delete from publisher where nation = 'PRC'`
 	//sql := `delete from Customer where name='Xiaohong' AND rank=1`
 	//sql := `delete from Customer where rank = 1`
 
