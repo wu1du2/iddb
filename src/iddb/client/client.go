@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ihandledelete"
 	"iparser"
 	"iqueryanalyzer"
 
@@ -13,6 +14,8 @@ import (
 	// "iexecuter"
 	// "log"
 	// "net"
+
+	"os"
 
 	"imeta"
 	"iplan"
@@ -35,11 +38,14 @@ iddb client设计思路
 */
 
 var (
-	txnID    int64
-	err      error
-	ipaddr   string
-	plantree iplan.PlanTree
-	queries  [10]string
+	txnID        int64
+	err          error
+	ipaddr       string
+	plantree     iplan.PlanTree
+	queries      [10]string
+	test_insert_ = 1
+	test_delete_ = 1
+	test_select_ = 0
 )
 
 func main() {
@@ -47,8 +53,34 @@ func main() {
 	iutilities.LoadAllConfig()
 	runtime.GOMAXPROCS(8)
 
-	test_insert()
-	test_delete()
+	for i, v := range os.Args {
+		if i == 1 {
+			test_insert_, _ = strconv.Atoi(v)
+		}
+
+		if i == 2 {
+			test_delete_, _ = strconv.Atoi(v)
+		}
+
+		if i == 3 {
+			test_select_, _ = strconv.Atoi(v)
+		}
+
+	}
+
+	println(test_insert_, test_delete_, test_select_)
+
+	if test_insert_ == 1 {
+		test_insert()
+	}
+
+	if test_delete_ == 1 {
+		test_delete()
+	}
+
+	if test_select_ != 1 {
+		return
+	}
 
 	var sqlstmt string
 	queries[0] = `
@@ -235,16 +267,15 @@ func test_insert() {
 	for i, ins_stmt := range ins_stmts {
 		println(i, ins_stmt)
 
-		N, sqls, siteid := iparser.HandleInsert(ins_HandleInsert)
-		i:=0
-		for i<N {
-			RunRemoteStmt(siteid[i], sqls[i])
-			i=i+1
+		N, sqls, siteid := iparser.HandleInsert(ins_stmt)
+		j := 0
+		for int64(j) < N {
+			println("insert_stmt", j, siteid[j], sqls[j])
+			RunRemoteStmt(siteid[j], sqls[j])
+			j++
 		}
-
-		//iparser.HandleInsert()
-
-		//func RunRemoteStmt(siteid int64, stmt string)
+		println("press any key to continue")
+		_ = scanLine()
 
 	}
 	return
@@ -269,16 +300,15 @@ func test_delete() {
 
 	for i, del_stmt := range del_stmts {
 		println(i, del_stmt)
-
-		N, sqls, siteid := ihandledelete.HandleDelete(ins_HandleInsert)
-		i:=0
-		for i<N {
-			RunRemoteStmt(siteid[i], sqls[i])
-			i=i+1
+		N, sqls, siteid := ihandledelete.HandleDelete(del_stmt)
+		j := 0
+		for int64(j) < N {
+			println("delete_stmt", j, siteid[j], sqls[j])
+			RunRemoteStmt(siteid[j], sqls[j])
+			j = j + 1
 		}
-		//iparser.HandleInsert()
-
-		//func RunRemoteStmt(siteid int64, stmt string)
+		println("press any key to continue")
+		_ = scanLine()
 
 	}
 	return
