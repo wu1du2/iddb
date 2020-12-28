@@ -76,7 +76,7 @@ func HandleDelete(sql string) (int64, [8]string, [8]int64) {
 		println(sqlstmt)
 		var txnID int64
 		//txnID needs to be unique!
-		txnID = 4441
+		txnID = 4449
 		plantree := iparser.Parse(sqlstmt, txnID)
 		plantree = iqueryanalyzer.Analyze(plantree)
 		plantree = iqueryoptimizer.Optimize(plantree)
