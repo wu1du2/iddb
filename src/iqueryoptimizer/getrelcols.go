@@ -21,6 +21,7 @@ func getRelCols(t *iplan.PlanTree, n int64) {
 	node := &t.Nodes[n]
 	if node.NodeType == 3 {
 		node.Rel_cols = node.Cols
+		return
 	}
 	if node.Nodeid == -1 {
 		return
