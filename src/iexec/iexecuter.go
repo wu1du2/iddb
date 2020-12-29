@@ -411,6 +411,7 @@ func generateInsertQuery(plan_node *iplan.PlanTreeNode) (string, bool) {
 	rows, err := db.Query(query)
 
 	tt, err := rows.ColumnTypes()
+
 	iutilities.CheckErr(err)
 
 	types := make([]reflect.Type, len(tt))
@@ -505,6 +506,7 @@ func PrintResult(plan_tree iplan.PlanTree, txnID int64) {
 		query := "select * from " + plan_node.TmpTable
 		println(query)
 		rows, err := db.Query(query)
+		iutilities.CheckErr(err)
 		tt, err := rows.ColumnTypes()
 		iutilities.CheckErr(err)
 

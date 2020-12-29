@@ -179,6 +179,7 @@ func main() {
 		plantree.Print()
 
 		println("press any key to continue")
+		_ = scanLine()
 
 		imeta.Connect_etcd()
 		println("start imeta")
