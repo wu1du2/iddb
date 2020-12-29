@@ -105,6 +105,7 @@ func TreeIsComplete(plan_tree iplan.PlanTree) bool {
 }
 
 func FindOneNode(plan_tree iplan.PlanTree, node_id int64) int64 {
+	Init()
 	// fmt.Println("go into node")
 	// fmt.Println(node_id)
 	var can_execute_id int64
@@ -156,6 +157,7 @@ func FindOneNode(plan_tree iplan.PlanTree, node_id int64) int64 {
 }
 
 func ExecuteOneNode(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_id int64) {
+	Init()
 	switch {
 	case plan_node.NodeType == 1 /*Table*/ :
 		break
@@ -495,6 +497,7 @@ func ExecuteTransmission(plan_node *iplan.PlanTreeNode) {
 }
 
 func PrintResult(plan_tree iplan.PlanTree, txnID int64) {
+	Init()
 	if TreeIsComplete(plan_tree) != true {
 		println("txn ", txnID, "not finished!")
 	} else {
