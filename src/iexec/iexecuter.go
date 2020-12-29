@@ -210,6 +210,7 @@ func ExecuteFilter(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_
 	iutilities.CheckErr(err)
 	println(res)
 	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10)
+	AddIndex(plan_node)
 	CleanTmpTable(plan_node.Left, plan_tree)
 	if !plan_node.TransferFlag {
 		plan_node.Status = 1
@@ -230,6 +231,7 @@ func ExecuteProjection(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, 
 	iutilities.CheckErr(err)
 	println(res)
 	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10)
+	AddIndex(plan_node)
 	CleanTmpTable(plan_node.Left, plan_tree)
 	if !plan_node.TransferFlag {
 		plan_node.Status = 1
@@ -263,6 +265,7 @@ func ExecuteJoin(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_id
 	iutilities.CheckErr(err)
 	println(res)
 	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10)
+	AddIndex(plan_node)
 	CleanTmpTable(plan_node.Left, plan_tree)
 	CleanTmpTable(plan_node.Right, plan_tree)
 	if !plan_node.TransferFlag {
@@ -285,10 +288,28 @@ func ExecuteUnion(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_i
 	iutilities.CheckErr(err)
 	println(res)
 	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10)
+	AddIndex(plan_node)
 	CleanTmpTable(plan_node.Left, plan_tree)
 	CleanTmpTable(plan_node.Right, plan_tree)
 	if !plan_node.TransferFlag {
 		plan_node.Status = 1
+	}
+}
+
+func AddIndex(plan_node *iplan.PlanTreeNode) {
+	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
+	db, err := sql.Open("mysql", mysql)
+	iutilities.CheckErr(err)
+	
+	index_querys, has_index := generateAddIndexQuery(plan_node)
+	
+	if has_index {
+		for _, query := range index_querys {
+			stmt, err := db.Prepare(query)
+			res, err := stmt.Exec()
+			iutilities.CheckErr(err)
+			println(res)
+		}
 	}
 }
 
@@ -464,6 +485,36 @@ func generateInsertQuery(plan_node *iplan.PlanTreeNode) (string, bool) {
 
 }
 
+func generateAddIndexQuery(plan_node *iplan.PlanTreeNode) ([]string, bool) {
+	mySlice := make([]string, 0)
+	has_index := false
+	cols := strings.Split(plan_node.Rel_cols, ",")
+	for _, col := range cols {
+		if strings.EqualFold(col, "pid") {
+			query := "create index idx_pid_" + plan_node.TmpTable + " on " + plan_node.TmpTable + "(pid)"
+			mySlice = append(mySlice, query)
+			has_index = true
+		} else if strings.EqualFold(col, "bid") {
+			query := "create index idx_bid_" + plan_node.TmpTable + " on " + plan_node.TmpTable + "(bid)"
+			mySlice = append(mySlice, query)
+			has_index = true
+		} else if strings.EqualFold(col, "cid") {
+			query := "create index idx_cid_" + plan_node.TmpTable + " on " + plan_node.TmpTable + "(cid)"
+			mySlice = append(mySlice, query)
+			has_index = true
+		} else if strings.EqualFold(col, "ocid") {
+			query := "create index idx_ocid_" + plan_node.TmpTable + " on " + plan_node.TmpTable + "(ocid)"
+			mySlice = append(mySlice, query)
+			has_index = true
+		} else if strings.EqualFold(col, "obid") {
+			query := "create index idx_obid_" + plan_node.TmpTable + " on " + plan_node.TmpTable + "(obid)"
+			mySlice = append(mySlice, query)
+			has_index = true
+		}
+	}
+	return mySlice, has_index
+}
+
 func getAddress(plan_node *iplan.PlanTreeNode) string {
 	dest := iutilities.Peers[plan_node.Dest]
 	address := dest.IP + ":" + dest.Tran
@@ -479,13 +530,14 @@ func ExecuteTransmission(plan_node *iplan.PlanTreeNode) {
 		ExecuteRemoteCreateStmt(address, create_sql)
 		insert_query, issuccess := generateInsertQuery(plan_node)
 		println("query length is: ", len(insert_query))
-		// if len(insert_query) > 200 {
-
-		// 	println(insert_query[0:200])
-
-		// } else {
-		// 	println(insert_query)
-		// }
+		
+		index_querys, has_index := generateAddIndexQuery(plan_node)
+	
+		if has_index {
+			for _, query := range index_querys {
+				ExecuteRemoteCreateStmt(address, query)
+			}
+		}
 
 		fmt.Println(insert_query)
 
