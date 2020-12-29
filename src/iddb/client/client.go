@@ -159,15 +159,9 @@ func main() {
 	for qid := 0; qid < 9; qid++ {
 
 		if qid == 4 || qid == 7 {
-			txnID += 1
-			continue
+			// txnID += 1
+			// continue
 		}
-		// println("please enter SQL statement end with ; (q to quit)")
-		// sqlstmt = scanLine()
-
-		// sqlstmt = `select customer.name,orders.quantity
-		// from customer,orders
-		// where customer.id=orders.customer_id`
 
 		sqlstmt = queries[qid]
 
@@ -183,6 +177,8 @@ func main() {
 		// fmt.Println("plantree is ", plantree)
 
 		plantree.Print()
+
+		println("press any key to continue")
 
 		imeta.Connect_etcd()
 		println("start imeta")
