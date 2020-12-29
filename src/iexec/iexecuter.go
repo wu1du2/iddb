@@ -10,6 +10,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -70,7 +71,7 @@ func RunTree(txn_id int64) int64 {
 		}
 		// 从tree中找可用代码
 		// fmt.Println(plan_tree)
-		plan_tree.Print()
+		// plan_tree.Print()
 		execute_id := FindOneNode(plan_tree, plan_tree.Root)
 		fmt.Println(execute_id)
 		if execute_id == -1 {
@@ -89,6 +90,7 @@ func RunTree(txn_id int64) int64 {
 		fmt.Println(current_node)
 		// TODO:更新etcd状态
 		imeta.Set_Node(txn_id, current_node)
+		time.Sleep(time.Duration(10) * time.Millisecond)
 	}
 	println("executed successfully")
 	return 0
@@ -306,6 +308,7 @@ func AddIndex(plan_node *iplan.PlanTreeNode) {
 	if has_index {
 		for _, query := range index_querys {
 			stmt, err := db.Prepare(query)
+			println("create index stmt:", query)
 			res, err := stmt.Exec()
 			iutilities.CheckErr(err)
 			println(res)

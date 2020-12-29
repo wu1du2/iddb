@@ -33,8 +33,8 @@ func (s *tserver) PushTable(ctx context.Context, in *Table) (*IrpcStatus, error)
 	now := time.Now()
 	createstmt := in.Createstmt
 	itrans.ExecuteCreateStmt(createstmt)
-	println(in.Createstmt, "time cost:")
-	println(time.Since(now))
+	// println(in.Createstmt, "time cost:")
+	println(time.Since(now).Milliseconds())
 	return &IrpcStatus{IsSuc: 1}, nil
 }
 

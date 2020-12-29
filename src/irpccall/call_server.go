@@ -29,7 +29,7 @@ func (s *cserver) ExecuterCall(ctx context.Context, in *IrpcCallReq) (*IrpcStatu
 	now := time.Now()
 	iexec.RunExecuter(in.Txnid)
 	println(in.Txnid, "time cost:")
-	println(time.Since(now))
+	println(time.Since(now).Milliseconds())
 	return &IrpcStatus{IsSuc: 1}, nil
 }
 
