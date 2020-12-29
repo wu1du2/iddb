@@ -427,10 +427,10 @@ func generateCreateQuery(plan_node *iplan.PlanTreeNode) string {
 	return create_sql.String + ";"
 }
 
-func generateInsertQuery(plan_node *iplan.PlanTreeNode) (string, bool) {
+func generateInsertQuery(plan_node *iplan.PlanTreeNode) (string[], bool) {
 	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
 	db, err := sql.Open("mysql", mysql)
-
+	mySlice := make([]string, 0)
 	insert_query := "insert into " + plan_node.TmpTable + " values "
 	query := "select * from " + plan_node.TmpTable
 	// println(query)
@@ -455,12 +455,11 @@ func generateInsertQuery(plan_node *iplan.PlanTreeNode) (string, bool) {
 	}
 	i := 0
 	for rows.Next() {
-		// todo: 只插入前100条，之后需要修改
-		// if i > 10 {
-		// 	break
-		// }
-		// todo: 只插入前100条，之后需要修改
-		if i != 0 {
+		if i % 1000 == 0 && i != 0 {
+			insert_query = insert_query + ";"
+			mySlice = append(mySlice, query)
+			insert_query = "insert into " + plan_node.TmpTable + " values "
+		} else if i != 0 {
 			insert_query = insert_query + ", "
 		}
 		err = rows.Scan(values...)
@@ -480,10 +479,11 @@ func generateInsertQuery(plan_node *iplan.PlanTreeNode) (string, bool) {
 		i++
 	}
 	insert_query = insert_query + ";"
+	mySlice = append(mySlice, query)
 	if i == 0 {
-		return insert_query, false
+		return mySlice, false
 	} else {
-		return insert_query, true
+		return mySlice, true
 	}
 
 }
@@ -532,6 +532,7 @@ func ExecuteTransmission(plan_node *iplan.PlanTreeNode) {
 		fmt.Println(create_sql)
 		ExecuteRemoteCreateStmt(address, create_sql)
 		insert_query, issuccess := generateInsertQuery(plan_node)
+
 		println("query length is: ", len(insert_query))
 
 		index_querys, has_index := generateAddIndexQuery(plan_node)
@@ -541,11 +542,10 @@ func ExecuteTransmission(plan_node *iplan.PlanTreeNode) {
 				ExecuteRemoteCreateStmt(address, query)
 			}
 		}
-
-		// fmt.Println(insert_query)
-
 		if issuccess {
-			ExecuteRemoteCreateStmt(address, insert_query)
+			for _, query := range insert_query {
+				ExecuteRemoteCreateStmt(address, query)
+			}
 		}
 		plan_node.Status = 1
 	}
