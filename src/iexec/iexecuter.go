@@ -548,7 +548,7 @@ func PrintResult(plan_tree iplan.PlanTree, txnID int64) {
 
 		rows.Next()
 		fmt.Print("total count:")
-		err = rows.Scan(values...)
+		err = rows.Scan(values)
 		iutilities.CheckErr(err)
 		for j := range values {
 			value := reflect.ValueOf(values[j]).Elem().Interface()
