@@ -300,9 +300,9 @@ func AddIndex(plan_node *iplan.PlanTreeNode) {
 	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
 	db, err := sql.Open("mysql", mysql)
 	iutilities.CheckErr(err)
-	
+
 	index_querys, has_index := generateAddIndexQuery(plan_node)
-	
+
 	if has_index {
 		for _, query := range index_querys {
 			stmt, err := db.Prepare(query)
@@ -453,9 +453,9 @@ func generateInsertQuery(plan_node *iplan.PlanTreeNode) (string, bool) {
 	i := 0
 	for rows.Next() {
 		// todo: 只插入前100条，之后需要修改
-		if i > 10 {
-			break
-		}
+		// if i > 10 {
+		// 	break
+		// }
 		// todo: 只插入前100条，之后需要修改
 		if i != 0 {
 			insert_query = insert_query + ", "
@@ -530,9 +530,9 @@ func ExecuteTransmission(plan_node *iplan.PlanTreeNode) {
 		ExecuteRemoteCreateStmt(address, create_sql)
 		insert_query, issuccess := generateInsertQuery(plan_node)
 		println("query length is: ", len(insert_query))
-		
+
 		index_querys, has_index := generateAddIndexQuery(plan_node)
-	
+
 		if has_index {
 			for _, query := range index_querys {
 				ExecuteRemoteCreateStmt(address, query)
