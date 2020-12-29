@@ -19,30 +19,26 @@ func GetRelCols(oldtree iplan.PlanTree) iplan.PlanTree {
 func getRelCols(t *iplan.PlanTree, n int64) {
 	//if invalid Nodeid
 	node := &t.Nodes[n]
-	if node.NodeType == 3 {
-		node.Rel_cols = node.Cols
-		return
-	}
+	// println("!!!!", node.Nodeid)
 	if node.Nodeid == -1 {
 		return
 	}
 	//if access leaf node
 	if node.Left == -1 && node.Right == -1 {
 		getleafcols(node)
-		return
+		// println(node.Rel_cols)
 	}
 	//if only n.Left exist
 	if node.Left != -1 && node.Right == -1 {
 		getRelCols(t, node.Left)
 		node.Rel_cols = t.Nodes[node.Left].Rel_cols
-		return
+		// println(node.Rel_cols)
 	}
 	//if only n.Right exist
 	if node.Right != -1 && node.Left == -1 {
 		getRelCols(t, node.Right)
 		node.Rel_cols = t.Nodes[node.Right].Rel_cols
 		// println(node.Rel_cols)
-		return
 	}
 
 	if node.Left != -1 && node.Right != -1 {
@@ -51,7 +47,13 @@ func getRelCols(t *iplan.PlanTree, n int64) {
 		// println(t.Nodes[node.Left].Rel_cols)
 		// println(t.Nodes[node.Right].Rel_cols)
 		node.Rel_cols = union(t.Nodes[node.Left].Rel_cols, t.Nodes[node.Right].Rel_cols)
+		// println(node.Rel_cols)
 	}
+
+	if node.NodeType == 3 {
+		node.Rel_cols = node.Cols
+	}
+
 	return
 }
 
