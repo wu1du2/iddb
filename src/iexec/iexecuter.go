@@ -543,22 +543,17 @@ func PrintResult(plan_tree iplan.PlanTree, txnID int64) {
 			fmt.Println(" ")
 			i++
 		}
-		count_query := "select count(*) from " + plan_node.TmpTable
-		rows, err = db.Query(count_query)
 
-		rows.Next()
+		var count int64
+		err = db.QueryRow("select count(*) from " + plan_node.TmpTable).Scan(&count)
 		fmt.Print("total count:")
-		err = rows.Scan(values)
-		iutilities.CheckErr(err)
-		for j := range values {
-			value := reflect.ValueOf(values[j]).Elem().Interface()
-			fmt.Print(Strval(value))
-		}
+		fmt.Println(count)
 	}
 }
 
 func GetResult(plan_tree iplan.PlanTree, txnID int64) []int {
 	mySlice := make([]int, 0)
+	Init()
 	if TreeIsComplete(plan_tree) != true {
 		println("txn ", txnID, "not finished!")
 	} else {
