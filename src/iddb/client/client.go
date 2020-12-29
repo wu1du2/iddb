@@ -97,7 +97,7 @@ func main() {
 	where copies>5000`
 
 	queries[3] = `
-	select customer_id,quantity
+	select orders.customer_id,quantity
 	from orders
 	where quantity<8`
 
