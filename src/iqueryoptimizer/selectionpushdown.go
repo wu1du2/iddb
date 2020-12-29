@@ -85,6 +85,7 @@ func addWhereNodeOnTop(newNode iplan.PlanTreeNode, nodeid int64) {
 		if pt.Nodes[nodeid].TransferFlag == true {
 			pt.Nodes[nodeid].TransferFlag = false
 			pt.Nodes[nodeid].Dest = -1
+			pt.Nodes[nodeid].Status = 1
 		}
 		switch getChildType(nodeid) {
 		case "Left":
@@ -168,9 +169,9 @@ func SelectionPushDown(oldtree iplan.PlanTree) iplan.PlanTree {
 
 	}
 
-	// for _, node := range pt.Nodes {
-	// 	if node.NodeType == 4 && node.Joint_type == 0 && pt.Nodes[node.Parent].NodeType == 2{//若是x,且父节点为选择条件，则合并为等值连接
-
+	// for i, node := range pt.Nodes {
+	// 	if node.NodeType == 1 && node.TransferFlag == false {
+	// 		pt.Nodes[i].Status = 1
 	// 	}
 	// }
 
