@@ -14,6 +14,7 @@ func Optimize(oldtree iplan.PlanTree) iplan.PlanTree {
 		newtree = SelectionPushDown(newtree)
 		newtree = ProjectionPushDown(newtree)
 		newtree = TransmissionMinimization(newtree)
+		newtree = GetRelCols(newtree)
 	}
 	return newtree
 }
