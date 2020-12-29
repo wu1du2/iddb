@@ -539,7 +539,7 @@ func ExecuteTransmission(plan_node *iplan.PlanTreeNode) {
 			}
 		}
 
-		fmt.Println(insert_query)
+		// fmt.Println(insert_query)
 
 		if issuccess {
 			ExecuteRemoteCreateStmt(address, insert_query)
