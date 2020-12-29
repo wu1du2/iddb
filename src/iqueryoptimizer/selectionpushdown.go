@@ -162,6 +162,7 @@ func SelectionPushDown(oldtree iplan.PlanTree) iplan.PlanTree {
 			//方法：先按照空格分割，然后检测and来组合
 			wheres := strings.Split(node.Where, "and")
 			for _, subWhere := range wheres {
+				subWhere = "where " + subWhere
 				tryPushDown(subWhere, node.Nodeid)
 			}
 			deleteWhereNode(node.Nodeid)
