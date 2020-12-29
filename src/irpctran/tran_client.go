@@ -31,7 +31,7 @@ func RunTranClient(taddress string, table Table) int64 {
 	}
 	defer conn.Close()
 	c := NewPushTableClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30000)
 	defer cancel()
 
 	r, err := c.PushTable(ctx, &table)

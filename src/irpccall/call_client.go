@@ -32,7 +32,7 @@ func RunCallClient(caddress string, txnid int64) int64 {
 	}
 	defer conn.Close()
 	c := NewExecuterCallerClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30000)
 
 	defer cancel()
 	irpccallreq := IrpcCallReq{Txnid: txnid}
