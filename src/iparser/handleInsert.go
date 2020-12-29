@@ -10,9 +10,9 @@ import (
 )
 
 //map: (0,0)=1   <104000 && ="PRC"
-var Publisherflag = [2][2]int{{0, 1}, {2, 3}}
-var Bookflag = [3]int{0, 1, 2}
-var Ordersflag = [2][2]int{{0, 1}, {2, 3}}
+var Publisherflag = [2][2]int{{1, 2}, {3, 4}}
+var Bookflag = [3]int{1, 2, 3}
+var Ordersflag = [2][2]int{{1, 2}, {3, 4}}
 
 //return(1/2, [0][1], [0][1])
 func HandleInsert(sql string) (int64, [2]string, [2]int64) {
@@ -36,10 +36,10 @@ func HandleInsert(sql string) (int64, [2]string, [2]int64) {
 	switch tablename {
 	case "customer":
 		TotalNum = 2
-		siten[0] = 0
-		siten[1] = 1
-		outsql[0] = "insert into customer_0 values(" + value[0] + "," + value[1] + ")"
-		outsql[1] = "insert into customer_1 values(" + value[0] + "," + value[2] + ")"
+		siten[0] = 1
+		siten[1] = 2
+		outsql[0] = "insert into customer_1 values(" + value[0] + "," + value[1] + ")"
+		outsql[1] = "insert into customer_2 values(" + value[0] + "," + value[2] + ")"
 	case "publisher":
 		TotalNum = 1
 		pidflag := -1
