@@ -11,7 +11,8 @@ func GetRelCols(oldtree iplan.PlanTree) iplan.PlanTree {
 	var newtree iplan.PlanTree
 	getRelCols(&oldtree, oldtree.Root)
 	newtree = oldtree
-	newtree.Print()
+	// println("GetRelCols finished, the tree is:")
+	// newtree.Print()
 	return newtree
 }
 

@@ -59,8 +59,6 @@ func ResetColsForWhere(strin string) (strout string) {
 			arr[i] = "rank"
 		case "orders.customer_id":
 			arr[i] = "ocid"
-		case "customer_id":
-			arr[i] = "ocid"
 		case "orders.book_id":
 			arr[i] = "obid"
 		case "orders.quantity":
@@ -108,8 +106,6 @@ func ResetColsForProjection(strin string) (strout string) {
 		case "customer.rank":
 			arr[i] = "rank"
 		case "orders.customer_id":
-			arr[i] = "ocid"
-		case "customer_id":
 			arr[i] = "ocid"
 		case "orders.book_id":
 			arr[i] = "obid"

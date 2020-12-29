@@ -9,8 +9,8 @@ import (
 )
 
 func main() {
-	// test_old()
-	test_delete()
+	test_old()
+	// test_delete()
 	//test_insert()
 }
 
@@ -46,9 +46,10 @@ func test_insert() {
 func test_old() {
 	// sql := "SELECT t1.a,t2.b FROM t1,t2"
 
-	sql := `select customer.name,orders.quantity
+	sql := `select customer.name,customer.rank,orders.quantity
 	from customer,orders
-	where customer.id=orders.customer_id`
+	where customer.id=orders.customer_id
+	and customer.rank=1`
 
 	// sql := `select *
 	// from customer,orders

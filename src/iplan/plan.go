@@ -50,6 +50,7 @@ type FragTree struct {
 }
 
 func (pt *PlanTree) Print() {
+	fmt.Println("root is: ", pt.Root)
 	for _, node := range pt.Nodes {
 		if node.Nodeid == -1 || node.Nodeid == 0 {
 			continue

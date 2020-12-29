@@ -65,7 +65,7 @@ func main() {
 	where copies>5000`
 
 	queries[3] = `
-	select customer_id,quantity
+	select orders.customer_id,orders.quantity
 	from orders
 	where quantity<8`
 
@@ -236,10 +236,10 @@ func test_insert() {
 		println(i, ins_stmt)
 
 		N, sqls, siteid := iparser.HandleInsert(ins_HandleInsert)
-		i:=0
-		for i<N {
+		i := 0
+		for i < N {
 			RunRemoteStmt(siteid[i], sqls[i])
-			i=i+1
+			i = i + 1
 		}
 
 		//iparser.HandleInsert()
@@ -271,10 +271,10 @@ func test_delete() {
 		println(i, del_stmt)
 
 		N, sqls, siteid := ihandledelete.HandleDelete(ins_HandleInsert)
-		i:=0
-		for i<N {
+		i := 0
+		for i < N {
 			RunRemoteStmt(siteid[i], sqls[i])
-			i=i+1
+			i = i + 1
 		}
 		//iparser.HandleInsert()
 
