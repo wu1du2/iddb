@@ -23,7 +23,7 @@ output:
 	1 for succeed, 0 for failed
 */
 func RunTranClient(taddress string, table Table) int64 {
-	println("irpctran")
+	println("irpctran started")
 	// Set up a connection to the server.
 	conn, err := grpc.Dial(taddress, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
@@ -38,6 +38,6 @@ func RunTranClient(taddress string, table Table) int64 {
 	if err != nil {
 		log.Fatalf("could not call: %v", err)
 	}
-	println("result is ", r.IsSuc)
+	println("transmission suc ")
 	return r.IsSuc
 }

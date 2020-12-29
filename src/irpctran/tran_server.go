@@ -31,10 +31,11 @@ and execute
 */
 func (s *tserver) PushTable(ctx context.Context, in *Table) (*IrpcStatus, error) {
 	now := time.Now()
+	println("transmission started")
 	createstmt := in.Createstmt
 	itrans.ExecuteCreateStmt(createstmt)
 	// println(in.Createstmt, "time cost:")
-	println(time.Since(now).Milliseconds())
+	println("transmission time cost=", time.Since(now).Milliseconds(), "ms")
 	return &IrpcStatus{IsSuc: 1}, nil
 }
 
