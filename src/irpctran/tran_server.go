@@ -11,6 +11,7 @@ import (
 	"iutilities"
 	"log"
 	"net"
+	"time"
 
 	"google.golang.org/grpc"
 )
@@ -29,8 +30,10 @@ receive a table from remote client, make it a INSERT statement
 and execute
 */
 func (s *tserver) PushTable(ctx context.Context, in *Table) (*IrpcStatus, error) {
+	now := time.Now()
 	createstmt := in.Createstmt
 	itrans.ExecuteCreateStmt(createstmt)
+	println(in.Createstmt, "time cost:", time.Since(now))
 	return &IrpcStatus{IsSuc: 1}, nil
 }
 

@@ -11,6 +11,7 @@ import (
 	"iutilities"
 	"log"
 	"net"
+	"time"
 
 	"google.golang.org/grpc"
 )
@@ -25,7 +26,9 @@ var (
 
 // ExecuterCall implementation, defined in irpc.pb.go
 func (s *cserver) ExecuterCall(ctx context.Context, in *IrpcCallReq) (*IrpcStatus, error) {
+	now := time.Now()
 	iexec.RunExecuter(in.Txnid)
+	println(in.Txnid, "time cost:", time.Since(now))
 	return &IrpcStatus{IsSuc: 1}, nil
 }
 

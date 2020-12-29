@@ -4,6 +4,7 @@ import (
 	"ihandledelete"
 	"iparser"
 	"iqueryanalyzer"
+	"time"
 
 	// "iqueryanalyzer"
 	"iqueryoptimizer"
@@ -162,7 +163,7 @@ func main() {
 			// txnID += 1
 			// continue
 		}
-
+		now := time.Now()
 		sqlstmt = queries[qid]
 
 		println(sqlstmt)
@@ -217,6 +218,8 @@ func main() {
 		}
 
 		iexec.PrintResult(plantree, txnID)
+
+		println("total time cost:", time.Since(now))
 
 		println("txn", txnID, "end!")
 
