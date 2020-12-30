@@ -15,7 +15,7 @@ import (
 	"github.com/xwb1989/sqlparser"
 )
 
-var txnID int64 = 34541
+var txnID int64 = 34545
 
 func HandleDelete(sql string) (int64, [8]string, [8]int64) {
 	var TotalNum int64
