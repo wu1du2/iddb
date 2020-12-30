@@ -55,6 +55,7 @@ func Init() {
 	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
 	db, err = sql.Open("mysql", mysql)
 	iutilities.CheckErr(err)
+	db.Close()
 }
 
 func RunTree(txn_id int64) int64 {
@@ -209,9 +210,9 @@ func ExecuteFilter(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_
 	var query string
 	tablename := plan_tree.Nodes[plan_node.Left].TmpTable
 	if strings.EqualFold(plan_node.Cols, "") {
-		query = "create table tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select * from " + tablename + " " + plan_node.Where
+		query = "create table " + plan_node.TmpTable + " select * from " + tablename + " " + plan_node.Where
 	} else {
-		query = "create table tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select " + plan_node.Cols + " from " + tablename + " " + plan_node.Where
+		query = "create table " + plan_node.TmpTable + " select " + plan_node.Cols + " from " + tablename + " " + plan_node.Where
 	}
 
 	println(query)
@@ -219,12 +220,13 @@ func ExecuteFilter(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_
 	res, err := stmt.Exec()
 	iutilities.CheckErr(err)
 	println(res)
-	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10)
+	// plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10)
 	AddIndex(plan_node)
 	CleanTmpTable(plan_node.Left, plan_tree)
 	if !plan_node.TransferFlag {
 		plan_node.Status = 1
 	}
+	db.Close()
 }
 
 func ExecuteProjection(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_id int64) {
@@ -233,19 +235,20 @@ func ExecuteProjection(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, 
 	// TODO: assert(plan_node.Right = -1)
 
 	tablename := plan_tree.Nodes[plan_node.Left].TmpTable
-	query := "create table tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select " + plan_node.Cols + " from " + tablename
+	query := "create table " + plan_node.TmpTable + " select " + plan_node.Cols + " from " + tablename
 	println(query)
 
 	stmt, err := db.Prepare(query)
 	res, err := stmt.Exec()
 	iutilities.CheckErr(err)
 	println(res)
-	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10)
+	// plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10)
 	AddIndex(plan_node)
 	CleanTmpTable(plan_node.Left, plan_tree)
 	if !plan_node.TransferFlag {
 		plan_node.Status = 1
 	}
+	db.Close()
 }
 
 func ExecuteJoin(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_id int64) {
@@ -257,30 +260,28 @@ func ExecuteJoin(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_id
 	tablename2 := plan_tree.Nodes[plan_node.Right].TmpTable
 	var query string
 	if plan_node.Joint_type == 0 {
-		query = "create table tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select * from " + tablename1 + "," + tablename2 + ";"
+		query = "create table " + plan_node.TmpTable + " select * from " + tablename1 + "," + tablename2 + ";"
 		println(query)
 	} else if plan_node.Joint_type == 1 {
-		query = "create table tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select * from " + tablename1 + "," + tablename2 + " " + plan_node.Where + ";"
+		query = "create table " + plan_node.TmpTable + " select * from " + tablename1 + "," + tablename2 + " " + plan_node.Where + ";"
 		println(query)
 	} else {
-		query = "create table tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select * from " + tablename1 + " natural join " + tablename2 + " " + plan_node.Where + ";"
+		query = "create table " + plan_node.TmpTable + " select * from " + tablename1 + " natural join " + tablename2 + " " + plan_node.Where + ";"
 		println(query)
-		// cols := strings.Split(plan_node.Joint_cols, ",")
-		// query = "create table tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select * from " + tablename1 + "," + tablename2 + " where " + tablename1 + "." + cols[0] + "=" + tablename2 + "." + cols[1] + ";"
-		// println(query)
 	}
 
 	stmt, err := db.Prepare(query)
 	res, err := stmt.Exec()
 	iutilities.CheckErr(err)
 	println(res)
-	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10)
+	// plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10)
 	AddIndex(plan_node)
 	CleanTmpTable(plan_node.Left, plan_tree)
 	CleanTmpTable(plan_node.Right, plan_tree)
 	if !plan_node.TransferFlag {
 		plan_node.Status = 1
 	}
+	db.Close()
 }
 
 func ExecuteUnion(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_id int64) {
@@ -290,20 +291,21 @@ func ExecuteUnion(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_i
 
 	tablename1 := plan_tree.Nodes[plan_node.Left].TmpTable
 	tablename2 := plan_tree.Nodes[plan_node.Right].TmpTable
-	query := "create table tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10) + " select * from " + tablename1 + " union all" + " select * from " + tablename2 + ";"
+	query := "create table " + plan_node.TmpTable + " select * from " + tablename1 + " union all" + " select * from " + tablename2 + ";"
 	println(query)
 
 	stmt, err := db.Prepare(query)
 	res, err := stmt.Exec()
 	iutilities.CheckErr(err)
 	println(res)
-	plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10)
+	// plan_node.TmpTable = "tmp_table_" + strconv.FormatInt(txn_id, 10) + "_" + strconv.FormatInt(plan_node.Nodeid, 10)
 	AddIndex(plan_node)
 	CleanTmpTable(plan_node.Left, plan_tree)
 	CleanTmpTable(plan_node.Right, plan_tree)
 	if !plan_node.TransferFlag {
 		plan_node.Status = 1
 	}
+	db.Close()
 }
 
 func AddIndex(plan_node *iplan.PlanTreeNode) {
@@ -322,6 +324,7 @@ func AddIndex(plan_node *iplan.PlanTreeNode) {
 			println(res)
 		}
 	}
+	db.Close()
 }
 
 func Strval(value interface{}) string {
@@ -432,6 +435,7 @@ func generateCreateQuery(plan_node *iplan.PlanTreeNode) string {
 	iutilities.CheckErr(err)
 	fmt.Println(table_name.String)
 	// fmt.Println(create_sql.String + ";")
+	db.Close()
 	return create_sql.String + ";"
 }
 
@@ -486,6 +490,7 @@ func generateInsertQuery(plan_node *iplan.PlanTreeNode) ([]string, bool) {
 	}
 	insert_query = insert_query + ";"
 	mySlice = append(mySlice, insert_query)
+	db.Close()
 	if i == 0 {
 		return mySlice, false
 	} else {
@@ -609,6 +614,8 @@ func PrintResult(plan_tree iplan.PlanTree, txnID int64) {
 		err = db.QueryRow("select count(*) from " + plan_node.TmpTable).Scan(&count)
 		fmt.Print("total count:")
 		fmt.Println(count)
+
+		db.Close()
 	}
 }
 
@@ -635,6 +642,7 @@ func GetResult(plan_tree iplan.PlanTree, txnID int64) []int {
 			mySlice = append(mySlice, id)
 			i++
 		}
+		db.Close()
 	}
 	return mySlice
 }
