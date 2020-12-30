@@ -4,7 +4,7 @@ import "fmt"
 
 const (
 	//MaxNodeNum define the max num of the plantree nodes
-	MaxNodeNum = 100
+	MaxNodeNum = 1000
 	MaxFragNum = 10
 )
 
