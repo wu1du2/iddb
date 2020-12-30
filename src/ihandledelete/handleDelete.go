@@ -15,6 +15,8 @@ import (
 	"github.com/xwb1989/sqlparser"
 )
 
+var txnID int64 = 3454
+
 func HandleDelete(sql string) (int64, [8]string, [8]int64) {
 	var TotalNum int64
 	var outsql [8]string
@@ -70,9 +72,9 @@ func HandleDelete(sql string) (int64, [8]string, [8]int64) {
 		strwhere = strings.Replace(strwhere, "id", "cid", -1)
 		strwhere = strings.Replace(strwhere, "name", "cname", -1)
 		sqlstmt := "select cid from customer" + strwhere
-		var txnID int64
+
 		//txnID needs to be unique!
-		txnID = 67432
+		txnID++
 		plantree := iparser.Parse(sqlstmt, txnID)
 		plantree = iqueryanalyzer.Analyze(plantree)
 		plantree = iqueryoptimizer.Optimize(plantree)
