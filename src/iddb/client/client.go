@@ -158,7 +158,7 @@ func main() {
 	}
 
 	for qid := 0; qid < 10; qid++ {
-
+		
 		now := time.Now()
 		sqlstmt = queries[qid]
 
@@ -167,9 +167,16 @@ func main() {
 			break
 		}
 
-		plantree1 := iparser.Parse(sqlstmt, txnID)
-		plantree = iqueryanalyzer.Analyze(plantree1)
+		plantree := iparser.Parse(sqlstmt, txnID)
+		plantree = iqueryanalyzer.Analyze(plantree)
 		plantree = iqueryoptimizer.Optimize(plantree)
+
+		relsites := iqueryoptimizer.GetRelSites(plantree)
+		for i := 0; i < 4; i++ {
+			if relsites[i] == 1 {
+				println("Relative Site", i)
+			}
+		}
 
 		// fmt.Println("plantree is ", plantree)
 
@@ -197,7 +204,10 @@ func main() {
 		println("imeta set tree ok")
 
 		println("end imeta")
-		for _, node := range iutilities.Peers {
+		for i, node := range iutilities.Peers {
+			if relsites[i] == 0 {
+				continue
+			}
 			ipaddr = node.IP + ":" + node.Call
 			println("call node to work ", node.NodeId)
 			iutilities.Waitgroup.Add(1)
@@ -215,8 +225,8 @@ func main() {
 
 		iexec.PrintResult(plantree, txnID)
 
-		println("total time cost:")
-		println(time.Since(now).Milliseconds(), "ms")
+		println("total time cost: ")
+		println(time.Since(now).Milliseconds(), " ms")
 
 		println("txn", txnID, "end!")
 

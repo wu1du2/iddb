@@ -7,8 +7,9 @@ import (
 )
 
 var (
-	// Configfile = "/home/centos/config/iddb.conf"
-	Configfile = "D:/code/GoProject/iddb/cnf/iddb.conf"
+	Configfile = "/home/centos/config/iddb.conf"
+
+// Configfile = "D:/code/GoProject/iddb/cnf/iddb.conf"
 )
 
 var (
@@ -41,11 +42,11 @@ type Nodes struct {
 
 func LoadAllConfig() {
 	Me = GetMe()
-	PrintMe()
+	// PrintMe()
 	Peers = GetPeers()
-	PrintPeers()
+	// PrintPeers()
 	Mysql = GetMysqlConfig()
-	PrintMysqlConfig()
+	// PrintMysqlConfig()
 	return
 }
 
