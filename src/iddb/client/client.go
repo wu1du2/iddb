@@ -159,10 +159,6 @@ func main() {
 
 	for qid := 0; qid < 10; qid++ {
 
-		if qid == 4 || qid == 7 {
-			// txnID += 1
-			// continue
-		}
 		now := time.Now()
 		sqlstmt = queries[qid]
 
