@@ -61,9 +61,11 @@ func RunTree(txn_id int64) int64 {
 	Init()
 	println("iexecuter init ")
 	var plan_tree iplan.PlanTree
+	cnt := 0
 	for {
 		// TODO:获取etcd tree
-		println("txn_id:", txn_id)
+		cnt++
+
 		plan_tree, err = imeta.Get_Tree(txn_id)
 		// 检测树是否完全执行完毕
 		if TreeIsComplete(plan_tree) {
@@ -73,10 +75,16 @@ func RunTree(txn_id int64) int64 {
 		// fmt.Println(plan_tree)
 		// plan_tree.Print()
 		execute_id := FindOneNode(plan_tree, plan_tree.Root)
-		fmt.Println(execute_id)
 		if execute_id == -1 {
+			if cnt == 100 {
+				cnt = 0
+				println("txn_id:", txn_id, " busy waiting")
+			}
 			continue
 		}
+
+		fmt.Println(execute_id)
+
 		var pn *iplan.PlanTreeNode
 		pn = &plan_tree.Nodes[execute_id]
 		// 执行某个节点
