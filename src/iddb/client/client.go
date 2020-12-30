@@ -43,10 +43,11 @@ var (
 	err          error
 	ipaddr       string
 	plantree     iplan.PlanTree
-	queries      [10]string
+	queries      [15]string
 	test_insert_ = 1
 	test_delete_ = 1
 	test_select_ = 0
+	test_flag_   = 0
 )
 
 func main() {
@@ -65,6 +66,10 @@ func main() {
 
 		if i == 3 {
 			test_select_, _ = strconv.Atoi(v)
+		}
+
+		if i == 4 {
+			test_flag_, _ = strconv.Atoi(v)
 		}
 
 	}
@@ -158,9 +163,14 @@ func main() {
 	}
 
 	for qid := 0; qid < 10; qid++ {
-		if qid != 9 {
+		if qid < 9 && test_flag_ == 0 {
 			continue
 		}
+
+		if qid >= 9 && test_flag_ == 1 {
+			continue
+		}
+
 		now := time.Now()
 		sqlstmt = queries[qid]
 
