@@ -1,6 +1,6 @@
-drop database if exists iddb;
-create database iddb;
-use iddb;
+drop database if exists iddb2;
+create database iddb2;
+use iddb2;
 drop table if exists publisher_3;
 create table publisher_3(pid int primary key, pname char(100), nation char(3));
 drop table if exists orders_3;
