@@ -58,7 +58,10 @@ func ExecuteCreateStmt(stmt string) int64 {
 	if err != nil {
 		println("could not exec:", err)
 	}
-	println(res)
+	ins_id, err := res.LastInsertId()
+	row_aff, err := res.RowsAffected()
+
+	println("res: ", ins_id, row_aff)
 	println(err)
 	return 0
 }
