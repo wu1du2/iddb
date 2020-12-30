@@ -6,17 +6,41 @@ import (
 	"iplan"
 	"iutilities"
 	"os"
+	"strings"
 )
 
 var physicalPlanTree iplan.PlanTree
+
+func splitWhere(where string) []string {
+	arr := strings.Split(where, "and")
+	result := []string{}
+	for _, str := range arr {
+		s := strings.Split(str, " ")
+		if s[0] == "nation" && s[1] == "=" {
+			result = append(result, str)
+		}
+	}
+	return arr
+}
+
+func checkPublisherPrun() string {
+	for _, node := range physicalPlanTree.Nodes {
+		if node.NodeType == 2 {
+			// relatedconditions := splitWhere(node.Where)
+
+		}
+	}
+	return "no"
+}
 
 //GetFragTree return FragTree accroding to tablename
 func GetFragTree(tableName string) (fragTree iplan.FragTree) {
 	switch tableName {
 	case "publisher":
 		fragTree.TableName = "publisher"
-		fragTree.FragNum = 4
 		fragTree.FragType = 0
+		// prunInfo := checkPublisherPrun()
+		fragTree.FragNum = 4
 		fragTree.Frags[0].FragId = 0
 		fragTree.Frags[0].SiteNum = 0
 		fragTree.Frags[0].FragName = "publisher_0"

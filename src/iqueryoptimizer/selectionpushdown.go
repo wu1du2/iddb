@@ -176,6 +176,6 @@ func SelectionPushDown(oldtree iplan.PlanTree) iplan.PlanTree {
 	// 	}
 	// }
 
-	// pt.Print()
+	pt.Print()
 	return pt
 }

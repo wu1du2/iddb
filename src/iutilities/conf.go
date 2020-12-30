@@ -7,8 +7,8 @@ import (
 )
 
 var (
-// Configfile = "/home/centos/config/iddb.conf"
-// Configfile = "D:/code/GoProject/iddb/cnf/iddb.conf"
+	// Configfile = "/home/centos/config/iddb.conf"
+	Configfile = "D:/code/GoProject/iddb/cnf/iddb.conf"
 )
 
 var (
