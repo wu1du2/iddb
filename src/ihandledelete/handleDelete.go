@@ -72,7 +72,7 @@ func HandleDelete(sql string) (int64, [8]string, [8]int64) {
 		sqlstmt := "select cid from customer" + strwhere
 		var txnID int64
 		//txnID needs to be unique!
-		txnID = 46388
+		txnID = 46390
 		plantree := iparser.Parse(sqlstmt, txnID)
 		plantree = iqueryanalyzer.Analyze(plantree)
 		plantree = iqueryoptimizer.Optimize(plantree)
