@@ -69,7 +69,7 @@ func getChildType(childid int64) string {
 
 //把节点加在输入节点的上方
 func addWhereNodeOnTop(newNode iplan.PlanTreeNode, nodeid int64) {
-	if pt.Nodes[nodeid].NodeType == 4 && pt.Nodes[nodeid].Joint_type == 0 {
+	if pt.Nodes[nodeid].NodeType == 4 && pt.Nodes[nodeid].Joint_type == 0 { // x join
 		pt.Nodes[nodeid].Joint_type = 1
 		pt.Nodes[nodeid].Where = newNode.Where
 	} else {
@@ -77,7 +77,6 @@ func addWhereNodeOnTop(newNode iplan.PlanTreeNode, nodeid int64) {
 		newNode.Nodeid = newNodeid
 		newNode.Parent = pt.Nodes[nodeid].Parent
 		newNode.Left = nodeid
-		newNode.Status = 0
 		newNode.Locate = pt.Nodes[nodeid].Locate
 		newNode.TransferFlag = pt.Nodes[nodeid].TransferFlag
 		newNode.Dest = pt.Nodes[nodeid].Dest
@@ -85,7 +84,6 @@ func addWhereNodeOnTop(newNode iplan.PlanTreeNode, nodeid int64) {
 		if pt.Nodes[nodeid].TransferFlag == true {
 			pt.Nodes[nodeid].TransferFlag = false
 			pt.Nodes[nodeid].Dest = -1
-			pt.Nodes[nodeid].Status = 1
 		}
 		switch getChildType(nodeid) {
 		case "Left":
@@ -170,11 +168,13 @@ func SelectionPushDown(oldtree iplan.PlanTree) iplan.PlanTree {
 
 	}
 
-	// for i, node := range pt.Nodes {
-	// 	if node.NodeType == 1 && node.TransferFlag == false {
-	// 		pt.Nodes[i].Status = 1
-	// 	}
-	// }
+	for i, node := range pt.Nodes {
+		if node.NodeType == 1 && node.TransferFlag == false {
+			pt.Nodes[i].Status = 1
+		} else {
+			pt.Nodes[i].Status = 0
+		}
+	}
 
 	pt.Print()
 	return pt

@@ -63,18 +63,18 @@ func main() {
 	// and customer.rank=1
 	// and book.copies>5000`
 
-	//9
-	sqlstmt = `
-	select customer.name, book.title, publisher.name, orders.quantity
-	from customer, book, publisher, orders
-	where customer.id=orders.customer_id
-	and book.id=orders.book_id
-	and book.publisher_id=publisher.id
-	and book.id>220000		
-	and publisher.nation='USA' 
-	and orders.quantity>1`
+	// //9
+	// sqlstmt = `
+	// select customer.name, book.title, publisher.name, orders.quantity
+	// from customer, book, publisher, orders
+	// where customer.id=orders.customer_id
+	// and book.id=orders.book_id
+	// and book.publisher_id=publisher.id
+	// and book.id>220000
+	// and publisher.nation='USA'
+	// and orders.quantity>1`
 
-	// //10
+	//10
 	// sqlstmt = `
 	// select customer.name, book.title, publisher.name, orders.quantity
 	// from customer, book, publisher, orders
@@ -84,7 +84,18 @@ func main() {
 	// and customer.id>308000
 	// and book.copies>100
 	// and orders.quantity>1
-	// and publisher.nation='PRC'`  // !!!!!!
+	// and publisher.nation='PRC'`
+
+	sqlstmt = `select customer.name, book.title, publisher.name, orders.quantity 
+	from customer, book, publisher, orders 
+	where customer.id=orders.customer_id 
+	and book.id=orders.book_id 
+	and book.publisher_id=publisher.id 
+	and book.id > 207000 
+	and book.id < 213000 
+	and book.copies>100 
+	and orders.quantity>1 
+	and publisher.nation='PRC'`
 
 	pt = iparser.Parse(sqlstmt, 1)
 	pt = iqueryanalyzer.Analyze(pt)
