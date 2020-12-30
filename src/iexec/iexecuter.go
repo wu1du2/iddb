@@ -453,8 +453,6 @@ func generateInsertQuery(plan_node *iplan.PlanTreeNode) ([]string, bool) {
 		// ScanType
 		scanType := tp.ScanType()
 		types[i] = scanType
-		// fmt.Print(scanType)
-		// fmt.Print(" ")
 	}
 	// fmt.Println(" ")
 	values := make([]interface{}, len(tt))
@@ -465,7 +463,7 @@ func generateInsertQuery(plan_node *iplan.PlanTreeNode) ([]string, bool) {
 	for rows.Next() {
 		if i%1000 == 0 && i != 0 {
 			insert_query = insert_query + ";"
-			mySlice = append(mySlice, query)
+			mySlice = append(mySlice, insert_query)
 			insert_query = "insert into " + plan_node.TmpTable + " values "
 		} else if i != 0 {
 			insert_query = insert_query + ", "
@@ -487,7 +485,7 @@ func generateInsertQuery(plan_node *iplan.PlanTreeNode) ([]string, bool) {
 		i++
 	}
 	insert_query = insert_query + ";"
-	mySlice = append(mySlice, query)
+	mySlice = append(mySlice, insert_query)
 	if i == 0 {
 		return mySlice, false
 	} else {
