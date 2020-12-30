@@ -46,7 +46,7 @@ func ExecuteCreateStmt(stmt string) int64 {
 	} else {
 		println(stmt)
 	}
-	println(stmt)
+	// println(stmt)
 
 	// println(err)
 	stmts, err := db.Prepare(stmt)
