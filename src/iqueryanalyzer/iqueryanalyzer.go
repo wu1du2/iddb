@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"iparser"
 	"iplan"
+	"iutilities"
 	"os"
 )
 
@@ -156,15 +157,23 @@ func ShowPlanTree(planTree iplan.PlanTree) {
 	}
 }
 func min(a int64, b int64) (min int64, info string) {
-	if a < b {
+	iutilities.LoadAllConfig()
+	clientSite := iutilities.GetMe().NodeId
+	if a == b {
+		min = a
+		info = "Equal"
+	} else if a == clientSite {
+		min = a
+		info = "Left"
+	} else if b == clientSite {
+		min = b
+		info = "Right"
+	} else if a < b {
 		min = a
 		info = "Left"
 	} else if a > b {
 		min = b
 		info = "Right"
-	} else {
-		min = a
-		info = "Equal"
 	}
 	return min, info
 }
@@ -182,7 +191,7 @@ func getLocate(i int64) (locate int64) {
 	if physicalPlanTree.Nodes[i].Locate != -1 {
 		locate = physicalPlanTree.Nodes[i].Locate
 	} else if physicalPlanTree.Nodes[i].Left != -1 && physicalPlanTree.Nodes[i].Right != -1 {
-		//取两个孩子中Locate小的那个
+		//如果存在client站点，则优先client，否则取两个孩子中Locate小的那个
 		var minchildinfo string
 		locate, minchildinfo = min(getLocate(physicalPlanTree.Nodes[i].Left), getLocate(physicalPlanTree.Nodes[i].Right))
 		switch minchildinfo {
