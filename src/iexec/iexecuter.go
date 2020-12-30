@@ -55,7 +55,7 @@ func Init() {
 	mysql := mysql_user + ":" + mysql_passwd + "@tcp(" + mysql_ip_port + ")/" + mysql_db + "?charset=utf8"
 	db, err = sql.Open("mysql", mysql)
 	iutilities.CheckErr(err)
-	db.Close()
+	// db.Close()
 }
 
 func RunTree(txn_id int64) int64 {
@@ -226,7 +226,7 @@ func ExecuteFilter(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_
 	if !plan_node.TransferFlag {
 		plan_node.Status = 1
 	}
-	db.Close()
+	// db.Close()
 }
 
 func ExecuteProjection(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_id int64) {
@@ -248,7 +248,7 @@ func ExecuteProjection(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, 
 	if !plan_node.TransferFlag {
 		plan_node.Status = 1
 	}
-	db.Close()
+	// db.Close()
 }
 
 func ExecuteJoin(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_id int64) {
@@ -281,7 +281,7 @@ func ExecuteJoin(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_id
 	if !plan_node.TransferFlag {
 		plan_node.Status = 1
 	}
-	db.Close()
+	// db.Close()
 }
 
 func ExecuteUnion(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_id int64) {
@@ -305,7 +305,7 @@ func ExecuteUnion(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn_i
 	if !plan_node.TransferFlag {
 		plan_node.Status = 1
 	}
-	db.Close()
+	// db.Close()
 }
 
 func AddIndex(plan_node *iplan.PlanTreeNode) {
@@ -324,7 +324,7 @@ func AddIndex(plan_node *iplan.PlanTreeNode) {
 			println(res)
 		}
 	}
-	db.Close()
+	// db.Close()
 }
 
 func Strval(value interface{}) string {
@@ -435,7 +435,7 @@ func generateCreateQuery(plan_node *iplan.PlanTreeNode) string {
 	iutilities.CheckErr(err)
 	fmt.Println(table_name.String)
 	// fmt.Println(create_sql.String + ";")
-	db.Close()
+	// db.Close()
 	return create_sql.String + ";"
 }
 
@@ -490,7 +490,7 @@ func generateInsertQuery(plan_node *iplan.PlanTreeNode) ([]string, bool) {
 	}
 	insert_query = insert_query + ";"
 	mySlice = append(mySlice, insert_query)
-	db.Close()
+	// db.Close()
 	if i == 0 {
 		return mySlice, false
 	} else {
@@ -615,7 +615,7 @@ func PrintResult(plan_tree iplan.PlanTree, txnID int64) {
 		fmt.Print("total count:")
 		fmt.Println(count)
 
-		db.Close()
+		// db.Close()
 	}
 }
 
@@ -642,7 +642,7 @@ func GetResult(plan_tree iplan.PlanTree, txnID int64) []int {
 			mySlice = append(mySlice, id)
 			i++
 		}
-		db.Close()
+		// db.Close()
 	}
 	return mySlice
 }
