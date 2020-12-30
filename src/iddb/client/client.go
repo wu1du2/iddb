@@ -215,8 +215,8 @@ func main() {
 
 		iexec.PrintResult(plantree, txnID)
 
-		println("total time cost:")
-		println(time.Since(now).Milliseconds(), "ms")
+		println("total time cost: ")
+		println(time.Since(now).Milliseconds(), " ms")
 
 		println("txn", txnID, "end!")
 
