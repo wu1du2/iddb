@@ -46,10 +46,20 @@ func test_insert() {
 func test_old() {
 	// sql := "SELECT t1.a,t2.b FROM t1,t2"
 
-	sql := `select customer.name,customer.rank,orders.quantity
-	from customer,orders
+	// sql := `select customer.name,customer.rank,orders.quantity
+	// from customer,orders
+	// where customer.id=orders.customer_id
+	// and customer.rank=1`
+
+	sql := `
+	select customer.name, book.title, publisher.name, orders.quantity
+	from customer, book, publisher, orders
 	where customer.id=orders.customer_id
-	and customer.rank=1`
+	and book.id=orders.book_id
+	and book.publisher_id=publisher.id
+	and book.id>220000		
+	and publisher.nation='USA' 
+	and orders.quantity>1`
 
 	// sql := `select *
 	// from customer,orders
@@ -62,10 +72,10 @@ func test_old() {
 	logicalPlanTree := iparser.Parse(sql, 0)
 	//fmt.Print(logicalPlanTree)
 
-	// iqueryanalyzer.ShowPlanTree(logicalPlanTree)
+	iqueryanalyzer.ShowPlanTree(logicalPlanTree)
 
-	physicalPlanTree := iqueryanalyzer.Analyze(logicalPlanTree)
+	// physicalPlanTree := iqueryanalyzer.Analyze(logicalPlanTree)
 
-	iqueryanalyzer.ShowPlanTree(physicalPlanTree)
+	// iqueryanalyzer.ShowPlanTree(physicalPlanTree)
 
 }
