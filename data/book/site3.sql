@@ -25,4 +25,3 @@ create table publisher_3 select * from publisher where pid >= 104000 and nation 
 drop table if exists orders_3;
 create table orders_3 select * from orders where ocid >= 307000 and obid >= 215000;
 alter table publisher_3 add primary key(pid);
-alter table orders_3 add primary key(ocid, obid, quantity);

@@ -23,7 +23,7 @@ INTO TABLE iddb.orders;
 drop table if exists publisher_1;
 create table publisher_1 select * from publisher where pid < 104000 and nation = 'USA';
 drop table if exists book_1;
-create table book_1 select * from book where bid >= 2050000 and bid < 210000;
+create table book_1 select * from book where bid >= 205000 and bid < 210000;
 drop table if exists customer_1;
 create table customer_1 select cid,rank from customer;
 drop table if exists orders_1;
@@ -31,4 +31,3 @@ create table orders_1 select * from orders where ocid < 307000 and obid >= 21500
 alter table publisher_1 add primary key(pid);
 alter table book_1 add primary key(bid);
 alter table customer_1 add primary key(cid);
-alter table orders_1 add primary key(ocid, obid, quantity);

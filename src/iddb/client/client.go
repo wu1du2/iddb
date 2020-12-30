@@ -158,7 +158,7 @@ func main() {
 	}
 
 	for qid := 0; qid < 10; qid++ {
-
+		
 		now := time.Now()
 		sqlstmt = queries[qid]
 
