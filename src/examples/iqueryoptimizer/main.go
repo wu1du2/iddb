@@ -54,7 +54,7 @@ func main() {
 	// where customer.id=orders.customer_id
 	// and customer.rank=1`
 
-	//8
+	// 8
 	// sqlstmt = `
 	// select customer.name, orders.quantity, book.title
 	// from customer,orders,book
@@ -63,30 +63,17 @@ func main() {
 	// and customer.rank=1
 	// and book.copies>5000`
 
-	// //9
-	// sqlstmt = `
-	// select customer.name, book.title, publisher.name, orders.quantity
-	// from customer, book, publisher, orders
-	// where customer.id=orders.customer_id
-	// and book.id=orders.book_id
-	// and book.publisher_id=publisher.id
-	// and book.id>220000		//!!!
-	// and publisher.nation='USA' /!!!!!
-	// and orders.quantity>1`
-
-<<<<<<< Updated upstream
-	//10
+	//9
 	sqlstmt = `
 	select customer.name, book.title, publisher.name, orders.quantity
 	from customer, book, publisher, orders
 	where customer.id=orders.customer_id
 	and book.id=orders.book_id
 	and book.publisher_id=publisher.id
-	and customer.id>308000
-	and book.copies>100
-	and orders.quantity>1
-	and publisher.nation='PRC'`
-=======
+	and book.id>220000		
+	and publisher.nation='USA' 
+	and orders.quantity>1`
+
 	// //10
 	// sqlstmt = `
 	// select customer.name, book.title, publisher.name, orders.quantity
@@ -98,11 +85,10 @@ func main() {
 	// and book.copies>100
 	// and orders.quantity>1
 	// and publisher.nation='PRC'`  // !!!!!!
->>>>>>> Stashed changes
 
 	pt = iparser.Parse(sqlstmt, 1)
 	pt = iqueryanalyzer.Analyze(pt)
 	pt = iqueryoptimizer.Optimize(pt)
-	pt.Print()
+	// pt.Print()gn[[]]
 	return
 }

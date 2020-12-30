@@ -43,10 +43,11 @@ var (
 	err          error
 	ipaddr       string
 	plantree     iplan.PlanTree
-	queries      [10]string
+	queries      [15]string
 	test_insert_ = 1
 	test_delete_ = 1
 	test_select_ = 0
+	test_flag_   = 0
 )
 
 func main() {
@@ -65,6 +66,10 @@ func main() {
 
 		if i == 3 {
 			test_select_, _ = strconv.Atoi(v)
+		}
+
+		if i == 4 {
+			test_flag_, _ = strconv.Atoi(v)
 		}
 
 	}
@@ -149,6 +154,19 @@ func main() {
 	and orders.quantity>1
 	and publisher.nation='PRC'`
 
+	queries[10] = `
+	select customer.name, book.title, publisher.name, orders.quantity 
+	from customer, book, publisher, orders 
+	where customer.id=orders.customer_id 
+	and book.id=orders.book_id 
+	and book.publisher_id=publisher.id 
+	and book.id > 207000 
+	and book.id < 213000 
+	and book.copies>100 
+	and orders.quantity>1 
+	and publisher.nation='PRC'
+	`
+
 	println("please enter TxnId: ")
 	txnID, err = strconv.ParseInt(scanLine(), 10, 64)
 	if err != nil {
@@ -157,8 +175,25 @@ func main() {
 		println("txnID=", txnID)
 	}
 
-	for qid := 0; qid < 10; qid++ {
-		
+	for qid := 0; qid < 11; qid++ {
+		if test_flag_ == 8 {
+			if qid != 8 {
+				continue
+			}
+		}
+
+		if test_flag_ == 9 {
+			if qid != 9 {
+				continue
+			}
+		}
+
+		if test_flag_ == 10 {
+			if qid != 10 {
+				continue
+			}
+		}
+
 		now := time.Now()
 		sqlstmt = queries[qid]
 
@@ -167,9 +202,16 @@ func main() {
 			break
 		}
 
-		plantree1 := iparser.Parse(sqlstmt, txnID)
-		plantree = iqueryanalyzer.Analyze(plantree1)
+		plantree := iparser.Parse(sqlstmt, txnID)
+		plantree = iqueryanalyzer.Analyze(plantree)
 		plantree = iqueryoptimizer.Optimize(plantree)
+
+		relsites := iqueryoptimizer.GetRelSites(plantree)
+		for i := 0; i < 4; i++ {
+			if relsites[i] == 1 {
+				println("Relative Site", i)
+			}
+		}
 
 		// fmt.Println("plantree is ", plantree)
 
@@ -197,7 +239,10 @@ func main() {
 		println("imeta set tree ok")
 
 		println("end imeta")
-		for _, node := range iutilities.Peers {
+		for i, node := range iutilities.Peers {
+			if relsites[i] == 0 {
+				continue
+			}
 			ipaddr = node.IP + ":" + node.Call
 			println("call node to work ", node.NodeId)
 			iutilities.Waitgroup.Add(1)

@@ -264,6 +264,64 @@ func CreateUnionNode(TmpTableName string) iplan.PlanTreeNode {
 	return node
 }
 
+func buildBalanceTree() {
+	orders := CreateTableNode("orders")
+	customer := CreateTableNode("customer")
+	publisher := CreateTableNode("publisher")
+	book := CreateTableNode("book")
+
+	opos := findEmptyNode()
+	orders.Nodeid = opos
+	logicalPlanTree.Nodes[opos] = orders
+	logicalPlanTree.NodeNum++
+
+	cpos := findEmptyNode()
+	customer.Nodeid = cpos
+	logicalPlanTree.Nodes[cpos] = customer
+	logicalPlanTree.NodeNum++
+
+	ocjoin := findEmptyNode()
+	logicalPlanTree.Nodes[ocjoin] = CreateJoinNode(GetTmpTableName(), 0)
+	logicalPlanTree.Nodes[ocjoin].Nodeid = ocjoin
+	logicalPlanTree.NodeNum++
+
+	logicalPlanTree.Nodes[ocjoin].Left = opos
+	logicalPlanTree.Nodes[ocjoin].Right = cpos
+	logicalPlanTree.Nodes[opos].Parent = ocjoin
+	logicalPlanTree.Nodes[cpos].Parent = ocjoin
+
+	bpos := findEmptyNode()
+	book.Nodeid = bpos
+	logicalPlanTree.Nodes[bpos] = book
+	logicalPlanTree.NodeNum++
+
+	ppos := findEmptyNode()
+	publisher.Nodeid = ppos
+	logicalPlanTree.Nodes[ppos] = publisher
+	logicalPlanTree.NodeNum++
+
+	bpjoin := findEmptyNode()
+	logicalPlanTree.Nodes[bpjoin] = CreateJoinNode(GetTmpTableName(), 0)
+	logicalPlanTree.Nodes[bpjoin].Nodeid = bpjoin
+	logicalPlanTree.NodeNum++
+
+	logicalPlanTree.Nodes[bpjoin].Left = bpos
+	logicalPlanTree.Nodes[bpjoin].Right = ppos
+	logicalPlanTree.Nodes[bpos].Parent = bpjoin
+	logicalPlanTree.Nodes[ppos].Parent = bpjoin
+
+	root = findEmptyNode()
+	logicalPlanTree.Nodes[root] = CreateJoinNode(GetTmpTableName(), 0)
+	logicalPlanTree.Nodes[root].Nodeid = root
+	logicalPlanTree.NodeNum++
+
+	logicalPlanTree.Nodes[root].Left = ocjoin
+	logicalPlanTree.Nodes[root].Right = bpjoin
+	logicalPlanTree.Nodes[ocjoin].Parent = root
+	logicalPlanTree.Nodes[bpjoin].Parent = root
+
+}
+
 //buildSelect for handle select statment
 func buildSelect(sel *sqlparser.Select) iplan.PlanTree {
 	logicalPlanTree = InitalPlanTree()
@@ -271,9 +329,15 @@ func buildSelect(sel *sqlparser.Select) iplan.PlanTree {
 		fmt.Println("cannot build plan tree without From")
 		os.Exit(1)
 	}
-	for _, table := range sel.From {
-		tableName := sqlparser.String(table)
-		AddTableNode(CreateTableNode(tableName))
+	if len(sel.From) == 4 {
+		println("handle 4 tables!!!!")
+		buildBalanceTree()
+
+	} else {
+		for _, table := range sel.From {
+			tableName := sqlparser.String(table)
+			AddTableNode(CreateTableNode(tableName))
+		}
 	}
 
 	if sel.Where != nil {
