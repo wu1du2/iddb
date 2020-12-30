@@ -74,7 +74,6 @@ func main() {
 	// and publisher.nation='USA' /!!!!!
 	// and orders.quantity>1`
 
-<<<<<<< Updated upstream
 	//10
 	sqlstmt = `
 	select customer.name, book.title, publisher.name, orders.quantity
@@ -86,19 +85,6 @@ func main() {
 	and book.copies>100
 	and orders.quantity>1
 	and publisher.nation='PRC'`
-=======
-	// //10
-	// sqlstmt = `
-	// select customer.name, book.title, publisher.name, orders.quantity
-	// from customer, book, publisher, orders
-	// where customer.id=orders.customer_id
-	// and book.id=orders.book_id
-	// and book.publisher_id=publisher.id
-	// and customer.id>308000
-	// and book.copies>100
-	// and orders.quantity>1
-	// and publisher.nation='PRC'`  // !!!!!!
->>>>>>> Stashed changes
 
 	pt = iparser.Parse(sqlstmt, 1)
 	pt = iqueryanalyzer.Analyze(pt)
