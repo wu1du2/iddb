@@ -541,13 +541,13 @@ func ExecuteTransmission(plan_node *iplan.PlanTreeNode) {
 
 		println("query length is: ", len(insert_query))
 
-		index_querys, has_index := generateAddIndexQuery(plan_node)
+		// index_querys, has_index := generateAddIndexQuery(plan_node)
 
-		if has_index {
-			for _, query := range index_querys {
-				ExecuteRemoteCreateStmt(address, query)
-			}
-		}
+		// if has_index {
+		// 	for _, query := range index_querys {
+		// 		ExecuteRemoteCreateStmt(address, query)
+		// 	}
+		// }
 		if issuccess {
 			for _, query := range insert_query {
 				ExecuteRemoteCreateStmt(address, query)
