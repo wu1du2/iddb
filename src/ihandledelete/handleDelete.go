@@ -132,10 +132,10 @@ func HandleDelete(sql string) (int64, [8]string, [8]int64) {
 		i := 0
 		for i < int(TotalNum) {
 			//delete from customer_0123 where cid=res[0]
-			siten[i] = int64(1)
+			siten[i] = int64(0)
 			outsql[i] = "delete from customer_0 where cid=" + strconv.Itoa(res[j])
 			i = i + 1
-			siten[i] = int64(2)
+			siten[i] = int64(1)
 			outsql[i] = "delete from customer_1 where cid=" + strconv.Itoa(res[j])
 			i = i + 1
 			j = j + 1
