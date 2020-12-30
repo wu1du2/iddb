@@ -154,6 +154,10 @@ func main() {
 	and orders.quantity>1
 	and publisher.nation='PRC'`
 
+	queries[10] =
+		`select Customer.name, Book.title, Publisher.name, Orders.quantity from Customer, Book, Publisher, Orders where Customer.id=Orders.customer_id and Book.id=Orders.book_id and Book.publisher_id=Publisher.id and Book.id > 207000 and Book.id < 213000 and Book.copies>100 and Orders.quantity>1 and Publisher.nation='PRC'
+	`
+
 	println("please enter TxnId: ")
 	txnID, err = strconv.ParseInt(scanLine(), 10, 64)
 	if err != nil {
@@ -171,6 +175,12 @@ func main() {
 
 		if test_flag_ == 9 {
 			if qid != 9 {
+				continue
+			}
+		}
+
+		if test_flag_ == 10 {
+			if qid != 10 {
 				continue
 			}
 		}
