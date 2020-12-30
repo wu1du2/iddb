@@ -36,8 +36,8 @@ func HandleInsert(sql string) (int64, [2]string, [2]int64) {
 	switch tablename {
 	case "customer":
 		TotalNum = 2
-		siten[0] = 1
-		siten[1] = 2
+		siten[0] = 0
+		siten[1] = 1
 		outsql[0] = "insert into customer_0 values(" + value[0] + "," + value[1] + ")"
 		outsql[1] = "insert into customer_1 values(" + value[0] + "," + value[2] + ")"
 	case "publisher":
