@@ -163,12 +163,16 @@ func main() {
 	}
 
 	for qid := 0; qid < 10; qid++ {
-		if qid < 9 && test_flag_ == 0 {
-			continue
+		if test_flag_ == 8 {
+			if qid != 8 {
+				continue
+			}
 		}
 
-		if qid >= 9 && test_flag_ == 1 {
-			continue
+		if test_flag_ == 9 {
+			if qid != 9 {
+				continue
+			}
 		}
 
 		now := time.Now()
