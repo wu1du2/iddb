@@ -1,4 +1,6 @@
-use iddb
+drop database if exists iddb;
+create database iddb;
+use iddb;
 drop table if exists publisher;
 create table publisher(pid int primary key, pname char(100), nation char(3));
 drop table if exists book;
