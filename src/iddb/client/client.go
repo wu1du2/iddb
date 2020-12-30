@@ -296,7 +296,7 @@ func test_delete() {
 	delete from customer where rank = 1`
 
 	for i, del_stmt := range del_stmts {
-		if i != 3 {
+		if i != 4 {
 			continue
 		}
 		println(i, del_stmt)
