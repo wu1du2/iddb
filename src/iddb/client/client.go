@@ -296,6 +296,9 @@ func test_delete() {
 	delete from customer where rank = 1`
 
 	for i, del_stmt := range del_stmts {
+		if i != 3 {
+			continue
+		}
 		println(i, del_stmt)
 		N, sqls, siteid := ihandledelete.HandleDelete(del_stmt)
 		j := 0
