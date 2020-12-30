@@ -72,7 +72,7 @@ func HandleDelete(sql string) (int64, [8]string, [8]int64) {
 		sqlstmt := "select cid from customer" + strwhere
 		var txnID int64
 		//txnID needs to be unique!
-		txnID = 46382
+		txnID = 46388
 		plantree := iparser.Parse(sqlstmt, txnID)
 		plantree = iqueryanalyzer.Analyze(plantree)
 		plantree = iqueryoptimizer.Optimize(plantree)
@@ -80,6 +80,26 @@ func HandleDelete(sql string) (int64, [8]string, [8]int64) {
 		ipaddr0 := iutilities.Peers[0].IP + ":" + iutilities.Peers[0].Call
 
 		ipaddr1 := iutilities.Peers[1].IP + ":" + iutilities.Peers[1].Call
+
+		plantree.Print()
+
+		imeta.Connect_etcd()
+		println("start imeta")
+
+		err = imeta.Build_Txn(txnID)
+		if err != nil {
+			iutilities.CheckErr(err)
+		}
+
+		println("imeta build txn ok")
+
+		err = imeta.Set_Tree(txnID, plantree)
+		if err != nil {
+			iutilities.CheckErr(err)
+		}
+		println("imeta set tree ok")
+
+		println("end imeta")
 
 		iutilities.Waitgroup.Add(1)
 		go irpccall.RunCallClient(ipaddr0, txnID)
