@@ -31,4 +31,4 @@ create table orders_0 select * from orders where ocid < 307000 and obid < 215000
 alter table publisher_0 add primary key(pid);
 alter table book_0 add primary key(bid);
 alter table customer_0 add primary key(cid);
-alter table orders_0 add primary key(ocid, obid, quantity);
+create index idx_order_0 on orders_0(ocid, obid, quantity);
