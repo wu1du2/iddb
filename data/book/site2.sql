@@ -28,4 +28,3 @@ drop table if exists orders_2;
 create table orders_2 select * from orders where ocid >= 307000 and obid < 215000;
 alter table publisher_2 add primary key(pid);
 alter table book_2 add primary key(bid);
-create index idx_order_2 on orders_2(ocid, obid, quantity);
