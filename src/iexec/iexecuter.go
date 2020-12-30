@@ -187,7 +187,7 @@ func ExecuteOneNode(plan_node *iplan.PlanTreeNode, plan_tree iplan.PlanTree, txn
 	ExecuteTransmission(plan_node)
 }
 
-func //CleanTmpTable(plan_node_id int64, plan_tree iplan.PlanTree) {
+func CleanTmpTable(plan_node_id int64, plan_tree iplan.PlanTree) {
 	nodeType := plan_tree.Nodes[plan_node_id].NodeType
 	Locate := plan_tree.Nodes[plan_node_id].Locate
 	if nodeType != 1 || Locate != site {
