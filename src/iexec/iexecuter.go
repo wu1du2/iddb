@@ -22,13 +22,14 @@ var mysql_db string
 var mysql_ip_port string
 var db *sql.DB
 var err error
-var total_trans int64 = 0
 
 func RunExecuter(txn_id int64) int64 {
 	// get the plan through txn_id
 	//
 	RunTree(txn_id)
+	println("total transmission =", iutilities.Total_trans, "B")
 	println("executed successfully")
+
 	return 0
 }
 
@@ -40,10 +41,10 @@ func RunExecuter(txn_id int64) int64 {
 func ExecuteRemoteCreateStmt(address string, create_sql string) {
 	var table irpctran.Table
 	table.Createstmt = create_sql
-	total_trans += int64(len(create_sql))
+	iutilities.Total_trans += int64(len(create_sql))
 
 	irpctran.RunTranClient(address, table)
-	println("total_trans =", total_trans)
+	println("total_trans =", iutilities.Total_trans)
 }
 
 func Init() {
