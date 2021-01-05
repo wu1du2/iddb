@@ -38,11 +38,12 @@ func RunExecuter(txn_id int64) int64 {
 // }
 
 func ExecuteRemoteCreateStmt(address string, create_sql string) {
-	// address := "localhost:50053"
 	var table irpctran.Table
-	// table.Createstmt = "Create Table PUBLISHER (ID int, NATION varchar(255) );"
 	table.Createstmt = create_sql
+	total_trans += int64(len(create_sql))
+
 	irpctran.RunTranClient(address, table)
+	println("total_trans =", total_trans)
 }
 
 func Init() {
@@ -547,9 +548,6 @@ func ExecuteTransmission(plan_node *iplan.PlanTreeNode) {
 
 		println("query length is: ", len(insert_query))
 
-		total_trans += int64(len(insert_query))
-
-		println("total_trans =", total_trans)
 		// index_querys, has_index := generateAddIndexQuery(plan_node)
 
 		// if has_index {
