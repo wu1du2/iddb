@@ -206,4 +206,9 @@ git clone https://github.com/wu1du2/iddb.git
 ## working log
 2020.11.9 discussed the design of iddb
 2020.11.11 mid-term report
+2020.12.30 pass final test
+3 todos:
+1.transportation cost
+2.client total time cost
+3.introduce "PUSH TABLE PROCESS" in final report
 

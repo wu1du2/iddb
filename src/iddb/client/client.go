@@ -176,6 +176,47 @@ func main() {
 	}
 
 	for qid := 0; qid < 11; qid++ {
+
+		if test_flag_ == 0 {
+			if qid != 0 {
+				continue
+			}
+		}
+		if test_flag_ == 1 {
+			if qid != 1 {
+				continue
+			}
+		}
+		if test_flag_ == 2 {
+			if qid != 2 {
+				continue
+			}
+		}
+		if test_flag_ == 3 {
+			if qid != 3 {
+				continue
+			}
+		}
+		if test_flag_ == 4 {
+			if qid != 4 {
+				continue
+			}
+		}
+		if test_flag_ == 5 {
+			if qid != 5 {
+				continue
+			}
+		}
+		if test_flag_ == 6 {
+			if qid != 6 {
+				continue
+			}
+		}
+		if test_flag_ == 7 {
+			if qid != 7 {
+				continue
+			}
+		}
 		if test_flag_ == 8 {
 			if qid != 8 {
 				continue
@@ -193,6 +234,8 @@ func main() {
 				continue
 			}
 		}
+		println("press any key to continue")
+		_ = scanLine()
 
 		now := time.Now()
 		sqlstmt = queries[qid]
@@ -216,9 +259,6 @@ func main() {
 		// fmt.Println("plantree is ", plantree)
 
 		plantree.Print()
-
-		println("press any key to continue")
-		_ = scanLine()
 
 		imeta.Connect_etcd()
 		println("start imeta")

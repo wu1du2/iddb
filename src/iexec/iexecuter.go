@@ -22,6 +22,7 @@ var mysql_db string
 var mysql_ip_port string
 var db *sql.DB
 var err error
+var total_trans int64 = 0
 
 func RunExecuter(txn_id int64) int64 {
 	// get the plan through txn_id
@@ -546,6 +547,9 @@ func ExecuteTransmission(plan_node *iplan.PlanTreeNode) {
 
 		println("query length is: ", len(insert_query))
 
+		total_trans += int64(len(insert_query))
+
+		println("total_trans =", total_trans)
 		// index_querys, has_index := generateAddIndexQuery(plan_node)
 
 		// if has_index {
